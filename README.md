@@ -357,4 +357,159 @@ Made with ❤️ for the Swift and ML community
 
 ---
 
-*Last updated: June 24, 2025* 
+*Last updated: June 24, 2025*
+
+# MLXChatApp
+
+A sample SwiftUI chat application demonstrating the MLXEngine Swift package for local LLM inference using Apple's MLX framework.
+
+## Features
+
+- 🤖 **Local LLM Inference**: Chat with language models running entirely on your device
+- 🌊 **Real-time Streaming**: Token-by-token text generation with smooth animations
+- 💬 **Clean Chat Interface**: Modern SwiftUI design with message bubbles and timestamps
+- 🔧 **Model Management**: Easy model loading and management
+- 📱 **Cross-Platform**: Runs on both macOS and iOS with optimized layouts
+- ⚡ **Performance**: Optimized for Apple Silicon with proper memory management
+
+## Requirements
+
+- macOS 14.0+ or iOS 17.0+
+- Apple Silicon (M1/M2/M3/M4) for optimal performance
+- Xcode 15.0+
+- Swift 5.9+
+
+## Installation & Setup
+
+1. **Clone the repository** (if not already done):
+   ```bash
+   git clone <repository-url>
+   cd MLXEngine
+   ```
+
+2. **Navigate to the sample app**:
+   ```bash
+   cd Examples/MLXChatApp
+   ```
+
+3. **Build and run**:
+   ```bash
+   swift run
+   ```
+
+   Or open in Xcode:
+   ```bash
+   open Package.swift
+   ```
+
+## Usage
+
+1. **Launch the app** - The app will initialize with a welcome message
+2. **Load a model** - Tap the menu (⋯) and select "Load Model" 
+3. **Wait for download** - The first run will download the model (this may take a few minutes)
+4. **Start chatting** - Type your message and press Enter or click Send
+5. **View responses** - Watch as the AI responds in real-time with streaming text
+
+## Architecture
+
+The app demonstrates proper MLXEngine integration:
+
+- **ContentView**: Main SwiftUI interface with navigation and layout
+- **ChatViewModel**: `@MainActor` class managing chat state and MLXEngine integration
+- **MessageBubbleView**: Reusable view components for chat messages
+- **ChatHeaderView**: Status display showing connection and model information
+- **ChatInputView**: Text input with send/stop functionality
+
+## Model Information
+
+The sample uses the **Qwen1.5 0.5B Chat (4-bit)** model by default:
+- **Size**: ~350MB download
+- **Performance**: Fast inference on Apple Silicon
+- **Context**: 4K tokens
+- **Quantization**: 4-bit for efficiency
+
+## Customization
+
+### Using Different Models
+
+Modify the `loadDefaultModel()` function in `ChatViewModel.swift`:
+
+```swift
+let modelConfig = ModelConfiguration(
+    id: "your-model-id",
+    name: "Your Model Name",
+    url: "https://huggingface.co/your-model-repo",
+    filename: "your-model-file.gguf",
+    maxTokens: 2048,
+    contextLength: 4096
+)
+```
+
+### UI Customization
+
+- **Colors**: Modify the color schemes in the view files
+- **Layout**: Adjust spacing and sizing in the SwiftUI views
+- **Platform**: Add platform-specific UI variations using `#if os(macOS)`
+
+## Performance Tips
+
+1. **First Run**: Model download can take several minutes
+2. **Memory**: Ensure sufficient free RAM (4GB+ recommended)
+3. **Storage**: Allow space for model files (~500MB per model)
+4. **Background**: Keep the app active during inference for best performance
+
+## Troubleshooting
+
+### Common Issues
+
+**"Model loading failed"**
+- Check internet connection for model download
+- Verify sufficient disk space
+- Ensure Apple Silicon Mac (Intel Macs need Rosetta)
+
+**"Generation failed"**
+- Model may not be fully loaded
+- Try restarting the app
+- Check memory availability
+
+**Slow Performance**
+- Close other memory-intensive apps
+- Ensure the device isn't thermal throttling
+- Try a smaller model for testing
+
+### Debug Mode
+
+Enable debug logging by modifying the MLXEngine initialization:
+
+```swift
+// Add debug flags in ChatViewModel.initialize()
+inferenceEngine = InferenceEngine(debugMode: true)
+```
+
+## Technical Details
+
+### Dependencies
+
+- **MLXEngine**: Local package dependency (../..)
+- **SwiftUI**: Native Apple UI framework
+- **Swift Concurrency**: Async/await for model operations
+
+### Threading
+
+- **@MainActor**: UI updates on main thread
+- **Task**: Background model operations
+- **AsyncSequence**: Streaming token generation
+
+### Memory Management
+
+- **Automatic**: MLXEngine handles model memory
+- **GPU Cache**: Configurable Metal buffer limits
+- **Unloading**: Automatic cleanup on app termination
+
+## License
+
+This sample app follows the same license as the parent MLXEngine project.
+
+---
+
+*This sample demonstrates the full capabilities of the MLXEngine Swift package for local LLM inference on Apple platforms.* 

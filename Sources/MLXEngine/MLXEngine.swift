@@ -137,53 +137,7 @@ public protocol LLMEngine: Sendable {
 
 // MARK: - File Manager Service
 
-/// Platform-aware file management service
-public actor FileManagerService {
-    public static let shared = FileManagerService()
-    
-    private init() {}
-    
-    /// Gets the appropriate models directory for the current platform
-    public func getModelsDirectory() throws -> URL {
-        #if os(iOS)
-        // iOS: Use app's documents directory
-        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return documentsPath.appendingPathComponent("MLXModels")
-        #elseif os(macOS)
-        // macOS: Use Application Support
-        let appSupportPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        return appSupportPath.appendingPathComponent("MLXEngine/Models")
-        #else
-        // Other platforms: Use caches directory
-        let cachesPath = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-        return cachesPath.appendingPathComponent("MLXEngine/Models")
-        #endif
-    }
-    
-    /// Creates the models directory if it doesn't exist
-    public func ensureModelsDirectoryExists() throws -> URL {
-        let modelsDirectory = try getModelsDirectory()
-        try FileManager.default.createDirectory(at: modelsDirectory, withIntermediateDirectories: true)
-        return modelsDirectory
-    }
-    
-    /// Checks if a model is already downloaded
-    public func isModelDownloaded(modelId: String) async -> Bool {
-        do {
-            let modelsDirectory = try getModelsDirectory()
-            let modelDirectory = modelsDirectory.appendingPathComponent(modelId)
-            return FileManager.default.fileExists(atPath: modelDirectory.path)
-        } catch {
-            return false
-        }
-    }
-    
-    /// Gets the local path for a downloaded model
-    public func getModelPath(modelId: String) throws -> URL {
-        let modelsDirectory = try getModelsDirectory()
-        return modelsDirectory.appendingPathComponent(modelId)
-    }
-}
+
 
 // MARK: - Model Downloader
 
@@ -249,7 +203,7 @@ public actor ModelDownloader {
     
     /// Fallback download implementation using the original method
     private func downloadModelFallback(_ config: ModelConfiguration, progress: @escaping @Sendable (Double) -> Void) async throws -> URL {
-        let modelsDirectory = try await fileManager.ensureModelsDirectoryExists()
+        let modelsDirectory = try fileManager.ensureModelsDirectoryExists()
         let modelDirectory = modelsDirectory.appendingPathComponent(config.hubId)
         
         // Create model directory
@@ -285,17 +239,14 @@ public actor ModelDownloader {
     /// Verifies file integrity using SHA-256 checksum
     public func verifyFileChecksum(fileURL: URL, expectedSHA256: String) async throws -> Bool {
         let data = try Data(contentsOf: fileURL)
-        let calculatedSHA256 = sha256Hex(data: data)
+        let calculatedSHA256 = calculateSHA256(data: data)
         return calculatedSHA256.lowercased() == expectedSHA256.lowercased()
     }
     
-    /// Simple SHA-256 implementation
-    private func sha256Hex(data: Data) -> String {
-        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        data.withUnsafeBytes { buffer in
-            _ = CC_SHA256(buffer.baseAddress, CC_LONG(buffer.count), &hash)
-        }
-        return hash.map { String(format: "%02x", $0) }.joined()
+    /// Simple SHA-256 implementation using CryptoKit
+    private func calculateSHA256(data: Data) -> String {
+        // Use the global sha256Hex function from SHA256Helper.swift
+        return sha256Hex(data: data)
     }
     
     /// Gets the list of downloaded models
@@ -306,7 +257,7 @@ public actor ModelDownloader {
         }
         
         // Fallback to original implementation
-        let modelsDirectory = try await fileManager.getModelsDirectory()
+        let modelsDirectory = try fileManager.getModelsDirectory()
         
         guard FileManager.default.fileExists(atPath: modelsDirectory.path) else {
             return []

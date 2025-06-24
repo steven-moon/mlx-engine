@@ -130,6 +130,35 @@ public class HuggingFaceAPI: @unchecked Sendable {
         self.hfToken = token
     }
     
+    /// Tests the current authentication by making a simple API call
+    public func testAuthentication() async throws -> String {
+        guard let token = hfToken else {
+            throw HuggingFaceError.authenticationRequired
+        }
+        
+        let url = URL(string: "https://huggingface.co/api/whoami")!
+        let request = createAuthenticatedRequest(for: url)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw HuggingFaceError.networkError
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            if httpResponse.statusCode == 401 {
+                throw HuggingFaceError.authenticationRequired
+            } else {
+                throw HuggingFaceError.httpError(httpResponse.statusCode)
+            }
+        }
+        
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        let username = json?["name"] as? String ?? "unknown"
+        
+        return username
+    }
+    
     /// Creates an authenticated URLRequest with proper headers
     private func createAuthenticatedRequest(for url: URL) -> URLRequest {
         var request = URLRequest(url: url)
@@ -342,7 +371,7 @@ public class HuggingFaceAPI: @unchecked Sendable {
 
 // MARK: - Data Models
 
-public struct HuggingFaceModel: Codable, Identifiable, Hashable {
+public struct HuggingFaceModel: Codable, Identifiable, Hashable, Sendable {
     public let id: String
     public let modelId: String?
     public let author: String?
@@ -583,11 +612,31 @@ public struct HuggingFaceModel: Codable, Identifiable, Hashable {
     public static func == (lhs: HuggingFaceModel, rhs: HuggingFaceModel) -> Bool {
         return lhs.id == rhs.id
     }
+    
+    /// Convert to ModelConfiguration
+    public func toModelConfiguration() -> ModelConfiguration {
+        let displayName = id.components(separatedBy: "/").last?.replacingOccurrences(of: "-", with: " ") ?? id
+        let parameters = extractParameters() ?? "Unknown"
+        let quantization = extractQuantization() ?? "fp16"
+        let architecture = extractArchitecture() ?? "Unknown"
+        let estimatedSize = Double(getEstimatedSizeMB() ?? 1000) / 1000.0 // Convert MB to GB
+        
+        return ModelConfiguration(
+            name: displayName,
+            hubId: id,
+            description: "\(architecture) \(parameters) model with \(quantization) quantization",
+            parameters: parameters,
+            quantization: quantization,
+            architecture: architecture,
+            maxTokens: 4096,
+            estimatedSizeGB: estimatedSize
+        )
+    }
 }
 
 // MARK: - Supporting Structures
 
-public struct Sibling: Codable {
+public struct Sibling: Codable, Sendable {
     public let rfilename: String
     public let size: Int?
     
@@ -599,7 +648,7 @@ public struct Sibling: Codable {
 
 // MARK: - AnyCodable for flexible JSON parsing
 
-public struct AnyCodable: Codable {
+public struct AnyCodable: Codable, Sendable {
     public let value: Any
     
     public init(_ value: Any) {

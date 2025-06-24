@@ -59,6 +59,28 @@ public class FileManagerService: @unchecked Sendable {
         return modelsDirectory
     }
     
+    /// Ensures the models directory exists and returns its URL
+    public func ensureModelsDirectoryExists() throws -> URL {
+        return try getModelsDirectory()
+    }
+    
+    /// Checks if a model is already downloaded
+    public func isModelDownloaded(modelId: String) async -> Bool {
+        do {
+            let modelsDirectory = try getModelsDirectory()
+            let modelDirectory = modelsDirectory.appendingPathComponent(modelId)
+            return FileManager.default.fileExists(atPath: modelDirectory.path)
+        } catch {
+            return false
+        }
+    }
+    
+    /// Gets the local path for a downloaded model
+    public func getModelPath(modelId: String) throws -> URL {
+        let modelsDirectory = try getModelsDirectory()
+        return modelsDirectory.appendingPathComponent(modelId)
+    }
+    
     /// Gets the cache directory for temporary files
     public func getCacheDirectory() throws -> URL {
         logger.info("📁 Getting cache directory")

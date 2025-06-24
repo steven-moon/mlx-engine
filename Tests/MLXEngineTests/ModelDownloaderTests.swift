@@ -19,7 +19,7 @@ final class ModelDownloaderTests: XCTestCase {
     }
     
     private func cleanupTestFiles() async throws {
-        let modelsDirectory = try await fileManager.getModelsDirectory()
+        let modelsDirectory = try fileManager.getModelsDirectory()
         if FileManager.default.fileExists(atPath: modelsDirectory.path) {
             try FileManager.default.removeItem(at: modelsDirectory)
         }
@@ -28,7 +28,7 @@ final class ModelDownloaderTests: XCTestCase {
     // MARK: - FileManagerService Tests
     
     func testGetModelsDirectory() async throws {
-        let directory = try await fileManager.getModelsDirectory()
+        let directory = try fileManager.getModelsDirectory()
         
         #if os(iOS)
         XCTAssertTrue(directory.path.contains("Documents"))
@@ -43,7 +43,7 @@ final class ModelDownloaderTests: XCTestCase {
     }
     
     func testEnsureModelsDirectoryExists() async throws {
-        let directory = try await fileManager.ensureModelsDirectoryExists()
+        let directory = try fileManager.ensureModelsDirectoryExists()
         
         XCTAssertTrue(FileManager.default.fileExists(atPath: directory.path))
         var isDir: ObjCBool = false
@@ -57,7 +57,7 @@ final class ModelDownloaderTests: XCTestCase {
         XCTAssertFalse(isDownloaded)
         
         // Create a mock model directory
-        let modelsDirectory = try await fileManager.ensureModelsDirectoryExists()
+        let modelsDirectory = try fileManager.ensureModelsDirectoryExists()
         let modelDirectory = modelsDirectory.appendingPathComponent("test-model")
         try FileManager.default.createDirectory(at: modelDirectory, withIntermediateDirectories: true)
         
@@ -67,8 +67,8 @@ final class ModelDownloaderTests: XCTestCase {
     }
     
     func testGetModelPath() async throws {
-        let modelPath = try await fileManager.getModelPath(modelId: "test-model")
-        let expectedDirectory = try await fileManager.getModelsDirectory()
+        let modelPath = try fileManager.getModelPath(modelId: "test-model")
+        let expectedDirectory = try fileManager.getModelsDirectory()
         let expectedPath = expectedDirectory.appendingPathComponent("test-model")
         
         XCTAssertEqual(modelPath, expectedPath)
@@ -191,7 +191,7 @@ final class ModelDownloaderTests: XCTestCase {
     
     func testGetDownloadedModelsWithValidModel() async throws {
         // Create a mock model directory with required files
-        let modelsDirectory = try await fileManager.ensureModelsDirectoryExists()
+        let modelsDirectory = try fileManager.ensureModelsDirectoryExists()
         let modelDirectory = modelsDirectory.appendingPathComponent("test-model")
         try FileManager.default.createDirectory(at: modelDirectory, withIntermediateDirectories: true)
         
@@ -213,7 +213,7 @@ final class ModelDownloaderTests: XCTestCase {
     
     func testGetDownloadedModelsWithIncompleteModel() async throws {
         // Create a mock model directory with only some files
-        let modelsDirectory = try await fileManager.ensureModelsDirectoryExists()
+        let modelsDirectory = try fileManager.ensureModelsDirectoryExists()
         let modelDirectory = modelsDirectory.appendingPathComponent("incomplete-model")
         try FileManager.default.createDirectory(at: modelDirectory, withIntermediateDirectories: true)
         
