@@ -1,0 +1,138 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Test Swift Package
+    runs-on: macos-14
+    
+    strategy:
+      matrix:
+        xcode: ['15.4']
+        destination: 
+          - 'platform=macOS'
+          - 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.5'
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: ${{ matrix.xcode }}
+    
+    - name: Cache Swift Package Manager
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/org.swift.swiftpm/
+          ~/.cache/org.swift.swiftpm/
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+    
+    - name: Build Package
+      run: swift build
+    
+    - name: Run Unit Tests
+      run: swift test --filter MLXEngineTests
+      
+    - name: Run Sanity Tests
+      run: swift test --filter SanityTests
+    
+    - name: Test iOS Build
+      if: matrix.destination == 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.5'
+      run: |
+        xcodebuild clean build \
+          -scheme MLXEngine \
+          -destination "${{ matrix.destination }}" \
+          -skipPackageSignatureValidation
+
+  lint:
+    name: SwiftLint
+    runs-on: macos-14
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: SwiftLint
+      uses: norio-nomura/action-swiftlint@3.2.1
+      with:
+        args: --strict
+
+  package-validation:
+    name: Package Validation
+    runs-on: macos-14
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.4'
+    
+    - name: Validate Package
+      run: swift package diagnose
+    
+    - name: Check Package Dependencies
+      run: swift package show-dependencies
+    
+    - name: Dump Package Description
+      run: swift package dump-package
+
+  documentation:
+    name: Documentation Build
+    runs-on: macos-14
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.4'
+    
+    - name: Build Documentation
+      run: |
+        swift package --allow-writing-to-directory docs \
+          generate-documentation --target MLXEngine \
+          --disable-indexing \
+          --transform-for-static-hosting \
+          --hosting-base-path MLXEngine \
+          --output-path docs
+    
+    - name: Upload Documentation
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs
+
+  deploy-docs:
+    name: Deploy Documentation
+    needs: documentation
+    if: github.ref == 'refs/heads/main'
+    
+    permissions:
+      pages: write
+      id-token: write
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4 

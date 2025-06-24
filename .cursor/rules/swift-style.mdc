@@ -1,0 +1,23 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- Follow **Swift API Design Guidelines**; prefer clear, descriptive names over abbreviations.
+- Use **camelCase** for functions/variables and **PascalCase** for types. Acronyms are capitalised (`URLSession`).
+- Public symbols require **`///` doc-comments** that explain *what* and *why*, not *how*.
+- Adopt **Swift Concurrency** exclusively:
+  - Return `async throws` instead of callback-based APIs.
+  - Use `Task {}` or `Task.detached` only on background queues; wrap UI updates in `@MainActor`.
+  - Mark reference types that interact with UIKit/SwiftUI as `@MainActor`.
+- Prefer **value types** (`struct`, `enum`) unless subclassing is required.
+- Protocols that may be conformed to outside the module should be marked `public` + `@unchecked Sendable` if concurrency-safe.
+- Use **Codable** for serialisation. Derive `CodingKeys` explicitly when field names differ.
+- Keep files < 400 LOC; split extensions into separate *+Extension.swift* files when it aids clarity.
+- Guard against force-unwraps; favour `if let` / `guard let`, or provide meaningful default values.
+- Organise imports: standard library, Apple frameworks, third-party, local modules – **alphabetically** within each group.
+- Run **`swift-format` (apple/swift-format v509)** before committing; CI will fail on style violations.
+- Lint rules:
+  - Limit line length to **120** chars (except in URLs & long strings).
+  - Use **4-space indentation**; never tabs.
+  - End every file with a single trailing newline.
