@@ -73,6 +73,7 @@ The following guides provide detailed instructions for integrating MLXEngine wit
 - **Hardware**: Apple Silicon (M1/M2/M3/M4) or A17+ devices
 - **Dependencies**: MLX Swift framework
 - **Xcode**: Latest Xcode with Swift 5.9+
+- **MLX Runtime**: The MLX runtime (including Metal libraries) **must be installed** on your system for all tests to pass. See [MLX installation instructions](https://github.com/ml-explore/mlx) for details.
 
 ### Building and Testing
 
@@ -112,6 +113,27 @@ See [CONTRIBUTING.md](../../CONTRIBUTING.md) for development guidelines.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
+
+## What's Next
+
+- **MLX Runtime Setup**: Ensure MLX runtime is properly installed on all development/test machines (blocker for full test pass).
+- **Integration Testing**: Run integration tests with real MLX models once runtime is available.
+- **Performance Testing**: Benchmark real MLX performance vs fallback.
+- **Chat App UI**: Complete chat view, input, model selection, and management UIs.
+- **Prepare for Release**: Plan for user acceptance testing, documentation polish, and community launch.
+
+## Error Types and Handling
+
+MLXEngine uses comprehensive error types for robust error handling:
+
+- `EngineError`: Errors related to the inference engine (e.g., unloaded engine)
+- `MLXEngineError`: MLX integration errors (e.g., model not found, MLX not available)
+- `ChatSessionError`: Chat session errors (e.g., no messages, generation failed)
+- `FileManagerError`: File and directory errors (e.g., not found, permission denied)
+- `OptimizedDownloadError`: Model download errors (e.g., download failed, verification failed)
+- `HuggingFaceError`: Hugging Face API errors (e.g., network, authentication, model not found)
+
+All errors conform to `LocalizedError` and provide user-friendly descriptions. See the [API Reference](api_reference.md#error-types) for details.
 
 ---
 

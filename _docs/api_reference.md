@@ -10,7 +10,7 @@ This document provides a comprehensive reference for all public APIs in MLXEngin
 - [ModelConfiguration](#modelconfiguration)
 - [ModelRegistry](#modelregistry)
 - [ChatSession](#chatsession)
-- [ModelDownloader](#modeldownloader)
+- [OptimizedDownloader (was ModelDownloader)](#optimizeddownloader)
 - [HuggingFaceAPI](#huggingfaceapi)
 - [Error Types](#error-types)
 
@@ -142,12 +142,13 @@ public struct ModelConfiguration: Codable, Sendable
 public let name: String
 public let hubId: String
 public let description: String
-public let parameters: String
-public let quantization: String
-public let architecture: String
+public var parameters: String? // Optional
+public var quantization: String? // Optional
+public var architecture: String? // Optional
 public let maxTokens: Int
-public let estimatedSizeGB: Double
-public let defaultSystemPrompt: String?
+public let estimatedSizeGB: Double? // Optional
+public let defaultSystemPrompt: String? // Optional
+public let endOfTextTokens: [String]? // Optional
 ```
 
 ### Initializers
@@ -272,10 +273,10 @@ public static func findSmallModels() -> [ModelConfiguration]
 
 Multi-turn conversation management with history and context preservation.
 
-### Class
+### Struct
 
 ```swift
-public final class ChatSession: @unchecked Sendable
+public struct ChatSession: @unchecked Sendable
 ```
 
 ### Initializers
@@ -461,24 +462,14 @@ public let content: String
 public let timestamp: Date
 ```
 
-## ModelDownloader
+## OptimizedDownloader (was ModelDownloader)
 
 Optimized model downloading with progress tracking and integrity verification.
 
-### Class
+### Actor
 
 ```swift
-public final class ModelDownloader: @unchecked Sendable
-```
-
-### Initializers
-
-#### `init()`
-
-Creates a new model downloader.
-
-```swift
-public init()
+public actor OptimizedDownloader: @unchecked Sendable
 ```
 
 ### Methods
@@ -494,39 +485,52 @@ public func downloadModel(
 ) async throws -> URL
 ```
 
-**Parameters:**
-- `config`: The model configuration to download
-- `progress`: Progress callback (0.0 to 1.0)
+#### `getModelInfo(_:)`
 
-**Returns:** The local URL of the downloaded model
-
-**Throws:** `ModelDownloaderError` if download fails
-
-#### `isModelDownloaded(_:)`
-
-Checks if a model is already downloaded.
+Gets information about a model.
 
 ```swift
-public func isModelDownloaded(_ config: ModelConfiguration) -> Bool
+public func getModelInfo(modelId: String) async throws -> ModelInfo
 ```
 
-**Parameters:**
-- `config`: The model configuration to check
+#### `getDownloadedModels()`
 
-**Returns:** `true` if the model is downloaded
-
-#### `getModelURL(_:)`
-
-Gets the local URL for a model.
+Returns all downloaded models.
 
 ```swift
-public func getModelURL(_ config: ModelConfiguration) -> URL?
+public func getDownloadedModels() async throws -> [ModelConfiguration]
 ```
 
-**Parameters:**
-- `config`: The model configuration
+#### `cleanupIncompleteDownloads()`
 
-**Returns:** The local URL if the model is downloaded, `nil` otherwise
+Cleans up incomplete downloads.
+
+```swift
+public func cleanupIncompleteDownloads() async throws
+```
+
+### Error Types
+
+```swift
+public enum OptimizedDownloadError: Error, LocalizedError {
+    case downloadFailed(String)
+    case modelInfoFailed(String)
+    case verificationFailed(String)
+}
+```
+
+### ModelInfo Struct
+
+```swift
+public struct ModelInfo: Sendable {
+    public let modelId: String
+    public let totalFiles: Int
+    public let modelFiles: Int
+    public let configFiles: Int
+    public let estimatedSizeGB: Double
+    public let filenames: [String]
+}
+```
 
 ## HuggingFaceAPI
 
@@ -650,31 +654,42 @@ public enum ChatSessionError: LocalizedError
 - `invalidRole`: Invalid message role
 - `generationFailed(String)`: Text generation failed
 
-### ModelDownloaderError
-
-Errors related to model downloading.
+### FileManagerError
 
 ```swift
-public enum ModelDownloaderError: LocalizedError
+public enum FileManagerError: Error, LocalizedError {
+    case directoryNotFound(String)
+    case fileNotFound(String)
+    case permissionDenied(String)
+    case diskFull
+    case unknown(Error)
+}
 ```
 
-**Cases:**
-- `downloadFailed(String)`: Download operation failed
-- `invalidModel(String)`: Invalid model configuration
-- `networkError(String)`: Network-related error
-
-### HuggingFaceAPIError
-
-Errors related to Hugging Face API operations.
+### OptimizedDownloadError
 
 ```swift
-public enum HuggingFaceAPIError: LocalizedError
+public enum OptimizedDownloadError: Error, LocalizedError {
+    case downloadFailed(String)
+    case modelInfoFailed(String)
+    case verificationFailed(String)
+}
 ```
 
-**Cases:**
-- `authenticationFailed(String)`: Authentication failed
-- `networkError(String)`: Network-related error
-- `invalidResponse(String)`: Invalid API response
+### HuggingFaceError
+
+```swift
+public enum HuggingFaceError: Error, LocalizedError {
+    case invalidURL
+    case networkError
+    case decodingError
+    case fileError
+    case authenticationRequired
+    case modelNotFound(String)
+    case rateLimitExceeded
+    case httpError(Int)
+}
+```
 
 ## Usage Examples
 

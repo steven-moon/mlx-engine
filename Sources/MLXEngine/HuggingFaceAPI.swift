@@ -1,8 +1,9 @@
 import Foundation
 import os.log
 
-/// Hugging Face Hub API client for searching and downloading models
+/// Hugging Face Hub API client for searching and downloading models.
 public class HuggingFaceAPI: @unchecked Sendable {
+    /// Shared singleton instance of the API client.
     public static let shared = HuggingFaceAPI()
     
     private let baseURL = "https://huggingface.co/api"
@@ -36,17 +37,17 @@ public class HuggingFaceAPI: @unchecked Sendable {
         self.hfToken = Self.loadHuggingFaceToken()
     }
     
-    /// Sets the Hugging Face token for authentication
+    /// Sets the Hugging Face token for authentication.
     public func setToken(_ token: String) {
         self.hfToken = token
     }
     
-    /// Clears the current token
+    /// Clears the current token.
     public func clearToken() {
         self.hfToken = nil
     }
     
-    /// Returns true if a token is available
+    /// Returns true if a token is available.
     public var hasToken: Bool {
         return hfToken != nil
     }
@@ -109,7 +110,7 @@ public class HuggingFaceAPI: @unchecked Sendable {
             .first
     }
     
-    /// Saves the Hugging Face token to a secure location
+    /// Saves the Hugging Face token to a secure location.
     public func saveToken(_ token: String) throws {
         #if os(iOS)
         let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -130,7 +131,7 @@ public class HuggingFaceAPI: @unchecked Sendable {
         self.hfToken = token
     }
     
-    /// Tests the current authentication by making a simple API call
+    /// Tests the current authentication by making a simple API call.
     public func testAuthentication() async throws -> String {
         guard let token = hfToken else {
             throw HuggingFaceError.authenticationRequired
@@ -245,7 +246,7 @@ public class HuggingFaceAPI: @unchecked Sendable {
         return model
     }
     
-    /// Downloads a model file from Hugging Face with enhanced performance and progress tracking
+    /// Downloads a model file from Hugging Face with progress callback.
     public func downloadModel(modelId: String, fileName: String, to destinationURL: URL, progress: @escaping @Sendable (Double) -> Void) async throws {
         let encodedModelId = modelId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         let encodedFileName = fileName.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
@@ -371,6 +372,7 @@ public class HuggingFaceAPI: @unchecked Sendable {
 
 // MARK: - Data Models
 
+/// Represents a model on Hugging Face Hub with metadata and configuration extraction.
 public struct HuggingFaceModel: Codable, Identifiable, Hashable, Sendable {
     public let id: String
     public let modelId: String?
@@ -613,7 +615,7 @@ public struct HuggingFaceModel: Codable, Identifiable, Hashable, Sendable {
         return lhs.id == rhs.id
     }
     
-    /// Convert to ModelConfiguration
+    /// Converts HuggingFaceModel metadata to a ModelConfiguration.
     public func toModelConfiguration() -> ModelConfiguration {
         let displayName = id.components(separatedBy: "/").last?.replacingOccurrences(of: "-", with: " ") ?? id
         let parameters = extractParameters() ?? "Unknown"
@@ -708,6 +710,7 @@ public struct AnyCodable: Codable, Sendable {
 
 // MARK: - Error Types
 
+/// Errors related to Hugging Face API operations.
 public enum HuggingFaceError: Error, LocalizedError {
     case invalidURL
     case networkError

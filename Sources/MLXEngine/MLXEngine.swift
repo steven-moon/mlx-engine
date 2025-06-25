@@ -5,16 +5,27 @@ import CommonCrypto
 
 /// A comprehensive configuration describing an LLM model.
 public struct ModelConfiguration: Sendable, Codable, Hashable, Identifiable {
+    /// Unique identifier for the model configuration (defaults to hubId)
     public let id: String
+    /// Display name for the model
     public let name: String
+    /// Hugging Face Hub ID for the model
     public let hubId: String
+    /// Human-readable description of the model
     public let description: String
+    /// Number of parameters (e.g., "3B"), if available
     public var parameters: String?
+    /// Quantization type (e.g., "4bit", "8bit"), if available
     public var quantization: String?
+    /// Model architecture (e.g., "Llama", "Qwen"), if available
     public var architecture: String?
+    /// Maximum number of tokens supported by the model
     public let maxTokens: Int
+    /// Estimated model size in GB, if available
     public let estimatedSizeGB: Double?
+    /// Default system prompt for the model, if any
     public let defaultSystemPrompt: String?
+    /// End-of-text tokens for the model, if any
     public let endOfTextTokens: [String]?
     
     public init(
@@ -127,11 +138,15 @@ public struct GenerateParams: Sendable, Hashable {
     }
 }
 
-/// A protocol representing a loaded LLM engine.
+/// Protocol for engines capable of LLM inference.
 public protocol LLMEngine: Sendable {
+    /// Loads a model with the specified configuration and progress callback.
     static func loadModel(_ config: ModelConfiguration, progress: @escaping @Sendable (Double) -> Void) async throws -> Self
+    /// Generates text from a prompt using one-shot completion.
     func generate(_ prompt: String, params: GenerateParams) async throws -> String
+    /// Generates text from a prompt using streaming completion.
     func stream(_ prompt: String, params: GenerateParams) -> AsyncThrowingStream<String, Error>
+    /// Unloads the model and frees associated resources.
     func unload()
 }
 

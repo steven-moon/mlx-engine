@@ -8,6 +8,10 @@ This document describes the technical architecture and design decisions behind M
 
 MLXEngine is designed as a clean, modular Swift package that provides a high-level API for running Large Language Models (LLMs) using Apple's MLX framework. The architecture emphasizes simplicity, performance, and platform compatibility.
 
+## Requirements
+
+- **MLX Runtime**: The MLX runtime (including Metal libraries) **must be installed** for full functionality and to run all tests. See [MLX installation instructions](https://github.com/ml-explore/mlx).
+
 ## Core Architecture
 
 ### Design Principles
@@ -29,7 +33,7 @@ MLXEngine is designed as a clean, modular Swift package that provides a high-lev
 ├─────────────────────────────────────────────────────────────┤
 │                    Core Services Layer                       │
 ├─────────────────────────────────────────────────────────────┤
-│  ModelDownloader  │  HuggingFaceAPI  │  SHA256Helper       │
+│  OptimizedDownloader  │  HuggingFaceAPI  │  SHA256Helper    │
 ├─────────────────────────────────────────────────────────────┤
 │                    MLX Integration Layer                     │
 ├─────────────────────────────────────────────────────────────┤
@@ -97,7 +101,7 @@ Multi-turn conversation management with history and context preservation.
 - **Export Functionality**: Export conversations in various formats
 - **Thread Safety**: Concurrent access support
 
-### 5. ModelDownloader
+### 5. OptimizedDownloader
 
 Optimized model downloading with progress tracking and integrity verification.
 
@@ -177,7 +181,34 @@ public enum MLXEngineError: LocalizedError {
     case downloadFailed(String)
     // Additional MLX-specific errors
 }
+
+public enum FileManagerError: Error, LocalizedError {
+    case directoryNotFound(String)
+    case fileNotFound(String)
+    case permissionDenied(String)
+    case diskFull
+    case unknown(Error)
+}
+
+public enum OptimizedDownloadError: Error, LocalizedError {
+    case downloadFailed(String)
+    case modelInfoFailed(String)
+    case verificationFailed(String)
+}
+
+public enum HuggingFaceError: Error, LocalizedError {
+    case invalidURL
+    case networkError
+    case decodingError
+    case fileError
+    case authenticationRequired
+    case modelNotFound(String)
+    case rateLimitExceeded
+    case httpError(Int)
+}
 ```
+
+All errors conform to `LocalizedError` and provide user-friendly descriptions.
 
 ### Error Recovery
 

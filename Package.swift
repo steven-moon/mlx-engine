@@ -13,13 +13,16 @@ let package = Package(
     targets: [
         .target(
             name: "MLXEngine",
-            dependencies: [.product(name: "MLX", package: "mlx-swift")],
+            dependencies: [
+                .product(name: "MLX", package: "mlx-swift"),
+                .product(name: "MLXNN", package: "mlx-swift")
+            ],
             path: "Sources/MLXEngine"
         ),
         .testTarget(
             name: "MLXEngineTests",
             dependencies: ["MLXEngine"],
-            path: "Tests"
+            path: "Tests/MLXEngineTests"
         )
     ]
 )

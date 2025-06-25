@@ -5,12 +5,14 @@ public struct ModelRegistry {
     
     // MARK: - Model Type Definitions
     
+    /// Model type categories (LLM, VLM, Embedder, Diffusion)
     public enum ModelType: String, CaseIterable {
         case llm = "LLM"           // Large Language Model
         case vlm = "VLM"           // Vision Language Model
         case embedder = "Embedder" // Text Embedding Model
         case diffusion = "Diffusion" // Image Generation Model
         
+        /// Human-readable description of the model type
         public var description: String {
             switch self {
             case .llm:
@@ -165,7 +167,7 @@ public struct ModelRegistry {
     
     // MARK: - Model Collections
     
-    /// All available model configurations, sorted by type and size
+    /// Returns all pre-configured models
     public static var allModels: [ModelConfiguration] {
         [
             // Small LLM models first

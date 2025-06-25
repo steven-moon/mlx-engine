@@ -2,11 +2,15 @@ import Foundation
 
 // MARK: - Chat Message Types
 
-/// Represents a message in a chat conversation
+/// Represents a message in a chat conversation.
 public struct ChatMessage: Codable, Identifiable, Sendable {
+    /// Unique identifier for the message
     public let id: UUID
+    /// The role of the message sender (user or assistant)
     public let role: Role
+    /// The content of the message
     public let content: String
+    /// Timestamp when the message was created
     public let timestamp: Date
     
     public init(role: Role, content: String, id: UUID = UUID(), timestamp: Date = Date()) {
@@ -26,7 +30,7 @@ public struct ChatMessage: Codable, Identifiable, Sendable {
 
 // MARK: - Chat Session
 
-/// Manages a multi-turn conversation with an LLM
+/// Manages a multi-turn chat session with history and context preservation.
 public final class ChatSession: @unchecked Sendable {
     private let engine: any LLMEngine
     private var messages: [ChatMessage] = []
@@ -36,18 +40,18 @@ public final class ChatSession: @unchecked Sendable {
         self.engine = engine
     }
     
-    /// The current conversation history
+    /// The conversation history as an array of messages
     public var conversationHistory: [ChatMessage] {
         queue.sync { messages }
     }
     
-    /// Adds a message to the conversation
+    /// Adds a message to the conversation history.
     public func addMessage(_ role: ChatMessage.Role, content: String) async throws {
         let message = ChatMessage(role: role, content: content)
         queue.sync { messages.append(message) }
     }
     
-    /// Generates a response to the given content
+    /// Generates a response to a user message.
     public func generateResponse(_ content: String, params: GenerateParams = .init()) async throws -> String {
         // Add the user message
         try await addMessage(.user, content: content)
@@ -64,7 +68,7 @@ public final class ChatSession: @unchecked Sendable {
         return response
     }
     
-    /// Streams a response to the given content
+    /// Streams a response to a user message.
     public func streamResponse(_ content: String, params: GenerateParams = .init()) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
             Task {
@@ -93,22 +97,22 @@ public final class ChatSession: @unchecked Sendable {
         }
     }
     
-    /// Clears the conversation history
+    /// Clears the conversation history.
     public func clearHistory() {
         queue.sync { messages.removeAll() }
     }
     
-    /// Removes the last message from the conversation
+    /// Removes the last message from the conversation.
     public func removeLastMessage() {
         queue.sync { _ = messages.popLast() }
     }
     
-    /// Gets the last message in the conversation
+    /// Returns the last message in the conversation, if any.
     public var lastMessage: ChatMessage? {
         queue.sync { messages.last }
     }
     
-    /// Gets the number of messages in the conversation
+    /// Returns the number of messages in the conversation.
     public var messageCount: Int {
         queue.sync { messages.count }
     }
@@ -136,7 +140,7 @@ public final class ChatSession: @unchecked Sendable {
         }
     }
     
-    /// Exports the conversation as a formatted string
+    /// Exports the conversation as a formatted string.
     public func exportConversation() -> String {
         queue.sync {
             var export = "Chat Conversation\n"
@@ -151,7 +155,7 @@ public final class ChatSession: @unchecked Sendable {
         }
     }
     
-    /// Imports a conversation from a formatted string
+    /// Imports a conversation from a formatted string.
     public func importConversation(_ conversation: String) {
         // TODO: Implement conversation import
         // This would parse the exported format and reconstruct the messages

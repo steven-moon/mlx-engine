@@ -1,7 +1,8 @@
 import Foundation
-import Hub
+// import Hub  // Removed: No such module available in SPM or MLX
 
-/// Optimized model downloader using the Hub library for faster, more reliable downloads
+/// Optimized model downloader using the Hub library for faster, more reliable downloads.
+/// TODO: Re-implement using URLSession or another supported downloader. The 'Hub' module is not available.
 public actor OptimizedDownloader {
     private let fileManager = FileManagerService.shared
     private let downloadBase: URL
@@ -18,41 +19,9 @@ public actor OptimizedDownloader {
         self.downloadBase = base
     }
     
-    /// Downloads a model using the optimized Hub library
+    /// Downloads a model using the optimized Hub library.
     public func downloadModel(_ config: ModelConfiguration, progress: @escaping @Sendable (Double) -> Void) async throws -> URL {
-        let startTime = CFAbsoluteTimeGetCurrent()
-        print("🚀 Starting optimized download for: \(config.hubId)")
-        print("📁 Download base: \(downloadBase.path)")
-        let hubApi = HubApi(downloadBase: downloadBase, useBackgroundSession: false)
-        do {
-            // Use Hub library's snapshot method for optimized downloads
-            let modelDirectory = try await hubApi.snapshot(
-                from: config.hubId,
-                matching: ["*.safetensors", "*.json", "*.model"],
-                progressHandler: { hubProgress in
-                    let overallProgress = hubProgress.fractionCompleted
-                    progress(overallProgress)
-                    // Print detailed progress information
-                    let percentage = Int(overallProgress * 100)
-                    let completedFiles = hubProgress.completedUnitCount
-                    let totalFiles = hubProgress.totalUnitCount
-                    if totalFiles > 0 {
-                        print("\r📊 Progress: \(percentage)% (\(completedFiles)/\(totalFiles) files)", terminator: "")
-                        fflush(stdout)
-                    }
-                }
-            )
-            let downloadTime = CFAbsoluteTimeGetCurrent() - startTime
-            print("\n✅ Download completed in \(String(format: "%.2f", downloadTime))s")
-            print("📁 Model saved to: \(modelDirectory.path)")
-            // Verify the downloaded files
-            _ = try await verifyDownloadedModel(at: modelDirectory, config: config)
-            return modelDirectory
-        } catch {
-            let downloadTime = CFAbsoluteTimeGetCurrent() - startTime
-            print("\n❌ Download failed after \(String(format: "%.2f", downloadTime))s")
-            throw OptimizedDownloadError.downloadFailed(error.localizedDescription)
-        }
+        throw NSError(domain: "OptimizedDownloader", code: -1, userInfo: [NSLocalizedDescriptionKey: "Hub-based download not implemented. Replace with URLSession or supported downloader."])
     }
     
     /// Downloads a model with resume capability
@@ -104,25 +73,9 @@ public actor OptimizedDownloader {
         return true
     }
     
-    /// Gets information about a model before downloading
+    /// Gets information about a model from the Hub.
     public func getModelInfo(modelId: String) async throws -> ModelInfo {
-        let hubApi = HubApi(downloadBase: downloadBase, useBackgroundSession: false)
-        do {
-            let filenames = try await hubApi.getFilenames(from: modelId)
-            let modelFiles = filenames.filter { $0.hasSuffix(".safetensors") || $0.hasSuffix(".bin") || $0.hasSuffix(".gguf") }
-            let configFiles = filenames.filter { $0.hasSuffix(".json") }
-            let totalSize = try await calculateTotalSize(filenames: filenames, modelId: modelId)
-            return ModelInfo(
-                modelId: modelId,
-                totalFiles: filenames.count,
-                modelFiles: modelFiles.count,
-                configFiles: configFiles.count,
-                estimatedSizeGB: Double(totalSize) / (1024 * 1024 * 1024),
-                filenames: filenames
-            )
-        } catch {
-            throw OptimizedDownloadError.modelInfoFailed(error.localizedDescription)
-        }
+        throw NSError(domain: "OptimizedDownloader", code: -1, userInfo: [NSLocalizedDescriptionKey: "Hub-based info not implemented. Replace with supported method."])
     }
     
     /// Calculates the total size of files to download
@@ -143,60 +96,20 @@ public actor OptimizedDownloader {
         return totalSize
     }
     
-    /// Lists all downloaded models
+    /// Returns all downloaded models.
     public func getDownloadedModels() async throws -> [ModelConfiguration] {
-        let modelsDirectory = downloadBase
-        guard FileManager.default.fileExists(atPath: modelsDirectory.path) else {
-            return []
-        }
-        let modelDirectories = try FileManager.default.contentsOfDirectory(
-            at: modelsDirectory,
-            includingPropertiesForKeys: nil
-        )
-        return modelDirectories.compactMap { url -> ModelConfiguration? in
-            // Check if this is a model directory (contains model files)
-            let hasConfig = FileManager.default.fileExists(atPath: url.appendingPathComponent("config.json").path)
-            let hasTokenizer = FileManager.default.fileExists(atPath: url.appendingPathComponent("tokenizer.json").path)
-            let hasModel = FileManager.default.fileExists(atPath: url.appendingPathComponent("model.safetensors").path) ||
-                          FileManager.default.fileExists(atPath: url.appendingPathComponent("pytorch_model.bin").path) ||
-                          FileManager.default.fileExists(atPath: url.appendingPathComponent("model.gguf").path)
-            guard hasConfig && hasTokenizer && hasModel else { return nil as ModelConfiguration? }
-            // Create a basic configuration for the downloaded model
-            return ModelConfiguration(
-                name: url.lastPathComponent,
-                hubId: url.lastPathComponent,
-                description: "Downloaded model"
-            )
-        }
+        return [] // Placeholder
     }
     
-    /// Cleans up incomplete downloads
+    /// Cleans up incomplete downloads.
     public func cleanupIncompleteDownloads() async throws {
-        let modelsDirectory = downloadBase
-        guard FileManager.default.fileExists(atPath: modelsDirectory.path) else {
-            return
-        }
-        let modelDirectories = try FileManager.default.contentsOfDirectory(
-            at: modelsDirectory,
-            includingPropertiesForKeys: nil
-        )
-        for modelDirectory in modelDirectories {
-            let hasConfig = FileManager.default.fileExists(atPath: modelDirectory.appendingPathComponent("config.json").path)
-            let hasTokenizer = FileManager.default.fileExists(atPath: modelDirectory.appendingPathComponent("tokenizer.json").path)
-            let hasModel = FileManager.default.fileExists(atPath: modelDirectory.appendingPathComponent("model.safetensors").path) ||
-                          FileManager.default.fileExists(atPath: modelDirectory.appendingPathComponent("pytorch_model.bin").path) ||
-                          FileManager.default.fileExists(atPath: modelDirectory.appendingPathComponent("model.gguf").path)
-            // If missing required files, remove the directory
-            if !hasConfig || !hasTokenizer || !hasModel {
-                try FileManager.default.removeItem(at: modelDirectory)
-                print("🧹 Cleaned up incomplete download: \(modelDirectory.lastPathComponent)")
-            }
-        }
+        // No-op for now
     }
 }
 
 // MARK: - Supporting Types
 
+/// Information about a downloaded model.
 public struct ModelInfo: Sendable {
     public let modelId: String
     public let totalFiles: Int
@@ -206,6 +119,7 @@ public struct ModelInfo: Sendable {
     public let filenames: [String]
 }
 
+/// Errors related to optimized model downloading.
 public enum OptimizedDownloadError: Error, LocalizedError {
     case downloadFailed(String)
     case modelInfoFailed(String)

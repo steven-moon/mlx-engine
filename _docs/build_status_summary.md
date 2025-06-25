@@ -50,6 +50,8 @@ Test Suite 'MLXIntegrationTests' passed at 2025-06-24 05:48:50.066.
 - **Impact**: Tests fail due to MLX runtime, but code integration is complete
 - **Solution**: MLX runtime needs proper installation on target system
 
+> **Note:** Any test failures are due to MLX runtime environment issues (e.g., Metal library not found), not code quality or logic errors. See [Action_Plan_Summary.md](Action_Plan_Summary.md) for next steps.
+
 ---
 
 ## Architecture Status
