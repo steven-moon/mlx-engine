@@ -2,25 +2,24 @@
 import PackageDescription
 
 let package = Package(
-    name: "MLXChatApp",
-    platforms: [
-        .macOS(.v14),
-        .iOS(.v17)
-    ],
+    name: "MLXEngine",
+    platforms: [.macOS(.v14), .iOS(.v17)],
     products: [
-        .executable(name: "MLXChatApp", targets: ["MLXChatApp"])
+        .library(name: "MLXEngine", targets: ["MLXEngine"])
     ],
     dependencies: [
-        // Local MLXEngine dependency
-        .package(path: "../../")
+        .package(url: "https://github.com/ml-explore/mlx-swift.git", from: "0.2.0")
     ],
     targets: [
-        .executableTarget(
-            name: "MLXChatApp",
-            dependencies: [
-                .product(name: "MLXEngine", package: "MLXEngine")
-            ],
-            path: "Sources/MLXChatApp"
+        .target(
+            name: "MLXEngine",
+            dependencies: [.product(name: "MLX", package: "mlx-swift")],
+            path: "Sources/MLXEngine"
+        ),
+        .testTarget(
+            name: "MLXEngineTests",
+            dependencies: ["MLXEngine"],
+            path: "Tests"
         )
     ]
-) 
+)
