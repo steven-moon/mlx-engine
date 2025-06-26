@@ -388,6 +388,24 @@ public actor ModelDownloader {
                 progress(overallProgress)
             }
         }
+        // Patch: Symlink or copy model.safetensors to main.mlx if main.mlx is missing
+        let mainMLXPath = modelDirectory.appendingPathComponent("main.mlx").path
+        let safetensorsPath = modelDirectory.appendingPathComponent("model.safetensors").path
+        if !FileManager.default.fileExists(atPath: mainMLXPath), FileManager.default.fileExists(atPath: safetensorsPath) {
+            do {
+                #if os(macOS) || os(Linux)
+                try? FileManager.default.removeItem(atPath: mainMLXPath)
+                try FileManager.default.createSymbolicLink(atPath: mainMLXPath, withDestinationPath: safetensorsPath)
+                #else
+                // On iOS/tvOS/watchOS, symlinks may not be allowed; fallback to copy
+                try? FileManager.default.removeItem(atPath: mainMLXPath)
+                try FileManager.default.copyItem(atPath: safetensorsPath, toPath: mainMLXPath)
+                #endif
+                AppLogger.shared.info("ModelDownloader", "Patched: Linked model.safetensors to main.mlx for MLX compatibility", context: ["modelDir": modelDirectory.path])
+            } catch {
+                AppLogger.shared.warning("ModelDownloader", "Failed to patch main.mlx symlink/copy: \(error)", context: ["modelDir": modelDirectory.path])
+            }
+        }
         return modelDirectory
     }
     

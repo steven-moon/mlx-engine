@@ -1,0 +1,101 @@
+Test Suite 'Selected tests' started at 2025-06-26 16:05:44.439.
+Test Suite 'MLXEnginePackageTests.xctest' started at 2025-06-26 16:05:44.440.
+Test Suite 'MLXIntegrationTests' started at 2025-06-26 16:05:44.440.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testGenerateParametersCreation]' started.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testGenerateParametersCreation]' passed (0.001 seconds).
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineIntegration]' started.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineIntegration]' passed (0.641 seconds).
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineParameters]' started.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineParameters]' passed (0.625 seconds).
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineStaticMethod]' started.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineStaticMethod]' passed (0.001 seconds).
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineStreaming]' started.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineStreaming]' passed (1.295 seconds).
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineUnload]' started.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testInferenceEngineUnload]' passed (0.646 seconds).
+Test Case '-[MLXEngineTests.MLXIntegrationTests testMLXDependenciesAvailable]' started.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testMLXDependenciesAvailable]' passed (0.000 seconds).
+Test Case '-[MLXEngineTests.MLXIntegrationTests testMLXLMCommonTypes]' started.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testMLXLMCommonTypes]' passed (0.000 seconds).
+Test Case '-[MLXEngineTests.MLXIntegrationTests testModelConfigurationCreation]' started.
+Test Case '-[MLXEngineTests.MLXIntegrationTests testModelConfigurationCreation]' passed (0.000 seconds).
+Test Case '-[MLXEngineTests.MLXIntegrationTests testRealModelInferenceWithHuggingFaceAPI]' started.
+/Users/stevenmoon/Documents/GitHub/mlx-engine/Tests/MLXEngineTests/MLXIntegrationTests.swift:310: error: -[MLXEngineTests.MLXIntegrationTests testRealModelInferenceWithHuggingFaceAPI] : XCTAssertFalse failed - Should not be a mock response
+Test Case '-[MLXEngineTests.MLXIntegrationTests testRealModelInferenceWithHuggingFaceAPI]' failed (1.252 seconds).
+Test Suite 'MLXIntegrationTests' failed at 2025-06-26 16:05:48.903.
+	 Executed 10 tests, with 1 failure (0 unexpected) in 4.462 (4.463) seconds
+Test Suite 'MLXEnginePackageTests.xctest' failed at 2025-06-26 16:05:48.903.
+	 Executed 10 tests, with 1 failure (0 unexpected) in 4.462 (4.463) seconds
+Test Suite 'Selected tests' failed at 2025-06-26 16:05:48.903.
+	 Executed 10 tests, with 1 failure (0 unexpected) in 4.462 (4.464) seconds
+2025-06-26T22:05:44Z 🟩 [AppLogger] Logger initialized  (AppLogger.init)
+2025-06-26T22:05:44Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at compile time.  (InferenceEngine.swift:loadModel(_:progress:):32)
+2025-06-26T22:05:44Z 🟩 [InferenceEngine] [DIAGNOSTIC] Entering MLX model load logic. MLX should be available. hubId: mlx-community/Qwen-0.5B-Instruct-4bit (InferenceEngine.swift:loadModelInternal(progress:):43)
+2025-06-26T22:05:44Z 🟩 [InferenceEngine] 🔧 Attempting to load MLX model model: Test Model (InferenceEngine.swift:loadMLXModel(progress:):70)
+2025-06-26T22:05:44Z 🟩 [FileManagerService] 📁 Getting models directory  (FileManagerService.swift:getModelsDirectory():17)
+2025-06-26T22:05:44Z 🟥 [InferenceEngine] ❌ Required files missing in model directory presentFiles: , modelDir: /Users/stevenmoon/Library/Application Support/MLXEngine/Models/mlx-community/Qwen-0.5B-Instruct-4bit, missingFiles: main.mlx, config.json, tokenizer.json (InferenceEngine.swift:loadMLXModel(progress:):83)
+2025-06-26T22:05:44Z 🟥 [InferenceEngine] ⚠️ MLX not available, using mock implementation error: Model loading failed: Missing required files: main.mlx, config.json, tokenizer.json in /Users/stevenmoon/Library/Application Support/MLXEngine/Models/mlx-community/Qwen-0.5B-Instruct-4bit (InferenceEngine.swift:loadModelInternal(progress:):53)
+2025-06-26T22:05:44Z 🟩 [InferenceEngine] ✅ Mock model loaded successfully model: Test Model (InferenceEngine.swift:loadMockModel(progress:):126)
+Loading progress: 0.1
+Loading progress: 0.2
+Loading progress: 0.3
+Loading progress: 0.4
+Loading progress: 0.5
+Loading progress: 0.6
+Loading progress: 0.7
+Loading progress: 0.8
+Loading progress: 0.9
+Loading progress: 1.0
+2025-06-26T22:05:44Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at runtime for inference.  (InferenceEngine.swift:generate(_:params:):138)
+2025-06-26T22:05:44Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX is not available for inference. mlxAvailable: false, chatSession: nil (InferenceEngine.swift:generate(_:params:):160)
+✅ Using mock implementation (expected when MLX runtime unavailable)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at compile time.  (InferenceEngine.swift:loadModel(_:progress:):32)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] [DIAGNOSTIC] Entering MLX model load logic. MLX should be available. hubId: test/model (InferenceEngine.swift:loadModelInternal(progress:):43)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] 🔧 Attempting to load MLX model model: Test Model (InferenceEngine.swift:loadMLXModel(progress:):70)
+2025-06-26T22:05:45Z 🟩 [FileManagerService] 📁 Getting models directory  (FileManagerService.swift:getModelsDirectory():17)
+2025-06-26T22:05:45Z 🟥 [InferenceEngine] ❌ Required files missing in model directory presentFiles: , modelDir: /Users/stevenmoon/Library/Application Support/MLXEngine/Models/test/model, missingFiles: main.mlx, config.json, tokenizer.json (InferenceEngine.swift:loadMLXModel(progress:):83)
+2025-06-26T22:05:45Z 🟥 [InferenceEngine] ⚠️ MLX not available, using mock implementation error: Model loading failed: Missing required files: main.mlx, config.json, tokenizer.json in /Users/stevenmoon/Library/Application Support/MLXEngine/Models/test/model (InferenceEngine.swift:loadModelInternal(progress:):53)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] ✅ Mock model loaded successfully model: Test Model (InferenceEngine.swift:loadMockModel(progress:):126)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at runtime for inference.  (InferenceEngine.swift:generate(_:params:):138)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX is not available for inference. chatSession: nil, mlxAvailable: false (InferenceEngine.swift:generate(_:params:):160)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at compile time.  (InferenceEngine.swift:loadModel(_:progress:):32)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] [DIAGNOSTIC] Entering MLX model load logic. MLX should be available. hubId: test/model (InferenceEngine.swift:loadModelInternal(progress:):43)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] 🔧 Attempting to load MLX model model: Test Model (InferenceEngine.swift:loadMLXModel(progress:):70)
+2025-06-26T22:05:45Z 🟩 [FileManagerService] 📁 Getting models directory  (FileManagerService.swift:getModelsDirectory():17)
+2025-06-26T22:05:45Z 🟥 [InferenceEngine] ❌ Required files missing in model directory presentFiles: , missingFiles: main.mlx, config.json, tokenizer.json, modelDir: /Users/stevenmoon/Library/Application Support/MLXEngine/Models/test/model (InferenceEngine.swift:loadMLXModel(progress:):83)
+2025-06-26T22:05:45Z 🟥 [InferenceEngine] ⚠️ MLX not available, using mock implementation error: Model loading failed: Missing required files: main.mlx, config.json, tokenizer.json in /Users/stevenmoon/Library/Application Support/MLXEngine/Models/test/model (InferenceEngine.swift:loadModelInternal(progress:):53)
+2025-06-26T22:05:45Z 🟩 [InferenceEngine] ✅ Mock model loaded successfully model: Test Model (InferenceEngine.swift:loadMockModel(progress:):126)
+✅ Using mock streaming implementation
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at compile time.  (InferenceEngine.swift:loadModel(_:progress:):32)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] [DIAGNOSTIC] Entering MLX model load logic. MLX should be available. hubId: test/model (InferenceEngine.swift:loadModelInternal(progress:):43)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] 🔧 Attempting to load MLX model model: Test Model (InferenceEngine.swift:loadMLXModel(progress:):70)
+2025-06-26T22:05:47Z 🟩 [FileManagerService] 📁 Getting models directory  (FileManagerService.swift:getModelsDirectory():17)
+2025-06-26T22:05:47Z 🟥 [InferenceEngine] ❌ Required files missing in model directory modelDir: /Users/stevenmoon/Library/Application Support/MLXEngine/Models/test/model, missingFiles: main.mlx, config.json, tokenizer.json, presentFiles:  (InferenceEngine.swift:loadMLXModel(progress:):83)
+2025-06-26T22:05:47Z 🟥 [InferenceEngine] ⚠️ MLX not available, using mock implementation error: Model loading failed: Missing required files: main.mlx, config.json, tokenizer.json in /Users/stevenmoon/Library/Application Support/MLXEngine/Models/test/model (InferenceEngine.swift:loadModelInternal(progress:):53)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] ✅ Mock model loaded successfully model: Test Model (InferenceEngine.swift:loadMockModel(progress:):126)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at runtime for inference.  (InferenceEngine.swift:generate(_:params:):138)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX is not available for inference. mlxAvailable: false, chatSession: nil (InferenceEngine.swift:generate(_:params:):160)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] ✅ Model unloaded model: Test Model (InferenceEngine.swift:unload():228)
+[TEST] Selected model for real inference: Qwen 1.5 0.5B Chat (mlx-community/Qwen1.5-0.5B-Chat-4bit)
+2025-06-26T22:05:47Z 🟩 [MLXEngine] 🚀 Using optimized downloader for faster downloads correlationId: FE185D4F-2282-4735-A831-6832C73252A1 (MLXEngine.swift:downloadModel(_:progress:):351)
+📁 Model already exists at: /Users/stevenmoon/Library/Application Support/MLXEngine/Models/mlx-community/Qwen1.5-0.5B-Chat-4bit
+✅ Found model file: model.safetensors
+✅ Model verification passed
+✅ Existing model is valid, skipping download
+[TEST] Download complete for mlx-community/Qwen1.5-0.5B-Chat-4bit
+2025-06-26T22:05:47Z 🟩 [MLXEngine] [Progress] Downloading model... progress: 1.00, correlationId: FE185D4F-2282-4735-A831-6832C73252A1 (MLXEngine.swift:downloadModel(_:progress:):354)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at compile time.  (InferenceEngine.swift:loadModel(_:progress:):32)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] [DIAGNOSTIC] Entering MLX model load logic. MLX should be available. hubId: mlx-community/Qwen1.5-0.5B-Chat-4bit (InferenceEngine.swift:loadModelInternal(progress:):43)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] 🔧 Attempting to load MLX model model: Qwen 1.5 0.5B Chat (InferenceEngine.swift:loadMLXModel(progress:):70)
+2025-06-26T22:05:47Z 🟩 [FileManagerService] 📁 Getting models directory  (FileManagerService.swift:getModelsDirectory():17)
+2025-06-26T22:05:47Z 🟥 [InferenceEngine] ❌ Required files missing in model directory presentFiles: model.safetensors, added_tokens.json, tokenizer_config.json, special_tokens_map.json, config.json, tokenizer.json, README.md, merges.txt, .gitattributes, vocab.json, model.safetensors.index.json, missingFiles: main.mlx, modelDir: /Users/stevenmoon/Library/Application Support/MLXEngine/Models/mlx-community/Qwen1.5-0.5B-Chat-4bit (InferenceEngine.swift:loadMLXModel(progress:):83)
+2025-06-26T22:05:47Z 🟥 [InferenceEngine] ⚠️ MLX not available, using mock implementation error: Model loading failed: Missing required files: main.mlx in /Users/stevenmoon/Library/Application Support/MLXEngine/Models/mlx-community/Qwen1.5-0.5B-Chat-4bit (InferenceEngine.swift:loadModelInternal(progress:):53)
+2025-06-26T22:05:47Z 🟩 [InferenceEngine] ✅ Mock model loaded successfully model: Qwen 1.5 0.5B Chat (InferenceEngine.swift:loadMockModel(progress:):126)
+[TEST] Model loaded: mlx-community/Qwen1.5-0.5B-Chat-4bit
+2025-06-26T22:05:48Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at runtime for inference.  (InferenceEngine.swift:generate(_:params:):138)
+2025-06-26T22:05:48Z 🟩 [InferenceEngine] [DIAGNOSTIC] MLX is not available for inference. mlxAvailable: false, chatSession: nil (InferenceEngine.swift:generate(_:params:):160)
+[TEST] Inference output: [Mock Response] This is a simulated response to: 'Hello, world!'. Temperature: 0.7, Max Tokens: 100
+◇ Test run started.
+↳ Testing Library Version: 124.4
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests passed after 0.001 seconds.

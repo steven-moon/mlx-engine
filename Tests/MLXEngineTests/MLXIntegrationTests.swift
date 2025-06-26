@@ -270,6 +270,55 @@ final class MLXIntegrationTests: XCTestCase {
             }
         }
     }
+    
+    func testRealModelInferenceWithHuggingFaceAPI() async throws {
+        // This test will search for a small MLX-compatible model, download it, and run real inference.
+        // It will be skipped if MLX runtime is not available or if the model cannot be downloaded.
+        let downloader = ModelDownloader()
+        let smallModels = ModelRegistry.smallModels
+        let preferredHubIds = [
+            "mlx-community/Qwen1.5-0.5B-Chat-4bit",
+            "mlx-community/TinyLlama-1.1B-Chat-v1.0-4bit"
+        ]
+        let modelConfig: MLXEngine.ModelConfiguration? = {
+            for hubId in preferredHubIds {
+                if let m = smallModels.first(where: { $0.hubId == hubId }) { return m }
+            }
+            return smallModels.first
+        }()
+        guard let config = modelConfig else {
+            throw XCTSkip("No small MLX-compatible model found in registry.")
+        }
+        print("[TEST] Selected model for real inference: \(config.name) (\(config.hubId))")
+        // Download the model if needed
+        do {
+            let _ = try await downloader.downloadModel(config) { progress in
+                if progress == 1.0 { print("[TEST] Download complete for \(config.hubId)") }
+            }
+        } catch {
+            throw XCTSkip("Could not download model: \(error)")
+        }
+        // Load the model and run inference
+        do {
+            let engine = try await InferenceEngine.loadModel(config) { progress in
+                if progress == 1.0 { print("[TEST] Model loaded: \(config.hubId)") }
+            }
+            let prompt = "Hello, world!"
+            let response = try await engine.generate(prompt)
+            print("[TEST] Inference output: \(response)")
+            XCTAssertFalse(response.isEmpty, "Output should not be empty")
+            XCTAssertFalse(response.lowercased().contains("mock"), "Should not be a mock response")
+        } catch let error as MLXEngineError {
+            let msg = error.localizedDescription
+            if msg.contains("MLX runtime not available") || msg.contains("Missing required files") {
+                throw XCTSkip("MLX runtime or model files not available: \(msg)")
+            } else {
+                XCTFail("Unexpected MLXEngineError: \(msg)")
+            }
+        } catch {
+            XCTFail("Unexpected error during real inference: \(error)")
+        }
+    }
 }
 
 #else
