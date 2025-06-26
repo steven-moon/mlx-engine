@@ -50,7 +50,7 @@ public struct ModelCardView: View {
     
     @State private var errorMessage: String? = nil
     @State private var showError: Bool = false
-    @Environment(\.uiaiStyle) private var uiaiStyle
+    @Environment(\.uiaiStyle) private var uiaiStyle: any UIAIStyle
     
     public init(model: ModelInfo, onDownload: (() -> Void)? = nil, onDelete: (() -> Void)? = nil, onShowDetails: (() -> Void)? = nil) {
         self.model = model
@@ -87,7 +87,7 @@ public struct ModelCardView: View {
                             .foregroundColor(uiaiStyle.foregroundColor)
                         if model.isDownloaded {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
+                                .foregroundColor(uiaiStyle.successColor)
                         }
                     }
                     HStack(spacing: 6) {
@@ -100,18 +100,18 @@ public struct ModelCardView: View {
                     }
                     Text(model.description)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(uiaiStyle.secondaryForegroundColor)
                         .lineLimit(2)
                     HStack(spacing: 8) {
                         if let params = model.parameters {
                             Text(params)
                                 .font(.caption)
-                                .foregroundColor(.blue)
+                                .foregroundColor(uiaiStyle.infoColor)
                         }
                         if let quant = model.quantization {
                             Text(quant)
                                 .font(.caption)
-                                .foregroundColor(.purple)
+                                .foregroundColor(uiaiStyle.quantizationColor(for: quant))
                         }
                     }
                     if model.isDownloading, let progress = model.downloadProgress {
@@ -163,24 +163,14 @@ public struct ModelCardView: View {
         return nil
     }
     
-    private func typeColor(for type: String) -> Color {
-        switch type {
-        case "LLM": return .blue
-        case "VLM": return .orange
-        case "Embedding": return .green
-        case "Diffusion": return .pink
-        default: return .gray
-        }
-    }
-    
     private func badge(for type: String) -> some View {
         Capsule()
-            .fill(typeColor(for: type))
+            .fill(uiaiStyle.badgeColor(for: type))
             .frame(height: 22)
             .overlay(
                 Text(type)
                     .font(.caption2)
-                    .foregroundColor(.white)
+                    .foregroundColor(uiaiStyle.backgroundColor)
                     .padding(.horizontal, 8)
             )
             .help(badgeHelpText(for: type))
@@ -188,12 +178,12 @@ public struct ModelCardView: View {
     
     private func quantBadge(for quant: String) -> some View {
         Capsule()
-            .fill(quantColor(for: quant))
+            .fill(uiaiStyle.quantizationColor(for: quant))
             .frame(height: 22)
             .overlay(
                 Text(quant)
                     .font(.caption2)
-                    .foregroundColor(.white)
+                    .foregroundColor(uiaiStyle.backgroundColor)
                     .padding(.horizontal, 8)
             )
             .help(badgeHelpText(for: quant))
@@ -210,16 +200,6 @@ public struct ModelCardView: View {
         case "fp16": return "16-bit floating point: high quality, moderate size"
         case "fp32": return "32-bit floating point: highest quality, largest size"
         default: return badge.capitalized
-        }
-    }
-    
-    private func quantColor(for quant: String) -> Color {
-        switch quant {
-        case "4bit": return .purple
-        case "8bit": return .purple
-        case "fp16": return .purple
-        case "fp32": return .purple
-        default: return .gray
         }
     }
 }

@@ -18,7 +18,7 @@ public struct OnboardingBanner: View {
     @AppStorage("UIAI.hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     public let title: String
     public let message: String
-    @Environment(\.uiaiStyle) private var uiaiStyle
+    @Environment(\.uiaiStyle) private var uiaiStyle: any UIAIStyle
     
     public init(title: String = "Welcome to MLXEngine!", message: String = "Discover, chat, and build with AI models. Start by selecting a model or opening the chat panel.") {
         self.title = title
@@ -29,21 +29,28 @@ public struct OnboardingBanner: View {
         if !hasSeenOnboarding {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .top) {
-                    Image(systemName: "sparkles")
-                        .foregroundColor(uiaiStyle.accentColor)
-                        .font(.title2)
+                    if let logo = uiaiStyle.logo {
+                        logo
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+                    } else {
+                        Image(systemName: "sparkles")
+                            .foregroundColor(uiaiStyle.accentColor)
+                            .font(.title2)
+                    }
                     VStack(alignment: .leading, spacing: 2) {
                         Text(title)
                             .font(uiaiStyle.font.weight(.bold))
                             .foregroundColor(uiaiStyle.foregroundColor)
                         Text(message)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(uiaiStyle.secondaryForegroundColor)
                     }
                     Spacer()
                     Button(action: { hasSeenOnboarding = true }) {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(uiaiStyle.secondaryForegroundColor)
                     }
                     .buttonStyle(.plain)
                 }

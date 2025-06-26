@@ -18,7 +18,7 @@ public struct ErrorBanner: View {
     public let message: String
     public let style: Style
     @Binding public var isPresented: Bool
-    @Environment(\.uiaiStyle) private var uiaiStyle
+    @Environment(\.uiaiStyle) private var uiaiStyle: any UIAIStyle
     
     public init(message: String, style: Style = .error, isPresented: Binding<Bool>) {
         self.message = message

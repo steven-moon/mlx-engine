@@ -147,7 +147,7 @@
 		BEB6EA67275AF01F79FA5CBE /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 81117809C9EBE829097A1713 /* MLXLMCommon */; };
 		BECFC373F4CF7339C7D73E0C /* MLXEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7430BB22E84A73210D0A4DD2 /* MLXEngine.swift */; };
 		C2E869B9624E36FDEB2B99FB /* TokenProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2F420BD4946B5227DDF739 /* TokenProgressBar.swift */; };
-F5AFEE01E0B44CFCB927F40B3A1043F6 /* UIAIStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010264D2CE654A268A9ABFD5347E20AB /* UIAIStyle.swift */; };		C8984F308AB4101A86A556AA /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = C3F37424BF2D94F18D481B99 /* MLX */; };
+		C8984F308AB4101A86A556AA /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = C3F37424BF2D94F18D481B99 /* MLX */; };
 		CBB97DE33D645DFA2779921D /* InferenceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCFC82C669B9192ED2B78AB4 /* InferenceEngine.swift */; };
 		CED1583E094A1BA3D1D2B93F /* MLXEngine_macOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93967598BA189BC454BA7BAA /* MLXEngine_macOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D1CFA03B17FF171CC49E1A30 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 70175F6B0531C208E64CA3F8 /* MLX */; };
@@ -390,7 +390,7 @@ F5AFEE01E0B44CFCB927F40B3A1043F6 /* UIAIStyle.swift in Sources */ = {isa = PBXBu
 		DA88D8B20C3D684F0F0062AF /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		DC2F420BD4946B5227DDF739 /* TokenProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProgressBar.swift; sourceTree = "<group>"; };
 		DCFC82C669B9192ED2B78AB4 /* InferenceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InferenceEngine.swift; sourceTree = "<group>"; };
-010264D2CE654A268A9ABFD5347E20AB /* UIAIStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/UIAI/UIAIStyle.swift; sourceTree = "<group>"; };		E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugUtility.swift; sourceTree = "<group>"; };
+		E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugUtility.swift; sourceTree = "<group>"; };
 		E517F637270869146105427C /* MLXEngine_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MLXEngine_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6E01D341640864800E9F96A /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
 		E9AE29D2073444A1C61391E9 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
@@ -1031,7 +1031,7 @@ F5AFEE01E0B44CFCB927F40B3A1043F6 /* UIAIStyle.swift in Sources */ = {isa = PBXBu
 				F3A236ECF38042A4D5DA825A /* OnboardingBanner.swift in Sources */,
 				1187692DA03C67535407D06A /* SettingsPanel.swift in Sources */,
 				C2E869B9624E36FDEB2B99FB /* TokenProgressBar.swift in Sources */,
-F5AFEE01E0B44CFCB927F40B3A1043F6 /* UIAIStyle.swift in Sources */,			);
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8A19912A7C2811DD7B384D40 /* Sources */ = {

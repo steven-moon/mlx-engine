@@ -2,14 +2,11 @@ import SwiftUI
 import UIAI
 
 struct SettingsView: View {
-    @State private var enableLogging = false
-    @State private var downloadPath = ""
-    #if DEBUG
-    @State private var showDebugPanel = false
-    #endif
+    @Binding var selectedStyleKindRaw: String
+    @Binding var selectedColorSchemeRaw: String
 
     var body: some View {
-        SettingsPanel()
+        SettingsPanel(selectedStyleKindRaw: $selectedStyleKindRaw, selectedColorSchemeRaw: $selectedColorSchemeRaw)
     }
 
     private func chooseDownloadPath() {

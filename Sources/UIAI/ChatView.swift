@@ -33,6 +33,7 @@ public struct ChatView: View {
     @State private var errorMessage: String? = nil
     @State private var showError: Bool = false
     @State private var showResetConfirmation: Bool = false
+    @Environment(\.uiaiStyle) private var uiaiStyle: any UIAIStyle
     
     public init() {}
     
@@ -69,26 +70,17 @@ public struct ChatView: View {
                         HStack(alignment: .top) {
                             if message.sender == .assistant {
                                 Image(systemName: "brain.head.profile")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(uiaiStyle.accentColor)
                             } else {
                                 Image(systemName: "person.fill")
-                                    .foregroundColor(.green)
+                                    .foregroundColor(uiaiStyle.successColor)
                             }
                             Text(message.text)
                                 .padding(8)
                                 .background(
-                                    message.sender == .assistant ? (
-                                        {
-                                            #if os(iOS) || os(tvOS) || os(visionOS)
-                                            return Color(UIColor.systemGray6)
-                                            #elseif os(macOS)
-                                            return Color(NSColor.windowBackgroundColor)
-                                            #else
-                                            return Color.gray.opacity(0.15)
-                                            #endif
-                                        }()
-                                    ) : Color(.systemBlue).opacity(0.15)
+                                    message.sender == .assistant ? uiaiStyle.backgroundColor : uiaiStyle.accentColor.opacity(0.15)
                                 )
+                                .foregroundColor(uiaiStyle.foregroundColor)
                                 .cornerRadius(10)
                             Spacer()
                         }
@@ -102,7 +94,7 @@ public struct ChatView: View {
                         ProgressView()
                         Text("Assistant is typing...")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(uiaiStyle.secondaryForegroundColor)
                     }
                     .padding(.bottom, 8)
                 }
@@ -113,6 +105,21 @@ public struct ChatView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This will clear the chat history and start a new session.")
+        }
+        .background(uiaiStyle.backgroundColor.ignoresSafeArea())
+        .onAppear {
+            print("[ChatView] Appeared with style: \(type(of: uiaiStyle)), colorScheme: \(uiaiStyle.colorScheme)")
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(uiaiStyle.backgroundColor)
+            appearance.titleTextAttributes = [.foregroundColor: UIColor(uiaiStyle.foregroundColor)]
+            UINavigationBar.appearance().standardAppearance = appearance
+            if #available(iOS 15.0, *) {
+                UINavigationBar.appearance().scrollEdgeAppearance = appearance
+            }
+        }
+        .onChange(of: uiaiStyle.colorScheme) { newValue in
+            print("[ChatView] Color scheme changed to: \(newValue)")
         }
         #else
         Text("Chat is not yet available on this platform.")

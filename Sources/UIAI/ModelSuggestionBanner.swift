@@ -17,7 +17,7 @@ public struct ModelSuggestionBanner: View {
     public let modelName: String
     public let modelDescription: String
     public let onSelect: () -> Void
-    @Environment(\.uiaiStyle) private var uiaiStyle
+    @Environment(\.uiaiStyle) private var uiaiStyle: any UIAIStyle
     
     public init(modelName: String, modelDescription: String, onSelect: @escaping () -> Void) {
         self.modelName = modelName
@@ -28,7 +28,7 @@ public struct ModelSuggestionBanner: View {
     public var body: some View {
         HStack(alignment: .center, spacing: 16) {
             Image(systemName: "star.fill")
-                .foregroundColor(.yellow)
+                .foregroundColor(uiaiStyle.accentColor)
                 .font(.title2)
             VStack(alignment: .leading, spacing: 4) {
                 Text(modelName)
@@ -36,7 +36,7 @@ public struct ModelSuggestionBanner: View {
                     .foregroundColor(uiaiStyle.foregroundColor)
                 Text(modelDescription)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(uiaiStyle.secondaryForegroundColor)
             }
             Spacer()
             Button(action: onSelect) {

@@ -1,0 +1,10 @@
+391 		DC2F420BD4946B5227DDF739 /* TokenProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProgressBar.swift; sourceTree = "<group>"; };
+392 		DCFC82C669B9192ED2B78AB4 /* InferenceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InferenceEngine.swift; sourceTree = "<group>"; };
+393 		E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugUtility.swift; sourceTree = "<group>"; };
+394 		E517F637270869146105427C /* MLXEngine_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MLXEngine_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+395 		E6E01D341640864800E9F96A /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
+396 		E9AE29D2073444A1C61391E9 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+397 		EAC10B06EBB70A782C3B0B66 /* MLXEngineTests_tvOS.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MLXEngineTests_tvOS.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+398 		F2BE248685E683C8CBB8ADB8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+399 		F745B21AAE1DB597CE10F8D8 /* ModelDiscoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDiscoveryView.swift; sourceTree = "<group>"; };
+400 		F8AC528C7ADDE28A94561770 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };

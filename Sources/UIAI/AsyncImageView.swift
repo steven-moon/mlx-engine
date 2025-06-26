@@ -17,6 +17,7 @@ import SwiftUI
 public struct AsyncImageView: View {
     public let url: URL?
     public let placeholder: Image
+    @Environment(\.uiaiStyle) private var uiaiStyle: any UIAIStyle
     
     public init(url: URL?, placeholder: Image = Image(systemName: "photo")) {
         self.url = url
@@ -33,7 +34,7 @@ public struct AsyncImageView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 80, height: 80)
-                        .foregroundColor(.gray)
+                        .foregroundColor(uiaiStyle.secondaryForegroundColor)
                 case .success(let image):
                     image
                         .resizable()
@@ -45,13 +46,13 @@ public struct AsyncImageView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 80, height: 80)
-                        .foregroundColor(.red)
+                        .foregroundColor(uiaiStyle.errorColor)
                 @unknown default:
                     placeholder
                         .resizable()
                         .scaledToFit()
                         .frame(width: 80, height: 80)
-                        .foregroundColor(.gray)
+                        .foregroundColor(uiaiStyle.secondaryForegroundColor)
                 }
             }
         } else {
@@ -59,14 +60,14 @@ public struct AsyncImageView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 80, height: 80)
-                .foregroundColor(.gray)
+                .foregroundColor(uiaiStyle.secondaryForegroundColor)
         }
         #else
         placeholder
             .resizable()
             .scaledToFit()
             .frame(width: 80, height: 80)
-            .foregroundColor(.gray)
+            .foregroundColor(uiaiStyle.secondaryForegroundColor)
         #endif
     }
 }

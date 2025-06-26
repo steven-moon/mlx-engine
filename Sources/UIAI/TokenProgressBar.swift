@@ -19,6 +19,7 @@ public struct TokenProgressBar: View {
     public let progress: Double // 0.0 ... 1.0
     public let label: String?
     public let style: Style
+    @Environment(\.uiaiStyle) private var uiaiStyle: any UIAIStyle
     
     public init(progress: Double, label: String? = nil, style: Style = .normal) {
         self.progress = progress
@@ -30,8 +31,8 @@ public struct TokenProgressBar: View {
         VStack(alignment: .leading, spacing: 2) {
             if let label = label {
                 Text(label)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .font(uiaiStyle.font)
+                    .foregroundColor(uiaiStyle.secondaryForegroundColor)
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
@@ -49,23 +50,16 @@ public struct TokenProgressBar: View {
     
     private var foregroundColor: Color {
         switch style {
-        case .normal: return .accentColor
-        case .error: return .red
-        case .warning: return .orange
+        case .normal: return uiaiStyle.accentColor
+        case .error: return uiaiStyle.errorColor
+        case .warning: return uiaiStyle.warningColor
         }
     }
     private var backgroundColor: Color {
         switch style {
-        case .normal:
-            #if os(iOS) || os(tvOS) || os(visionOS)
-            return Color(UIColor.systemGray5)
-            #elseif os(macOS)
-            return Color(NSColor.systemGray)
-            #else
-            return Color.gray.opacity(0.15)
-            #endif
-        case .error: return Color.red.opacity(0.15)
-        case .warning: return Color.orange.opacity(0.15)
+        case .normal: return uiaiStyle.backgroundColor.opacity(0.3)
+        case .error: return uiaiStyle.errorColor.opacity(0.15)
+        case .warning: return uiaiStyle.warningColor.opacity(0.15)
         }
     }
 }

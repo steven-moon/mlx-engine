@@ -1,0 +1,2 @@
+1032 				1187692DA03C67535407D06A /* SettingsPanel.swift in Sources */,
+1033 				C2E869B9624E36FDEB2B99FB /* TokenProgressBar.swift in Sources */,

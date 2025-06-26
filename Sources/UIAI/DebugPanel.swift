@@ -16,7 +16,7 @@ import MLXEngine
 /// - Designed for iOS, macOS, visionOS, tvOS, and watchOS.
 /// - Integrates with MLXEngine diagnostics APIs.
 public struct DebugPanel: View {
-    @Environment(\.uiaiStyle) private var uiaiStyle
+    @Environment(\.uiaiStyle) private var uiaiStyle: any UIAIStyle
     @State private var selectedLevels: [LogLevel] = [.error, .warning, .critical]
     @State private var recentLogs: [LogEntry] = []
     @State private var debugReport: String = ""
@@ -70,7 +70,7 @@ public struct DebugPanel: View {
                                 .foregroundColor(color(for: log.level))
                             Text(log.message)
                                 .font(.caption)
-                                .foregroundColor(.primary)
+                                .foregroundColor(uiaiStyle.secondaryForegroundColor)
                         }
                     }
                 }
@@ -95,17 +95,7 @@ public struct DebugPanel: View {
                     Text(debugReport)
                         .font(.caption2)
                         .padding(8)
-                        .background(
-                            {
-                                #if os(iOS) || os(tvOS) || os(visionOS)
-                                return Color(UIColor.systemGray6)
-                                #elseif os(macOS)
-                                return Color(NSColor.windowBackgroundColor)
-                                #else
-                                return Color.gray.opacity(0.15)
-                                #endif
-                            }()
-                        )
+                        .background(uiaiStyle.backgroundColor.opacity(0.5))
                         .cornerRadius(8)
                         .contextMenu {
                             Button("Copy Report") { copyReport() }
@@ -119,7 +109,7 @@ public struct DebugPanel: View {
         .onAppear(perform: loadLogs)
         #else
         Text("Debug panel is not yet available on this platform.")
-            .foregroundColor(.secondary)
+            .foregroundColor(uiaiStyle.secondaryForegroundColor)
         #endif
     }
     
@@ -150,13 +140,7 @@ public struct DebugPanel: View {
     }
     
     private func color(for level: LogLevel) -> Color {
-        switch level {
-        case .debug: return .gray
-        case .info: return .blue
-        case .warning: return .orange
-        case .error: return .red
-        case .critical: return .purple
-        }
+        uiaiStyle.logLevelColor(for: level.rawValue)
     }
 }
 

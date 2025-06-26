@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import Foundation
 import MLXEngine
 
 /// A SwiftUI view for displaying and managing model metadata and actions.
@@ -16,7 +17,7 @@ import MLXEngine
 /// - Designed for iOS, macOS, visionOS, tvOS, and watchOS.
 /// - Integrates with MLXEngine model metadata and management APIs.
 public struct ModelDetailView: View {
-    @Environment(\.uiaiStyle) private var uiaiStyle
+    @Environment(\.uiaiStyle) private var uiaiStyle: any UIAIStyle
     public let model: ModelDiscoveryService.ModelSummary
     public let isDownloaded: Bool
     public let isDownloading: Bool
@@ -60,10 +61,10 @@ public struct ModelDetailView: View {
                 // Compatibility badge
                 HStack(spacing: 8) {
                     Image(systemName: isCompatible ? "checkmark.shield.fill" : "exclamationmark.triangle.fill")
-                        .foregroundColor(isCompatible ? .green : .yellow)
+                        .foregroundColor(isCompatible ? uiaiStyle.successColor : uiaiStyle.warningColor)
                     Text(isCompatible ? "Compatible with your device" : "May not fit in RAM")
                         .font(.caption)
-                        .foregroundColor(isCompatible ? .green : .yellow)
+                        .foregroundColor(isCompatible ? uiaiStyle.successColor : uiaiStyle.warningColor)
                     Spacer()
                 }
                 .padding(8)
@@ -72,10 +73,10 @@ public struct ModelDetailView: View {
                 let health = modelHealthStatus()
                 HStack(spacing: 8) {
                     Image(systemName: health.icon)
-                        .foregroundColor(health.color)
+                        .foregroundColor(health.color == .green ? uiaiStyle.successColor : (health.color == .yellow ? uiaiStyle.warningColor : uiaiStyle.infoColor))
                     Text(health.message)
                         .font(.caption)
-                        .foregroundColor(health.color)
+                        .foregroundColor(health.color == .green ? uiaiStyle.successColor : (health.color == .yellow ? uiaiStyle.warningColor : uiaiStyle.infoColor))
                     Spacer()
                     Button(action: copyMetadata) {
                         Label(isCopied ? "Copied!" : "Copy Metadata", systemImage: isCopied ? "checkmark.circle" : "doc.on.doc")
@@ -97,18 +98,18 @@ public struct ModelDetailView: View {
                         if let author = model.author {
                             Text("by \(author)")
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(uiaiStyle.secondaryForegroundColor)
                         }
                         HStack(spacing: 12) {
                             if model.downloads > 0 {
                                 Label("\(model.downloads)", systemImage: "arrow.down.circle")
                                     .font(.caption)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(uiaiStyle.infoColor)
                             }
                             if model.likes > 0 {
                                 Label("\(model.likes)", systemImage: "heart.fill")
                                     .font(.caption)
-                                    .foregroundColor(.pink)
+                                    .foregroundColor(uiaiStyle.accentColor)
                             }
                         }
                     }
@@ -142,7 +143,7 @@ public struct ModelDetailView: View {
                                 .fontWeight(.semibold)
                             Text(tags.joined(separator: ", "))
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(uiaiStyle.secondaryForegroundColor)
                         }
                     }
                     if let created = model.createdAt {
@@ -168,12 +169,12 @@ public struct ModelDetailView: View {
                     if isLoadingFiles {
                         ProgressView("Loading files...")
                     } else if let fileListError = fileListError {
-                        Text("Error: \(fileListError)").foregroundColor(.red)
+                        Text("Error: \(fileListError)").foregroundColor(uiaiStyle.errorColor)
                     } else if fileList.isEmpty {
-                        Text("No files found.").foregroundColor(.secondary)
+                        Text("No files found.").foregroundColor(uiaiStyle.secondaryForegroundColor)
                     } else {
                         ForEach(fileList, id: \.self) { file in
-                            Text(file).font(.caption).foregroundColor(.primary)
+                            Text(file).font(.caption).foregroundColor(uiaiStyle.foregroundColor)
                         }
                     }
                 }
