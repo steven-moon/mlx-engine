@@ -16,10 +16,11 @@ let package = Package(
         )
     ],
     targets: [
-        .target(
-            name: "SwiftUIKit",
-            path: "Sources/SwiftUIKit"
-        ),
+        // SwiftUIKit package is commented out/removed for non-SwiftUI build
+        // .target(
+        //     name: "SwiftUIKit",
+        //     path: "Sources/SwiftUIKit"
+        // ),
         .testTarget(
             name: "SwiftUIKitTests",
             dependencies: ["SwiftUIKit"],

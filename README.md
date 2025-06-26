@@ -37,6 +37,8 @@ print(response)
 - [Architecture Guide](./_docs/architecture.md)
 - [Integration Guides](./_docs/integration_guides/)
 
+> **Note:** The UIAI/SwiftUI component library is now maintained as a separate Swift package. For modern, cross-platform UI components and style system, see [UIAI/SwiftUI](https://github.com/yourorg/UIAI).
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.

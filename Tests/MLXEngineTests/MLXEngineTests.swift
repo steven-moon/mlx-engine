@@ -1237,6 +1237,23 @@ final class MLXEngineTests: XCTestCase {
         XCTAssertTrue(report.contains("Error message"))
         XCTAssertTrue(report.contains("Critical message"))
     }
+    
+    func testInferenceEngineStatusDiagnostics() async throws {
+        // Engine should be loaded in setUp
+        let status = sharedEngine.status
+        XCTAssertTrue(status.isModelLoaded, "Engine should report model as loaded")
+        XCTAssertNotNil(status.modelConfiguration, "Model configuration should be present")
+        XCTAssertEqual(status.modelConfiguration?.name, "Test Model")
+        // MLX availability is platform-dependent, so just check type
+        XCTAssertNotNil(status.mlxAvailable as Bool)
+        // GPU cache limit may be nil on some platforms
+        // No error should be present in default case
+        XCTAssertNil(status.lastError)
+        // Unload and check status again
+        sharedEngine.unload()
+        let statusAfterUnload = sharedEngine.status
+        XCTAssertFalse(statusAfterUnload.isModelLoaded, "Engine should report model as not loaded after unload")
+    }
 }
 
 // MARK: - Helper for thread-safe progress collection

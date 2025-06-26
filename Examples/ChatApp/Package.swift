@@ -21,7 +21,6 @@ let package = Package(
             name: "MLXChatApp",
             dependencies: [
                 .product(name: "MLXEngine", package: "MLXEngine"),
-                .product(name: "UIAI", package: "MLXEngine")
             ],
             path: "Sources/MLXChatApp"
         )

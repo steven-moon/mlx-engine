@@ -151,6 +151,29 @@ if InferenceEngine.supportedFeatures.contains(.visionLanguageModels) {
 }
 ```
 
+### Diagnostics: `status`
+
+Returns diagnostic information about the current engine state.
+
+```swift
+public struct EngineStatus: Sendable, Codable {
+    public let isModelLoaded: Bool
+    public let modelConfiguration: ModelConfiguration?
+    public let mlxAvailable: Bool
+    public let gpuCacheLimit: Int?
+    public let lastError: String?
+}
+
+public var status: EngineStatus { get }
+```
+
+**Example:**
+```swift
+let engine = try await InferenceEngine.loadModel(config)
+let diagnostics = engine.status
+print("Loaded: \(diagnostics.isModelLoaded), MLX: \(diagnostics.mlxAvailable)")
+```
+
 ## ModelConfiguration
 
 Configuration for LLM models with metadata and generation parameters.

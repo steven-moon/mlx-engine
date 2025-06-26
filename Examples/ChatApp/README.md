@@ -30,9 +30,11 @@ SampleChatApp is a modern, cross-platform SwiftUI application demonstrating the 
 
 ## Using UIAI in Your Own Project
 
+> **Note:** The UIAI/SwiftUI component library is now maintained as a separate Swift package. To use the UI components, add the [UIAI/SwiftUI package](https://github.com/yourorg/UIAI) to your project via Swift Package Manager.
+
 - Import the `UIAI` library target in your Swift Package or Xcode project.
-- Use composable components like `ChatView`, `ModelDiscoveryView`, `SettingsPanel`, and `DebugPanel`.
-- See `_docs/UIAI_SharedSwiftUILibrary.md` for a full component catalog and usage examples.
+- Use composable components like `ChatView`, `ModelDiscoveryView`, `SettingsPanel`, and `DebugPanel` from the UIAI package.
+- See the [UIAI/SwiftUI documentation](https://github.com/yourorg/UIAI) for a full component catalog and usage examples.
 - All components are public, documented, and cross-platform.
 
 ## Extending the App

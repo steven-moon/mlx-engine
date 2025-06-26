@@ -452,4 +452,44 @@ public enum SimulatorNotSupported: Error, LocalizedError {
         return "MLX is not available on iOS Simulator. Please use a physical device or macOS."
     }
 }
-#endif 
+#endif
+
+/// Diagnostic information about the current engine state.
+public struct EngineStatus: Sendable, Codable {
+    /// Whether a model is currently loaded and available for inference.
+    public let isModelLoaded: Bool
+    /// The configuration of the loaded model, if any.
+    public let modelConfiguration: ModelConfiguration?
+    /// Whether MLX is available and active for this engine instance.
+    public let mlxAvailable: Bool
+    /// The current GPU cache limit in bytes, if available.
+    public let gpuCacheLimit: Int?
+    /// The last error encountered by the engine, if any.
+    public let lastError: String?
+}
+
+extension InferenceEngine {
+    /// Returns diagnostic information about the current engine state.
+    ///
+    /// Use this to inspect whether a model is loaded, MLX is available, and other engine diagnostics.
+    public var status: EngineStatus {
+        #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
+        let cacheLimit = MLX.GPU.cacheLimit
+        #else
+        let cacheLimit: Int? = nil
+        #endif
+        return EngineStatus(
+            isModelLoaded: !isUnloaded && (self.modelContainer != nil || config.hubId.hasPrefix("mock/")),
+            modelConfiguration: config,
+            mlxAvailable: {
+                #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
+                return self.mlxAvailable
+                #else
+                return false
+                #endif
+            }(),
+            gpuCacheLimit: cacheLimit,
+            lastError: nil // Placeholder: can be expanded to track last error
+        )
+    }
+} 

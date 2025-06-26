@@ -84,6 +84,10 @@ The following guides provide detailed instructions for integrating MLXEngine wit
 - **[PocketMind iOS App Integration](integration_guides/pocketmind_ios_app_integration_guide.md)** - Real-world iOS patterns and optimizations
 - **[MLX Swift Main Integration](integration_guides/mlx_swift_main_integration_guide.md)** - Core MLX framework integration
 
+### UI Integration
+
+> **Note:** The UIAI/SwiftUI component library is now maintained as a separate Swift package. For modern, cross-platform UI components and style system, see [UIAI/SwiftUI](https://github.com/yourorg/UIAI).
+
 ## Development
 
 ### Requirements

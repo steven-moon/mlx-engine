@@ -6,8 +6,7 @@ let package = Package(
     platforms: [.macOS(.v14), .iOS(.v17)],
     products: [
         .library(name: "MLXEngine", targets: ["MLXEngine"]),
-        .executable(name: "mlxengine-debug-report", targets: ["mlxengine-debug-report"]),
-        .library(name: "UIAI", targets: ["UIAI"])
+        .executable(name: "mlxengine-debug-report", targets: ["mlxengine-debug-report"])
     ],
     dependencies: [
         .package(url: "https://github.com/ml-explore/mlx-swift", from: "0.10.0"),
@@ -31,11 +30,6 @@ let package = Package(
             name: "mlxengine-debug-report",
             dependencies: ["MLXEngine"],
             path: "Sources/mlxengine-debug-report"
-        ),
-        .target(
-            name: "UIAI",
-            dependencies: ["MLXEngine"],
-            path: "Sources/UIAI"
         ),
         .testTarget(
             name: "MLXEngineTests",
