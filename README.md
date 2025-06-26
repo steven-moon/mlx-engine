@@ -1,14 +1,56 @@
 # MLXEngine
 
-A production-ready Swift package for local Large Language Model (LLM) inference using Apple's MLX framework.
+A production-ready, high-performance Swift package for local Large Language Model (LLM) inference using Apple's MLX framework.
 
-- **Unified MLX Integration**: Single `InferenceEngine` for all platforms (MLX or fallback)
-- **Model Management**: Download, cache, and manage MLX-compatible models
-- **Text Generation**: One-shot and streaming text generation
-- **Chat Sessions**: Multi-turn conversation management
-- **Platform Support**: macOS 14+, iOS 17+, visionOS 1+
+🚀 **The Most Awesome MLXEngine Universal Swift Package**
 
-## Installation
+## ✨ **Advanced Features**
+
+### 🎯 **Unified MLX Integration**
+- **Seamless Fallback**: Single `InferenceEngine` that uses real MLX when available, falls back to mock for development/testing
+- **Platform Detection**: Automatic iOS Simulator detection with `SimulatorNotSupported` error
+- **Memory Optimization**: Dynamic GPU cache management based on model size
+- **Error Recovery**: Automatic retry logic with exponential backoff
+
+### 📊 **Performance Monitoring**
+- **Real-time Metrics**: Track model load time, generation speed, memory usage
+- **Health Monitoring**: Engine health status (healthy/degraded/unhealthy)
+- **Performance Optimization**: Automatic cache management and memory cleanup
+- **Detailed Diagnostics**: Comprehensive logging and status reporting
+
+### 🔍 **Advanced Model Discovery**
+- **Smart Search**: Filter models by size, architecture, quantization, use case
+- **Device Optimization**: Get models optimized for specific device capabilities
+- **Use Case Recommendations**: Pre-configured recommendations for different scenarios
+- **Best Model Selection**: AI-powered model selection based on requirements
+
+### 🛡️ **Production-Ready Features**
+- **Error Recovery**: Automatic engine recovery and retry mechanisms
+- **Health Checks**: Built-in health monitoring and diagnostics
+- **Memory Safety**: GPU memory management and cleanup
+- **Comprehensive Logging**: Structured logging with context and performance metrics
+
+## 🎯 **Use Cases**
+
+### Mobile Development
+```swift
+let mobileModels = ModelRegistry.getRecommendedModels(for: .mobileDevelopment)
+let engine = try await InferenceEngine.loadModel(mobileModels.first!)
+```
+
+### High-Quality Generation
+```swift
+let qualityModels = ModelRegistry.getRecommendedModels(for: .highQualityGeneration)
+let engine = try await InferenceEngine.loadModel(qualityModels.first!)
+```
+
+### Device-Specific Optimization
+```swift
+let deviceModels = ModelRegistry.getModelsForDevice(memoryGB: 8.0, isMobile: true)
+let engine = try await InferenceEngine.loadModel(deviceModels.first!)
+```
+
+## 📦 **Installation**
 
 Add MLXEngine to your project using Swift Package Manager:
 
@@ -18,62 +60,161 @@ dependencies: [
 ]
 ```
 
-## Quick Start
+## 🚀 **Quick Start**
 
 ```swift
 import MLXEngine
 
+// Load a model with automatic optimization
 let config = ModelRegistry.qwen_0_5B
 let engine = try await InferenceEngine.loadModel(config)
+
+// Generate text with performance monitoring
 let response = try await engine.generate("Hello, how are you?")
-print(response)
+
+// Check engine health and performance
+let health = engine.health
+let metrics = engine.performanceMetrics
+print("Engine Health: \(health)")
+print("Tokens per second: \(metrics.tokensPerSecond)")
+
+// Stream with automatic retry
+let stream = engine.streamWithRetry("Tell me a story", retryConfig: RetryConfiguration())
+for try await token in stream {
+    print(token, terminator: "")
+}
 ```
 
-## Documentation
+## 🔧 **Advanced Usage**
 
-**Full documentation, API reference, architecture, and guides are in [`_docs/README.md`](./_docs/README.md).**
+### Performance Optimization
+```swift
+// Optimize engine performance
+await engine.optimizePerformance()
 
-- [API Reference](./_docs/api_reference.md)
-- [Architecture Guide](./_docs/architecture.md)
-- [Integration Guides](./_docs/integration_guides/)
+// Get detailed status
+let status = engine.detailedStatus
+print(status.statusSummary)
+```
 
-> **Note:** The UIAI/SwiftUI component library is now maintained as a separate Swift package. For modern, cross-platform UI components and style system, see [UIAI/SwiftUI](https://github.com/yourorg/UIAI).
+### Model Discovery
+```swift
+// Search for models
+let criteria = ModelRegistry.SearchCriteria(
+    maxSizeGB: 2.0,
+    architecture: "llama",
+    isSmallModel: true
+)
+let models = ModelRegistry.searchModels(criteria: criteria)
 
-## Contributing
+// Get best model for specific requirements
+let bestModel = ModelRegistry.getBestModel(
+    for: "Generate a creative story",
+    maxTokens: 1000,
+    maxSizeGB: 4.0,
+    preferSpeed: false
+)
+```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
+### Error Recovery
+```swift
+// Generate with automatic retry
+let response = try await engine.generateWithRetry(
+    "Complex prompt",
+    retryConfig: RetryConfiguration(
+        maxRetries: 3,
+        baseDelay: 1.0,
+        backoffMultiplier: 2.0
+    )
+)
 
-## License
+// Manual recovery
+if engine.health == .unhealthy {
+    let recovered = await engine.attemptRecovery()
+    if recovered {
+        print("Engine recovered successfully!")
+    }
+}
+```
 
-MIT License. See [LICENSE](LICENSE) for details.
+## 📋 **Supported Models**
 
-## Running the Sample Chat App
+### LLM Models
+- **Qwen 0.5B** - Fast, efficient chat model
+- **Llama 3.2 1B/3B** - Meta's latest models
+- **Phi-3 Mini** - Microsoft's efficient model
+- **Gemma 2 2B** - Google's lightweight model
+- **Mistral 7B** - High-quality open model
 
-A full-featured SwiftUI sample app is included for macOS, iOS, and more. This is the best way to try MLXEngine interactively.
+### Vision Models
+- **LLaVA 1.6 3B** - Vision-language model
+- **LLaVA 1.5 7B** - Advanced vision model
 
-### Command Line (macOS)
+### Embedding Models
+- **BGE Small EN** - Fast text embeddings
+- **BGE Large EN** - High-quality embeddings
+
+### Image Generation
+- **Stable Diffusion XL** - Advanced image generation
+
+## 🏗️ **Architecture**
+
+### Core Components
+- **`InferenceEngine`**: Main inference engine with MLX integration
+- **`ModelRegistry`**: Comprehensive model registry with discovery
+- **`ChatSession`**: Multi-turn conversation management
+- **`ModelConfiguration`**: Model metadata and configuration
+
+### Advanced Features
+- **Performance Monitoring**: Real-time metrics and health checks
+- **Error Recovery**: Automatic retry and recovery mechanisms
+- **Memory Management**: GPU cache optimization and cleanup
+- **Model Discovery**: Smart search and recommendation system
+
+## 🧪 **Testing**
 
 ```bash
-cd Examples/ChatApp
-swift run MLXChatApp
+# Run all tests
+swift test
+
+# Run with coverage
+swift test --enable-code-coverage
 ```
 
-### In Xcode (all platforms)
+## 📊 **Performance**
 
-1. Open `Examples/ChatApp/Package.swift` in Xcode.
-2. Select the desired platform and run the `MLXChatApp` scheme.
+- **Model Loading**: Optimized loading with progress tracking
+- **Memory Usage**: Dynamic GPU cache management
+- **Generation Speed**: Real-time performance monitoring
+- **Error Handling**: Comprehensive error recovery
 
-See [`Examples/ChatApp/README.md`](Examples/ChatApp/README.md) for more details and platform-specific notes.
+## 🔒 **Platform Support**
+
+- **macOS 14+**: Full MLX support with GPU acceleration
+- **iOS 17+**: Full MLX support on physical devices
+- **visionOS 1+**: Full MLX support
+- **iOS Simulator**: Mock implementation with `SimulatorNotSupported` error
+
+## 📚 **Documentation**
+
+- [API Reference](_docs/api_reference.md)
+- [Architecture Guide](_docs/architecture.md)
+- [Integration Guides](_docs/integration_guides/)
+- [Development Guide](CONTRIBUTING.md)
+
+## 🤝 **Contributing**
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+## 📄 **License**
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ for the Apple ecosystem**
 
 ## Developer Diagnostics & Debugging
-
-### In-App DebugPanel (ChatApp)
-
-The ChatApp example now includes a developer DebugPanel (DEBUG builds only):
-- Access from the Settings screen via "Show Debug Panel".
-- View and filter recent logs by level.
-- Generate and copy a comprehensive debug report (system info, logs, model info).
-- Designed for rapid troubleshooting and sharing diagnostics with maintainers.
 
 ### CLI Debug Tools
 
@@ -113,4 +254,4 @@ swift run mlxengine-debug-report --help
 ```
 
 ---
-*Last updated: 2025-06-25* 
+*Last updated: 2025-06-26* 

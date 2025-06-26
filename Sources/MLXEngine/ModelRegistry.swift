@@ -1,19 +1,19 @@
 import Foundation
 
-/// A registry of well-known MLX-compatible models with comprehensive metadata.
+/// A comprehensive registry of well-known MLX-compatible models with advanced discovery and filtering capabilities.
 public struct ModelRegistry {
     
     // MARK: - Model Type Definitions
     
     /// Model type categories (LLM, VLM, Embedder, Diffusion)
-    internal enum ModelType: String, CaseIterable {
+    public enum ModelType: String, CaseIterable {
         case llm = "LLM"           // Large Language Model
         case vlm = "VLM"           // Vision Language Model
         case embedder = "Embedder" // Text Embedding Model
         case diffusion = "Diffusion" // Image Generation Model
         
         /// Human-readable description of the model type
-        var description: String {
+        public var description: String {
             switch self {
             case .llm:
                 return "Text generation and conversation"
@@ -25,6 +25,260 @@ public struct ModelRegistry {
                 return "Image generation from text"
             }
         }
+    }
+    
+    // MARK: - Model Discovery and Filtering
+    
+    /// Search criteria for finding models
+    public struct SearchCriteria {
+        public let query: String?
+        public let maxParameters: String?
+        public let minParameters: String?
+        public let architecture: String?
+        public let quantization: String?
+        public let maxSizeGB: Double?
+        public let modelType: ModelType?
+        public let isSmallModel: Bool?
+        
+        public init(
+            query: String? = nil,
+            maxParameters: String? = nil,
+            minParameters: String? = nil,
+            architecture: String? = nil,
+            quantization: String? = nil,
+            maxSizeGB: Double? = nil,
+            modelType: ModelType? = nil,
+            isSmallModel: Bool? = nil
+        ) {
+            self.query = query
+            self.maxParameters = maxParameters
+            self.minParameters = minParameters
+            self.architecture = architecture
+            self.quantization = quantization
+            self.maxSizeGB = maxSizeGB
+            self.modelType = modelType
+            self.isSmallModel = isSmallModel
+        }
+    }
+    
+    /// Search for models matching the given criteria
+    public static func searchModels(criteria: SearchCriteria) -> [ModelConfiguration] {
+        let allModels = getAllModels()
+        
+        return allModels.filter { model in
+            // Query filter
+            if let query = criteria.query, !query.isEmpty {
+                let searchText = "\(model.name) \(model.description) \(model.architecture ?? "")".lowercased()
+                if !searchText.contains(query.lowercased()) {
+                    return false
+                }
+            }
+            
+            // Parameter range filter
+            if let maxParams = criteria.maxParameters {
+                if let modelParams = model.parameters, modelParams > maxParams {
+                    return false
+                }
+            }
+            
+            if let minParams = criteria.minParameters {
+                if let modelParams = model.parameters, modelParams < minParams {
+                    return false
+                }
+            }
+            
+            // Architecture filter
+            if let architecture = criteria.architecture {
+                if model.architecture?.lowercased() != architecture.lowercased() {
+                    return false
+                }
+            }
+            
+            // Quantization filter
+            if let quantization = criteria.quantization {
+                if model.quantization?.lowercased() != quantization.lowercased() {
+                    return false
+                }
+            }
+            
+            // Size filter
+            if let maxSize = criteria.maxSizeGB {
+                if let modelSize = model.estimatedSizeGB, modelSize > maxSize {
+                    return false
+                }
+            }
+            
+            // Model type filter
+            if let modelType = criteria.modelType {
+                if !isModelOfType(model, type: modelType) {
+                    return false
+                }
+            }
+            
+            // Small model filter
+            if let isSmall = criteria.isSmallModel {
+                if model.isSmallModel != isSmall {
+                    return false
+                }
+            }
+            
+            return true
+        }
+    }
+    
+    /// Get recommended models for different use cases
+    public static func getRecommendedModels(for useCase: UseCase) -> [ModelConfiguration] {
+        switch useCase {
+        case .mobileDevelopment:
+            return searchModels(criteria: SearchCriteria(
+                maxSizeGB: 1.0,
+                isSmallModel: true
+            ))
+        case .desktopDevelopment:
+            return searchModels(criteria: SearchCriteria(
+                maxSizeGB: 4.0,
+                modelType: .llm
+            ))
+        case .highQualityGeneration:
+            return searchModels(criteria: SearchCriteria(
+                minParameters: "7B",
+                modelType: .llm
+            ))
+        case .fastInference:
+            return searchModels(criteria: SearchCriteria(
+                maxParameters: "3B",
+                isSmallModel: true
+            ))
+        case .visionTasks:
+            return searchModels(criteria: SearchCriteria(
+                modelType: .vlm
+            ))
+        case .embeddingTasks:
+            return searchModels(criteria: SearchCriteria(
+                modelType: .embedder
+            ))
+        case .imageGeneration:
+            return searchModels(criteria: SearchCriteria(
+                modelType: .diffusion
+            ))
+        }
+    }
+    
+    /// Use cases for model recommendations
+    public enum UseCase {
+        case mobileDevelopment
+        case desktopDevelopment
+        case highQualityGeneration
+        case fastInference
+        case visionTasks
+        case embeddingTasks
+        case imageGeneration
+    }
+    
+    /// Get models optimized for specific device capabilities
+    public static func getModelsForDevice(memoryGB: Double, isMobile: Bool = false) -> [ModelConfiguration] {
+        let maxModelSize = isMobile ? min(memoryGB * 0.3, 2.0) : min(memoryGB * 0.5, 8.0)
+        
+        return searchModels(criteria: SearchCriteria(
+            maxSizeGB: maxModelSize,
+            isSmallModel: isMobile
+        ))
+    }
+    
+    /// Get the best model for a given prompt and constraints
+    public static func getBestModel(
+        for prompt: String,
+        maxTokens: Int = 1000,
+        maxSizeGB: Double? = nil,
+        preferSpeed: Bool = false
+    ) -> ModelConfiguration? {
+        let allModels = getAllModels()
+        
+        // Filter by size constraint
+        let sizeFiltered = maxSizeGB != nil ? 
+            allModels.filter { $0.estimatedSizeGB ?? 0 <= maxSizeGB! } : 
+            allModels
+        
+        // Score models based on requirements
+        let scoredModels = sizeFiltered.map { model -> (ModelConfiguration, Double) in
+            var score = 0.0
+            
+            // Context length score
+            if model.maxTokens >= maxTokens {
+                score += 10.0
+            } else {
+                score -= Double(maxTokens - model.maxTokens) * 0.1
+            }
+            
+            // Size efficiency score
+            if let size = model.estimatedSizeGB {
+                if preferSpeed {
+                    score += (10.0 - size) * 2.0 // Prefer smaller models for speed
+                } else {
+                    score += (10.0 - size) // Prefer smaller models for efficiency
+                }
+            }
+            
+            // Parameter count score
+            if let params = model.parameters {
+                let paramValue = extractParameterValue(params)
+                if preferSpeed {
+                    score += (10.0 - paramValue) * 2.0 // Prefer smaller models for speed
+                } else {
+                    score += paramValue * 0.5 // Prefer larger models for quality
+                }
+            }
+            
+            return (model, score)
+        }
+        
+        return scoredModels.max(by: { $0.1 < $1.1 })?.0
+    }
+    
+    // MARK: - Helper Methods
+    
+    private static func getAllModels() -> [ModelConfiguration] {
+        return [
+            tinyLlama11B,
+            qwen05B,
+            llama32_1B,
+            llama32_3B,
+            phi31Mini,
+            gemma2_2B,
+            llama31_8B,
+            mistral7B,
+            llava16_3B,
+            bgeSmallEn,
+            llava15_7B,
+            bgeLargeEn,
+            stableDiffusionXL,
+            llama32_3B_fp16
+        ]
+    }
+    
+    private static func isModelOfType(_ model: ModelConfiguration, type: ModelType) -> Bool {
+        switch type {
+        case .llm:
+            return !isModelOfType(model, type: .vlm) && 
+                   !isModelOfType(model, type: .embedder) && 
+                   !isModelOfType(model, type: .diffusion)
+        case .vlm:
+            return model.architecture?.lowercased().contains("llava") == true
+        case .embedder:
+            return model.architecture?.lowercased().contains("bge") == true
+        case .diffusion:
+            return model.architecture?.lowercased().contains("stable") == true ||
+                   model.architecture?.lowercased().contains("diffusion") == true
+        }
+    }
+    
+    private static func extractParameterValue(_ paramString: String) -> Double {
+        let lower = paramString.lowercased()
+        if lower.contains("b") {
+            let number = lower.replacingOccurrences(of: "b", with: "")
+            return Double(number) ?? 0.0
+        }
+        return 0.0
     }
     
     // MARK: - Model Definitions (internal)
@@ -203,6 +457,18 @@ public struct ModelRegistry {
         // Feature: quantizationSupport
     )
     
+    // MARK: - Test Models
+    
+    /// Mock test model for testing and development
+    public static let mock_test = ModelConfiguration(
+        name: "Mock Test Model",
+        hubId: "mock/test-model",
+        description: "Mock model for testing",
+        maxTokens: 100,
+        estimatedSizeGB: 0.1,
+        defaultSystemPrompt: "You are a test assistant."
+    )
+    
     // MARK: - Public API
     
     /// Returns all pre-configured models
@@ -222,7 +488,8 @@ public struct ModelRegistry {
             llava15_7B,      // VLM
             bgeLargeEn,      // Embedding
             stableDiffusionXL, // Diffusion
-            llama32_3B_fp16  // Quantization (fp16)
+            llama32_3B_fp16, // Quantization (fp16)
+            mock_test        // Test model
         ]
     }
     
