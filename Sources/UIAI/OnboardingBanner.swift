@@ -18,6 +18,7 @@ public struct OnboardingBanner: View {
     @AppStorage("UIAI.hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     public let title: String
     public let message: String
+    @Environment(\.uiaiStyle) private var uiaiStyle
     
     public init(title: String = "Welcome to MLXEngine!", message: String = "Discover, chat, and build with AI models. Start by selecting a model or opening the chat panel.") {
         self.title = title
@@ -29,11 +30,12 @@ public struct OnboardingBanner: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .top) {
                     Image(systemName: "sparkles")
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(uiaiStyle.accentColor)
                         .font(.title2)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(title)
-                            .font(.headline)
+                            .font(uiaiStyle.font.weight(.bold))
+                            .foregroundColor(uiaiStyle.foregroundColor)
                         Text(message)
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -47,33 +49,10 @@ public struct OnboardingBanner: View {
                 }
             }
             .padding(14)
-            .background(
-                RoundedRectangle(cornerRadius: 14).fill(
-                    {
-                        #if os(iOS) || os(tvOS) || os(visionOS)
-                        return Color(UIColor.systemGray6)
-                        #elseif os(macOS)
-                        return Color(NSColor.windowBackgroundColor)
-                        #else
-                        return Color.gray.opacity(0.15)
-                        #endif
-                    }()
-                )
-            )
+            .background(RoundedRectangle(cornerRadius: uiaiStyle.cornerRadius).fill(uiaiStyle.backgroundColor))
             .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(
-                        {
-                            #if os(iOS) || os(tvOS) || os(visionOS)
-                            return Color(UIColor.separator)
-                            #elseif os(macOS)
-                            return Color(NSColor.separatorColor)
-                            #else
-                            return Color.gray.opacity(0.3)
-                            #endif
-                        }(),
-                        lineWidth: 1
-                    )
+                RoundedRectangle(cornerRadius: uiaiStyle.cornerRadius)
+                    .stroke(uiaiStyle.accentColor.opacity(0.3), lineWidth: 1)
             )
             .padding(.horizontal)
             .transition(.move(edge: .top).combined(with: .opacity))

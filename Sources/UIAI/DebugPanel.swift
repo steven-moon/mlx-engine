@@ -16,6 +16,7 @@ import MLXEngine
 /// - Designed for iOS, macOS, visionOS, tvOS, and watchOS.
 /// - Integrates with MLXEngine diagnostics APIs.
 public struct DebugPanel: View {
+    @Environment(\.uiaiStyle) private var uiaiStyle
     @State private var selectedLevels: [LogLevel] = [.error, .warning, .critical]
     @State private var recentLogs: [LogEntry] = []
     @State private var debugReport: String = ""
@@ -30,8 +31,9 @@ public struct DebugPanel: View {
         #if os(iOS) || os(macOS) || os(visionOS)
         VStack(alignment: .leading, spacing: 16) {
             Text("Debug Panel")
-                .font(.title2)
+                .font(uiaiStyle.font)
                 .fontWeight(.bold)
+                .foregroundColor(uiaiStyle.foregroundColor)
             HStack {
                 Text("Log Levels:")
                 ForEach(allLevels, id: \ .self) { level in
@@ -47,19 +49,9 @@ public struct DebugPanel: View {
                             .font(.caption)
                             .padding(6)
                             .background(
-                                selectedLevels.contains(level) ? Color.accentColor.opacity(0.2) : (
-                                    {
-                                        #if os(iOS) || os(tvOS) || os(visionOS)
-                                        return Color(UIColor.systemGray6)
-                                        #elseif os(macOS)
-                                        return Color(NSColor.windowBackgroundColor)
-                                        #else
-                                        return Color.gray.opacity(0.15)
-                                        #endif
-                                    }()
-                                )
+                                selectedLevels.contains(level) ? uiaiStyle.accentColor.opacity(0.2) : uiaiStyle.backgroundColor
                             )
-                            .cornerRadius(8)
+                            .cornerRadius(uiaiStyle.cornerRadius)
                     }
                 }
             }
@@ -123,6 +115,7 @@ public struct DebugPanel: View {
             }
         }
         .padding()
+        .background(RoundedRectangle(cornerRadius: uiaiStyle.cornerRadius).fill(uiaiStyle.backgroundColor))
         .onAppear(perform: loadLogs)
         #else
         Text("Debug panel is not yet available on this platform.")

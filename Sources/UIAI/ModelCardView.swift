@@ -50,6 +50,7 @@ public struct ModelCardView: View {
     
     @State private var errorMessage: String? = nil
     @State private var showError: Bool = false
+    @Environment(\.uiaiStyle) private var uiaiStyle
     
     public init(model: ModelInfo, onDownload: (() -> Void)? = nil, onDelete: (() -> Void)? = nil, onShowDetails: (() -> Void)? = nil) {
         self.model = model
@@ -82,7 +83,8 @@ public struct ModelCardView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Text(model.name)
-                            .font(.headline)
+                            .font(uiaiStyle.font.weight(.bold))
+                            .foregroundColor(uiaiStyle.foregroundColor)
                         if model.isDownloaded {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
@@ -136,33 +138,10 @@ public struct ModelCardView: View {
             Spacer()
         }
         .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 16).fill(
-                {
-                    #if os(iOS) || os(tvOS) || os(visionOS)
-                    return Color(UIColor.secondarySystemBackground)
-                    #elseif os(macOS)
-                    return Color(NSColor.windowBackgroundColor)
-                    #else
-                    return Color.gray.opacity(0.15)
-                    #endif
-                }()
-            )
-        )
+        .background(RoundedRectangle(cornerRadius: uiaiStyle.cornerRadius).fill(uiaiStyle.backgroundColor))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    {
-                        #if os(iOS) || os(tvOS) || os(visionOS)
-                        return Color(UIColor.separator)
-                        #elseif os(macOS)
-                        return Color(NSColor.separatorColor)
-                        #else
-                        return Color.gray.opacity(0.3)
-                        #endif
-                    }(),
-                    lineWidth: 1
-                )
+            RoundedRectangle(cornerRadius: uiaiStyle.cornerRadius)
+                .stroke(uiaiStyle.accentColor.opacity(0.3), lineWidth: 1)
         )
     }
     

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIAI
 
 struct SettingsView: View {
     @State private var enableLogging = false
@@ -8,42 +9,7 @@ struct SettingsView: View {
     #endif
 
     var body: some View {
-        VStack {
-            Spacer()
-            Text("Settings Coming Soon")
-                .font(.title2)
-                .foregroundStyle(.secondary)
-            Spacer()
-        }
-        .navigationTitle("Settings")
-#if DEBUG
-        .sheet(isPresented: $showDebugPanel) {
-            DebugPanel()
-        }
-#endif
-
-        Section("App Settings") {
-            Toggle("Enable Logging", isOn: $enableLogging)
-            #if os(macOS)
-            HStack {
-                Text("Download Path")
-                Spacer()
-                Button("Choose...") {
-                    chooseDownloadPath()
-                }
-            }
-            if !downloadPath.isEmpty {
-                Text(downloadPath)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            #endif
-            #if DEBUG
-            Button("Show Debug Panel") {
-                showDebugPanel = true
-            }
-            #endif
-        }
+        SettingsPanel()
     }
 
     private func chooseDownloadPath() {

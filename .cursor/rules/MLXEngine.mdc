@@ -1,0 +1,52 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# MLXEngine & UIAI Project Rules
+
+## General
+
+- All public types, properties, and functions must have `///` doc-comments explaining *what* and *why*.
+- Use **Swift Concurrency** (`async/await`, `AsyncSequence`) for all async work. Avoid legacy callbacks except for bridging.
+- Keep files < 400 LOC; split extensions into separate files if needed.
+- Use 4-space indentation, 120-char line limit, and end files with a single newline.
+- Organize imports: standard library, Apple frameworks, third-party, local modules – alphabetically within each group.
+- Reference internal code with Cursor-style citations and external docs with markdown links.
+
+## Architecture
+
+- Expose only these first-class public types: `ModelConfiguration`, `LLMEngine` (protocol), concrete `InferenceEngine`, and `ChatSession`.
+- Keep model download logic isolated in `ModelDownloader`.
+- Enforce GPU memory safety: set cache limit before model load, implement `unload()` to release Metal buffers.
+- Detect iOS Simulator and surface `SimulatorNotSupported` error or provide a mock engine.
+- Maintain `ModelRegistry.swift` for static model configs; do not hard-code IDs elsewhere.
+- Land new features behind a feature-flag enum in `LLMEngine.Features`.
+
+## Style System
+
+- Use the `UIAIStyle` protocol for all style/theme logic.
+- Inject the current style at the app root with `.uiaiStyle(...)`.
+- Use `@Environment(\.uiaiStyle)` in all UIAI components.
+- Register custom styles with `UIAIStyleRegistry.register(...)`.
+- Never hard-code style IDs outside the registry.
+- Use `any UIAIStyle` for protocol-typed values (Swift 6+).
+
+## Testing
+
+- Unit tests must exercise the public API only; use `MockLLMEngine` for simulator CI.
+- Build and test using provided scripts and swift-format before commit.
+
+## Troubleshooting
+
+- Use provided cleanup and build scripts for resolving SwiftPM and submodule errors.
+- For UI issues, use SwiftUI previews and ensure `.uiaiStyle` is injected at the correct level.
+
+## Collaboration
+
+- When in doubt, reference `_docs/UIAI_Development_Troubleshooting.md` and `_docs/UIAI_StyleSystem_Design.md`.
+- Prefer bullet points or tables for lists; keep section hierarchy predictable (H2 for major, H3 for minor).
+- Update the `Last updated` timestamp in docs after substantive edits.
+
+@_docs/UIAI_Development_Troubleshooting.md
+@_docs/UIAI_StyleSystem_Design.md

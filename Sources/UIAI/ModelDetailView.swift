@@ -16,6 +16,7 @@ import MLXEngine
 /// - Designed for iOS, macOS, visionOS, tvOS, and watchOS.
 /// - Integrates with MLXEngine model metadata and management APIs.
 public struct ModelDetailView: View {
+    @Environment(\.uiaiStyle) private var uiaiStyle
     public let model: ModelDiscoveryService.ModelSummary
     public let isDownloaded: Bool
     public let isDownloading: Bool
@@ -66,8 +67,8 @@ public struct ModelDetailView: View {
                     Spacer()
                 }
                 .padding(8)
-                .background((isCompatible ? Color.green : Color.yellow).opacity(0.08))
-                .cornerRadius(8)
+                .background(uiaiStyle.backgroundColor.opacity(0.8))
+                .cornerRadius(uiaiStyle.cornerRadius)
                 let health = modelHealthStatus()
                 HStack(spacing: 8) {
                     Image(systemName: health.icon)
@@ -80,19 +81,19 @@ public struct ModelDetailView: View {
                         Label(isCopied ? "Copied!" : "Copy Metadata", systemImage: isCopied ? "checkmark.circle" : "doc.on.doc")
                     }
                     .font(.caption2)
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(uiaiStyle.accentColor)
                 }
                 .padding(8)
-                .background(health.color.opacity(0.08))
-                .cornerRadius(8)
+                .background(uiaiStyle.backgroundColor.opacity(0.8))
+                .cornerRadius(uiaiStyle.cornerRadius)
                 HStack(alignment: .top, spacing: 16) {
                     AsyncImageView(url: model.imageURL)
                         .frame(width: 80, height: 80)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .clipShape(RoundedRectangle(cornerRadius: uiaiStyle.cornerRadius))
                     VStack(alignment: .leading, spacing: 6) {
                         Text(model.name)
-                            .font(.title2)
-                            .fontWeight(.bold)
+                            .font(uiaiStyle.font.weight(.bold))
+                            .foregroundColor(uiaiStyle.foregroundColor)
                         if let author = model.author {
                             Text("by \(author)")
                                 .font(.subheadline)
@@ -202,6 +203,7 @@ public struct ModelDetailView: View {
                 .buttonStyle(.borderedProminent)
             }
             .padding()
+            .background(RoundedRectangle(cornerRadius: uiaiStyle.cornerRadius).fill(uiaiStyle.backgroundColor))
             .onAppear {
                 loadFileList()
                 checkCompatibility()

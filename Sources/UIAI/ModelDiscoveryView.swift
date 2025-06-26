@@ -40,6 +40,7 @@ public struct ModelDiscoveryView: View {
     @State private var selectedSort: String = "Most Downloads"
     @State private var huggingFaceUsername: String? = nil
     @State private var showOnlyCompatible: Bool = false
+    @Environment(\.uiaiStyle) private var uiaiStyle
     private let typeOptions = ["All", "LLM", "VLM", "Embedding", "Diffusion"]
     private let quantOptions = ["All", "4bit", "8bit", "fp16", "fp32"]
     private let sortOptions = ["Most Downloads", "Most Likes", "Model Size", "Name (A-Z)"]
@@ -121,7 +122,8 @@ public struct ModelDiscoveryView: View {
                         if !recommendedModels.isEmpty {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Recommended for You")
-                                    .font(.headline)
+                                    .font(uiaiStyle.font.weight(.bold))
+                                    .foregroundColor(uiaiStyle.foregroundColor)
                                     .padding(.horizontal)
                                 HStack(spacing: 12) {
                                     ForEach(recommendedModels) { model in
@@ -138,7 +140,7 @@ public struct ModelDiscoveryView: View {
                                                 isDownloading: downloadingModelId == model.id,
                                                 downloadProgress: downloadProgress[model.id],
                                                 statusMessage: "Recommended",
-                                                statusColor: .accentColor,
+                                                statusColor: uiaiStyle.accentColor,
                                                 architecture: model.architecture
                                             ),
                                             onDownload: { downloadModel(model) },
@@ -151,6 +153,7 @@ public struct ModelDiscoveryView: View {
                                         )
                                         .frame(width: 320)
                                         .padding(.vertical, 4)
+                                        .uiaiStyle(uiaiStyle)
                                     }
                                 }
                                 .padding(.horizontal)
@@ -235,7 +238,7 @@ public struct ModelDiscoveryView: View {
                                                 selectModel(model)
                                             }
                                         )
-                                        .padding(.horizontal)
+                                        .uiaiStyle(uiaiStyle)
                                     }
                                 }
                                 .padding(.vertical)

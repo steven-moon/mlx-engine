@@ -18,6 +18,7 @@ public struct ErrorBanner: View {
     public let message: String
     public let style: Style
     @Binding public var isPresented: Bool
+    @Environment(\.uiaiStyle) private var uiaiStyle
     
     public init(message: String, style: Style = .error, isPresented: Binding<Bool>) {
         self.message = message
@@ -31,8 +32,8 @@ public struct ErrorBanner: View {
                 Image(systemName: iconName)
                     .foregroundColor(iconColor)
                 Text(message)
-                    .font(.caption)
-                    .foregroundColor(.primary)
+                    .font(uiaiStyle.font)
+                    .foregroundColor(uiaiStyle.foregroundColor)
                 Spacer()
                 Button(action: { isPresented = false }) {
                     Image(systemName: "xmark.circle.fill")
@@ -42,8 +43,8 @@ public struct ErrorBanner: View {
             }
             .padding(10)
             .background(backgroundColor)
-            .cornerRadius(10)
-            .shadow(radius: 2)
+            .cornerRadius(uiaiStyle.cornerRadius)
+            .shadow(color: uiaiStyle.shadow?.color ?? .clear, radius: uiaiStyle.shadow?.radius ?? 0)
             .padding(.horizontal)
             .transition(.move(edge: .top).combined(with: .opacity))
             .animation(.easeInOut, value: isPresented)
@@ -59,16 +60,16 @@ public struct ErrorBanner: View {
     }
     private var iconColor: Color {
         switch style {
-        case .error: return .red
-        case .warning: return .orange
-        case .info: return .blue
+        case .error: return uiaiStyle.accentColor
+        case .warning: return uiaiStyle.accentColor.opacity(0.8)
+        case .info: return uiaiStyle.accentColor.opacity(0.6)
         }
     }
     private var backgroundColor: Color {
         switch style {
-        case .error: return Color.red.opacity(0.12)
-        case .warning: return Color.orange.opacity(0.12)
-        case .info: return Color.blue.opacity(0.10)
+        case .error: return uiaiStyle.backgroundColor.opacity(0.9)
+        case .warning: return uiaiStyle.backgroundColor.opacity(0.85)
+        case .info: return uiaiStyle.backgroundColor.opacity(0.8)
         }
     }
 }

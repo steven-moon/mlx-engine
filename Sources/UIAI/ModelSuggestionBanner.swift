@@ -17,6 +17,7 @@ public struct ModelSuggestionBanner: View {
     public let modelName: String
     public let modelDescription: String
     public let onSelect: () -> Void
+    @Environment(\.uiaiStyle) private var uiaiStyle
     
     public init(modelName: String, modelDescription: String, onSelect: @escaping () -> Void) {
         self.modelName = modelName
@@ -31,7 +32,8 @@ public struct ModelSuggestionBanner: View {
                 .font(.title2)
             VStack(alignment: .leading, spacing: 4) {
                 Text(modelName)
-                    .font(.headline)
+                    .font(uiaiStyle.font.weight(.bold))
+                    .foregroundColor(uiaiStyle.foregroundColor)
                 Text(modelDescription)
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -42,38 +44,15 @@ public struct ModelSuggestionBanner: View {
                     .font(.caption)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Color.accentColor.opacity(0.15))
-                    .cornerRadius(8)
+                    .background(uiaiStyle.accentColor.opacity(0.15))
+                    .cornerRadius(uiaiStyle.cornerRadius)
             }
         }
         .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 12).fill(
-                {
-                    #if os(iOS) || os(tvOS) || os(visionOS)
-                    return Color(UIColor.systemGray6)
-                    #elseif os(macOS)
-                    return Color(NSColor.windowBackgroundColor)
-                    #else
-                    return Color.gray.opacity(0.15)
-                    #endif
-                }()
-            )
-        )
+        .background(RoundedRectangle(cornerRadius: uiaiStyle.cornerRadius).fill(uiaiStyle.backgroundColor))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(
-                    {
-                        #if os(iOS) || os(tvOS) || os(visionOS)
-                        return Color(UIColor.separator)
-                        #elseif os(macOS)
-                        return Color(NSColor.separatorColor)
-                        #else
-                        return Color.gray.opacity(0.3)
-                        #endif
-                    }(),
-                    lineWidth: 1
-                )
+            RoundedRectangle(cornerRadius: uiaiStyle.cornerRadius)
+                .stroke(uiaiStyle.accentColor.opacity(0.3), lineWidth: 1)
         )
         .padding(.horizontal)
     }
