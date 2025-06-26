@@ -29,6 +29,8 @@ public struct SettingsPanel: View {
     @Binding var selectedColorSchemeRaw: String
     private let availableModels: [String] = ["Qwen 0.5B Chat", "Llama 3B", "Phi-2", "Custom..."]
     @State private var showResetConfirmation: Bool = false
+    @State private var showErrorPreview: Bool = true
+    @State private var showStyleGallery: Bool = false
     
     private var selectedStyleKind: UIAIStyleKind {
         UIAIStyleKind(rawValue: selectedStyleKindRaw) ?? .minimal
@@ -51,6 +53,38 @@ public struct SettingsPanel: View {
         #if os(iOS) || os(macOS) || os(visionOS)
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+                // Logo Branding
+                HStack {
+                    Spacer()
+                    if let logo = currentStyle.logo {
+                        logo
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 48, height: 48)
+                            .padding(.bottom, 4)
+                    } else {
+                        Image(systemName: "sparkles")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(currentStyle.accentColor)
+                            .padding(.bottom, 4)
+                    }
+                    Spacer()
+                }
+                // Live Style Preview
+                Text("Live Style Preview")
+                    .font(.caption)
+                    .foregroundColor(currentStyle.secondaryForegroundColor)
+                    .padding(.bottom, 2)
+                VStack(spacing: 12) {
+                    ModelCardView(model: .init(name: "Preview Model", statusMessage: "Ready", statusColor: currentStyle.successColor))
+                        .frame(width: 220, height: 120)
+                        .uiaiStyle(currentStyle)
+                    ErrorBanner(message: "This is a preview error banner.", style: .error, isPresented: $showErrorPreview)
+                        .uiaiStyle(currentStyle)
+                }
+                .padding(.vertical, 8)
                 // Onboarding Banner
                 OnboardingBanner(title: "Welcome to Settings!", message: "Configure your model, generation, and app preferences here.")
                     .padding(.bottom, 8)
@@ -168,6 +202,18 @@ public struct SettingsPanel: View {
                         Label("Reset to Defaults", systemImage: "arrow.counterclockwise")
                     }
                 }
+                // Style Gallery Button
+                Button {
+                    showStyleGallery = true
+                } label: {
+                    Label("Open Style Gallery", systemImage: "paintpalette")
+                        .font(.headline)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.top, 12)
+                .padding(.horizontal)
             }
             .padding(.vertical, 24)
         }
@@ -177,6 +223,9 @@ public struct SettingsPanel: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This will restore all settings to their default values.")
+        }
+        .sheet(isPresented: $showStyleGallery) {
+            StyleGallery()
         }
         #else
         Text("Settings panel is not yet available on this platform.")

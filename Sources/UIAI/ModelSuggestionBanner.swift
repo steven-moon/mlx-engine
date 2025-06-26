@@ -27,9 +27,16 @@ public struct ModelSuggestionBanner: View {
     
     public var body: some View {
         HStack(alignment: .center, spacing: 16) {
-            Image(systemName: "star.fill")
-                .foregroundColor(uiaiStyle.accentColor)
-                .font(.title2)
+            if let logo = uiaiStyle.logo {
+                logo
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 32, height: 32)
+            } else {
+                Image(systemName: "star.fill")
+                    .foregroundColor(uiaiStyle.accentColor)
+                    .font(.title2)
+            }
             VStack(alignment: .leading, spacing: 4) {
                 Text(modelName)
                     .font(uiaiStyle.font.weight(.bold))

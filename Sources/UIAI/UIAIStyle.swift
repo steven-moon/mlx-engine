@@ -245,68 +245,220 @@ public struct LiquidGlassStyle: UIAIStyle {
     public let colorScheme: UIAIColorScheme
     public var backgroundColor: Color {
         switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#F5F7FA")
+        case .stormyMorningDark: return Color(hex: "#1A2636")
+        case .peachSkylineLight: return Color(hex: "#FFF6F0")
+        case .peachSkylineDark: return Color(hex: "#2D1E2F")
+        case .emeraldOdysseyLight: return Color(hex: "#F3F9F4")
+        case .emeraldOdysseyDark: return Color(hex: "#1B3B2F")
+        case .purpleGalaxyLight: return Color(hex: "#F6F5FF")
+        case .purpleGalaxyDark: return Color(hex: "#1F1B79")
+        case .neonJungleLight: return Color(hex: "#F8FFF8")
+        case .neonJungleDark: return Color(hex: "#181818")
+        case .cappuccinoLight: return Color(hex: "#F7F3EF")
+        case .cappuccinoDark: return Color(hex: "#3E2723")
         case .light: return Color.white.opacity(0.7)
         case .dark: return Color.black.opacity(0.5)
         case .vibrant: return Color.blue.opacity(0.6)
         case .highContrast: return Color.white
-        case .stormyMorningLight, .stormyMorningDark, .peachSkylineLight, .peachSkylineDark, .emeraldOdysseyLight, .emeraldOdysseyDark, .purpleGalaxyLight, .purpleGalaxyDark, .neonJungleLight, .neonJungleDark, .cappuccinoLight, .cappuccinoDark:
-            return Color.white.opacity(0.7)
         }
     }
     public var foregroundColor: Color {
         switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#1A2636")
+        case .stormyMorningDark: return Color(hex: "#F5F7FA")
+        case .peachSkylineLight: return Color(hex: "#2D1E2F")
+        case .peachSkylineDark: return Color(hex: "#FFF6F0")
+        case .emeraldOdysseyLight: return Color(hex: "#1B3B2F")
+        case .emeraldOdysseyDark: return Color(hex: "#F3F9F4")
+        case .purpleGalaxyLight: return Color(hex: "#2D1B79")
+        case .purpleGalaxyDark: return Color(hex: "#F6F5FF")
+        case .neonJungleLight: return Color(hex: "#1A1A1A")
+        case .neonJungleDark: return Color(hex: "#F8FFF8")
+        case .cappuccinoLight: return Color(hex: "#3E2723")
+        case .cappuccinoDark: return Color(hex: "#F7F3EF")
         case .light, .vibrant: return Color.primary
         case .dark: return Color.white
         case .highContrast: return Color.black
-        case .stormyMorningLight, .stormyMorningDark, .peachSkylineLight, .peachSkylineDark, .emeraldOdysseyLight, .emeraldOdysseyDark, .purpleGalaxyLight, .purpleGalaxyDark, .neonJungleLight, .neonJungleDark, .cappuccinoLight, .cappuccinoDark:
-            return Color.primary
         }
     }
     public var accentColor: Color {
         switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#3B82F6")
+        case .stormyMorningDark: return Color(hex: "#60A5FA")
+        case .peachSkylineLight: return Color(hex: "#FF8C42")
+        case .peachSkylineDark: return Color(hex: "#FFB385")
+        case .emeraldOdysseyLight: return Color(hex: "#2DD4BF")
+        case .emeraldOdysseyDark: return Color(hex: "#5EEAD4")
+        case .purpleGalaxyLight: return Color(hex: "#8E69BF")
+        case .purpleGalaxyDark: return Color(hex: "#8E69BF")
+        case .neonJungleLight: return Color(hex: "#00FF85")
+        case .neonJungleDark: return Color(hex: "#00FF85")
+        case .cappuccinoLight: return Color(hex: "#BCAAA4")
+        case .cappuccinoDark: return Color(hex: "#A1887F")
         case .light: return Color.blue
         case .dark: return Color.cyan
         case .vibrant: return Color.purple
         case .highContrast: return Color.yellow
-        case .stormyMorningLight, .stormyMorningDark, .peachSkylineLight, .peachSkylineDark, .emeraldOdysseyLight, .emeraldOdysseyDark, .purpleGalaxyLight, .purpleGalaxyDark, .neonJungleLight, .neonJungleDark, .cappuccinoLight, .cappuccinoDark:
-            return Color.blue
         }
     }
     public var cornerRadius: CGFloat { 20 }
     public var shadow: ShadowStyle? {
         ShadowStyle(color: .black.opacity(0.15), radius: 18, x: 0, y: 8)
     }
-    public var font: Font { .system(size: 18, weight: .medium) }
-    public var errorColor: Color { Color.red }
-    public var warningColor: Color { Color.orange }
-    public var secondaryForegroundColor: Color { Color.secondary }
+    public var font: Font {
+        switch colorScheme {
+        case .stormyMorningLight, .stormyMorningDark,
+             .peachSkylineLight, .peachSkylineDark,
+             .emeraldOdysseyLight, .emeraldOdysseyDark,
+             .purpleGalaxyLight, .purpleGalaxyDark,
+             .neonJungleLight, .neonJungleDark,
+             .cappuccinoLight, .cappuccinoDark:
+            return .system(size: 18, weight: .medium, design: .default)
+        default:
+            return .system(size: 18, weight: .medium)
+        }
+    }
+    public var errorColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#EF4444")
+        case .stormyMorningDark: return Color(hex: "#F87171")
+        case .peachSkylineLight: return Color(hex: "#E4572E")
+        case .peachSkylineDark: return Color(hex: "#FF6F61")
+        case .emeraldOdysseyLight: return Color(hex: "#F87171")
+        case .emeraldOdysseyDark: return Color(hex: "#FCA5A5")
+        case .purpleGalaxyLight: return Color(hex: "#E4576E")
+        case .purpleGalaxyDark: return Color(hex: "#FF6F91")
+        case .neonJungleLight, .neonJungleDark: return Color(hex: "#FF0099")
+        case .cappuccinoLight: return Color(hex: "#D84315")
+        case .cappuccinoDark: return Color(hex: "#FF7043")
+        default: return Color.red
+        }
+    }
+    public var warningColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#F59E42")
+        case .stormyMorningDark: return Color(hex: "#FBBF24")
+        case .peachSkylineLight: return Color(hex: "#FFC857")
+        case .peachSkylineDark: return Color(hex: "#FFD580")
+        case .emeraldOdysseyLight: return Color(hex: "#FBBF24")
+        case .emeraldOdysseyDark: return Color(hex: "#FDE68A")
+        case .purpleGalaxyLight: return Color(hex: "#FFC857")
+        case .purpleGalaxyDark: return Color(hex: "#FFD580")
+        case .neonJungleLight, .neonJungleDark: return Color(hex: "#FFD600")
+        case .cappuccinoLight: return Color(hex: "#FFB300")
+        case .cappuccinoDark: return Color(hex: "#FFD54F")
+        default: return Color.orange
+        }
+    }
+    public var secondaryForegroundColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#64748B")
+        case .stormyMorningDark: return Color(hex: "#94A3B8")
+        case .peachSkylineLight, .peachSkylineDark: return Color(hex: "#A78682")
+        case .emeraldOdysseyLight: return Color(hex: "#6EE7B7")
+        case .emeraldOdysseyDark: return Color(hex: "#34D399")
+        case .purpleGalaxyLight: return Color(hex: "#B1A3E0")
+        case .purpleGalaxyDark: return Color(hex: "#604FAB")
+        case .neonJungleLight, .neonJungleDark: return Color(hex: "#1E90FF")
+        case .cappuccinoLight: return Color(hex: "#A1887F")
+        case .cappuccinoDark: return Color(hex: "#BCAAA4")
+        default: return Color.secondary
+        }
+    }
     public var logo: Image? { nil }
     public init(colorScheme: UIAIColorScheme) { self.colorScheme = colorScheme }
     public func badgeColor(for type: String) -> Color {
         switch type.lowercased() {
-        case "llm": return .blue
-        case "vlm": return .orange
-        case "embedding": return .green
-        case "diffusion": return .pink
-        default: return .gray
+        case "llm": return accentColor
+        case "vlm":
+            switch colorScheme {
+            case .stormyMorningLight: return Color(hex: "#64748B")
+            case .stormyMorningDark: return Color(hex: "#94A3B8")
+            case .peachSkylineLight, .peachSkylineDark: return Color(hex: "#A78682")
+            case .emeraldOdysseyLight: return Color(hex: "#6EE7B7")
+            case .emeraldOdysseyDark: return Color(hex: "#34D399")
+            case .purpleGalaxyLight: return Color(hex: "#B1A3E0")
+            case .purpleGalaxyDark: return Color(hex: "#604FAB")
+            case .neonJungleLight, .neonJungleDark: return Color(hex: "#1E90FF")
+            case .cappuccinoLight: return Color(hex: "#A1887F")
+            case .cappuccinoDark: return Color(hex: "#BCAAA4")
+            default: return secondaryForegroundColor
+            }
+        case "embedding":
+            switch colorScheme {
+            case .stormyMorningLight: return Color(hex: "#22C55E")
+            case .stormyMorningDark: return Color(hex: "#4ADE80")
+            case .peachSkylineLight: return Color(hex: "#76B041")
+            case .peachSkylineDark: return Color(hex: "#B7E778")
+            case .emeraldOdysseyLight: return Color(hex: "#22C55E")
+            case .emeraldOdysseyDark: return Color(hex: "#6EE7B7")
+            case .purpleGalaxyLight: return Color(hex: "#76B041")
+            case .purpleGalaxyDark: return Color(hex: "#B7E778")
+            case .neonJungleLight, .neonJungleDark: return Color(hex: "#00FF85")
+            case .cappuccinoLight: return Color(hex: "#43A047")
+            case .cappuccinoDark: return Color(hex: "#81C784")
+            default: return secondaryForegroundColor
+            }
+        case "diffusion":
+            switch colorScheme {
+            case .stormyMorningLight: return Color(hex: "#F59E42")
+            case .stormyMorningDark: return Color(hex: "#FBBF24")
+            case .peachSkylineLight: return Color(hex: "#FFC857")
+            case .peachSkylineDark: return Color(hex: "#FFD580")
+            case .emeraldOdysseyLight: return Color(hex: "#FBBF24")
+            case .emeraldOdysseyDark: return Color(hex: "#FDE68A")
+            case .purpleGalaxyLight: return Color(hex: "#FFC857")
+            case .purpleGalaxyDark: return Color(hex: "#FFD580")
+            case .neonJungleLight, .neonJungleDark: return Color(hex: "#FFD600")
+            case .cappuccinoLight: return Color(hex: "#FFB300")
+            case .cappuccinoDark: return Color(hex: "#FFD54F")
+            default: return secondaryForegroundColor
+            }
+        default: return secondaryForegroundColor
         }
     }
     public func quantizationColor(for quant: String) -> Color {
         switch quant.lowercased() {
-        case "4bit", "8bit", "fp16", "fp32": return .purple
-        default: return .gray
+        case "4bit", "8bit", "fp16", "fp32": return accentColor
+        default: return secondaryForegroundColor
         }
     }
-    public var successColor: Color { .green }
-    public var infoColor: Color { .blue }
+    public var successColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#22C55E")
+        case .stormyMorningDark: return Color(hex: "#4ADE80")
+        case .peachSkylineLight: return Color(hex: "#76B041")
+        case .peachSkylineDark: return Color(hex: "#B7E778")
+        case .emeraldOdysseyLight: return Color(hex: "#22C55E")
+        case .emeraldOdysseyDark: return Color(hex: "#6EE7B7")
+        case .purpleGalaxyLight: return Color(hex: "#76B041")
+        case .purpleGalaxyDark: return Color(hex: "#B7E778")
+        case .neonJungleLight, .neonJungleDark: return Color(hex: "#00FF85")
+        case .cappuccinoLight: return Color(hex: "#43A047")
+        case .cappuccinoDark: return Color(hex: "#81C784")
+        default: return Color.green
+        }
+    }
+    public var infoColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight, .stormyMorningDark: return accentColor
+        case .peachSkylineLight, .peachSkylineDark: return accentColor
+        case .emeraldOdysseyLight, .emeraldOdysseyDark: return accentColor
+        case .purpleGalaxyLight, .purpleGalaxyDark: return accentColor
+        case .neonJungleLight, .neonJungleDark: return accentColor
+        case .cappuccinoLight, .cappuccinoDark: return accentColor
+        default: return Color.blue
+        }
+    }
     public func logLevelColor(for level: String) -> Color {
         switch level.lowercased() {
-        case "debug": return .gray
-        case "info": return .blue
-        case "warning": return .orange
-        case "error": return .red
-        case "critical": return .purple
-        default: return .gray
+        case "debug": return secondaryForegroundColor
+        case "info": return accentColor
+        case "warning": return warningColor
+        case "error": return errorColor
+        case "critical": return Color.purple
+        default: return secondaryForegroundColor
         }
     }
 }
@@ -316,68 +468,220 @@ public struct SkeuomorphicStyle: UIAIStyle {
     public let colorScheme: UIAIColorScheme
     public var backgroundColor: Color {
         switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#F5F7FA")
+        case .stormyMorningDark: return Color(hex: "#1A2636")
+        case .peachSkylineLight: return Color(hex: "#FFF6F0")
+        case .peachSkylineDark: return Color(hex: "#2D1E2F")
+        case .emeraldOdysseyLight: return Color(hex: "#F3F9F4")
+        case .emeraldOdysseyDark: return Color(hex: "#1B3B2F")
+        case .purpleGalaxyLight: return Color(hex: "#F6F5FF")
+        case .purpleGalaxyDark: return Color(hex: "#1F1B79")
+        case .neonJungleLight: return Color(hex: "#F8FFF8")
+        case .neonJungleDark: return Color(hex: "#181818")
+        case .cappuccinoLight: return Color(hex: "#F7F3EF")
+        case .cappuccinoDark: return Color(hex: "#3E2723")
         case .light: return Color(.systemGray6)
         case .dark: return Color(.systemGray4)
         case .vibrant: return Color.orange.opacity(0.2)
         case .highContrast: return Color.white
-        case .stormyMorningLight, .stormyMorningDark, .peachSkylineLight, .peachSkylineDark, .emeraldOdysseyLight, .emeraldOdysseyDark, .purpleGalaxyLight, .purpleGalaxyDark, .neonJungleLight, .neonJungleDark, .cappuccinoLight, .cappuccinoDark:
-            return Color(.systemGray6)
         }
     }
     public var foregroundColor: Color {
         switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#1A2636")
+        case .stormyMorningDark: return Color(hex: "#F5F7FA")
+        case .peachSkylineLight: return Color(hex: "#2D1E2F")
+        case .peachSkylineDark: return Color(hex: "#FFF6F0")
+        case .emeraldOdysseyLight: return Color(hex: "#1B3B2F")
+        case .emeraldOdysseyDark: return Color(hex: "#F3F9F4")
+        case .purpleGalaxyLight: return Color(hex: "#2D1B79")
+        case .purpleGalaxyDark: return Color(hex: "#F6F5FF")
+        case .neonJungleLight: return Color(hex: "#1A1A1A")
+        case .neonJungleDark: return Color(hex: "#F8FFF8")
+        case .cappuccinoLight: return Color(hex: "#3E2723")
+        case .cappuccinoDark: return Color(hex: "#F7F3EF")
         case .light, .vibrant: return Color.primary
         case .dark: return Color.white
         case .highContrast: return Color.black
-        case .stormyMorningLight, .stormyMorningDark, .peachSkylineLight, .peachSkylineDark, .emeraldOdysseyLight, .emeraldOdysseyDark, .purpleGalaxyLight, .purpleGalaxyDark, .neonJungleLight, .neonJungleDark, .cappuccinoLight, .cappuccinoDark:
-            return Color.primary
         }
     }
     public var accentColor: Color {
         switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#3B82F6")
+        case .stormyMorningDark: return Color(hex: "#60A5FA")
+        case .peachSkylineLight: return Color(hex: "#FF8C42")
+        case .peachSkylineDark: return Color(hex: "#FFB385")
+        case .emeraldOdysseyLight: return Color(hex: "#2DD4BF")
+        case .emeraldOdysseyDark: return Color(hex: "#5EEAD4")
+        case .purpleGalaxyLight: return Color(hex: "#8E69BF")
+        case .purpleGalaxyDark: return Color(hex: "#8E69BF")
+        case .neonJungleLight: return Color(hex: "#00FF85")
+        case .neonJungleDark: return Color(hex: "#00FF85")
+        case .cappuccinoLight: return Color(hex: "#BCAAA4")
+        case .cappuccinoDark: return Color(hex: "#A1887F")
         case .light: return Color.blue
         case .dark: return Color.green
         case .vibrant: return Color.pink
         case .highContrast: return Color.red
-        case .stormyMorningLight, .stormyMorningDark, .peachSkylineLight, .peachSkylineDark, .emeraldOdysseyLight, .emeraldOdysseyDark, .purpleGalaxyLight, .purpleGalaxyDark, .neonJungleLight, .neonJungleDark, .cappuccinoLight, .cappuccinoDark:
-            return Color.blue
         }
     }
     public var cornerRadius: CGFloat { 14 }
     public var shadow: ShadowStyle? {
         ShadowStyle(color: .gray.opacity(0.3), radius: 10, x: 2, y: 4)
     }
-    public var font: Font { .system(size: 17, weight: .regular) }
-    public var errorColor: Color { Color.red }
-    public var warningColor: Color { Color.orange }
-    public var secondaryForegroundColor: Color { Color.secondary }
+    public var font: Font {
+        switch colorScheme {
+        case .stormyMorningLight, .stormyMorningDark,
+             .peachSkylineLight, .peachSkylineDark,
+             .emeraldOdysseyLight, .emeraldOdysseyDark,
+             .purpleGalaxyLight, .purpleGalaxyDark,
+             .neonJungleLight, .neonJungleDark,
+             .cappuccinoLight, .cappuccinoDark:
+            return .system(size: 17, weight: .regular, design: .default)
+        default:
+            return .system(size: 17, weight: .regular)
+        }
+    }
+    public var errorColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#EF4444")
+        case .stormyMorningDark: return Color(hex: "#F87171")
+        case .peachSkylineLight: return Color(hex: "#E4572E")
+        case .peachSkylineDark: return Color(hex: "#FF6F61")
+        case .emeraldOdysseyLight: return Color(hex: "#F87171")
+        case .emeraldOdysseyDark: return Color(hex: "#FCA5A5")
+        case .purpleGalaxyLight: return Color(hex: "#E4576E")
+        case .purpleGalaxyDark: return Color(hex: "#FF6F91")
+        case .neonJungleLight, .neonJungleDark: return Color(hex: "#FF0099")
+        case .cappuccinoLight: return Color(hex: "#D84315")
+        case .cappuccinoDark: return Color(hex: "#FF7043")
+        default: return Color.red
+        }
+    }
+    public var warningColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#F59E42")
+        case .stormyMorningDark: return Color(hex: "#FBBF24")
+        case .peachSkylineLight: return Color(hex: "#FFC857")
+        case .peachSkylineDark: return Color(hex: "#FFD580")
+        case .emeraldOdysseyLight: return Color(hex: "#FBBF24")
+        case .emeraldOdysseyDark: return Color(hex: "#FDE68A")
+        case .purpleGalaxyLight: return Color(hex: "#FFC857")
+        case .purpleGalaxyDark: return Color(hex: "#FFD580")
+        case .neonJungleLight, .neonJungleDark: return Color(hex: "#FFD600")
+        case .cappuccinoLight: return Color(hex: "#FFB300")
+        case .cappuccinoDark: return Color(hex: "#FFD54F")
+        default: return Color.orange
+        }
+    }
+    public var secondaryForegroundColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#64748B")
+        case .stormyMorningDark: return Color(hex: "#94A3B8")
+        case .peachSkylineLight, .peachSkylineDark: return Color(hex: "#A78682")
+        case .emeraldOdysseyLight: return Color(hex: "#6EE7B7")
+        case .emeraldOdysseyDark: return Color(hex: "#34D399")
+        case .purpleGalaxyLight: return Color(hex: "#B1A3E0")
+        case .purpleGalaxyDark: return Color(hex: "#604FAB")
+        case .neonJungleLight, .neonJungleDark: return Color(hex: "#1E90FF")
+        case .cappuccinoLight: return Color(hex: "#A1887F")
+        case .cappuccinoDark: return Color(hex: "#BCAAA4")
+        default: return Color.secondary
+        }
+    }
     public var logo: Image? { nil }
     public init(colorScheme: UIAIColorScheme) { self.colorScheme = colorScheme }
     public func badgeColor(for type: String) -> Color {
         switch type.lowercased() {
-        case "llm": return .blue
-        case "vlm": return .orange
-        case "embedding": return .green
-        case "diffusion": return .pink
-        default: return .gray
+        case "llm": return accentColor
+        case "vlm":
+            switch colorScheme {
+            case .stormyMorningLight: return Color(hex: "#64748B")
+            case .stormyMorningDark: return Color(hex: "#94A3B8")
+            case .peachSkylineLight, .peachSkylineDark: return Color(hex: "#A78682")
+            case .emeraldOdysseyLight: return Color(hex: "#6EE7B7")
+            case .emeraldOdysseyDark: return Color(hex: "#34D399")
+            case .purpleGalaxyLight: return Color(hex: "#B1A3E0")
+            case .purpleGalaxyDark: return Color(hex: "#604FAB")
+            case .neonJungleLight, .neonJungleDark: return Color(hex: "#1E90FF")
+            case .cappuccinoLight: return Color(hex: "#A1887F")
+            case .cappuccinoDark: return Color(hex: "#BCAAA4")
+            default: return secondaryForegroundColor
+            }
+        case "embedding":
+            switch colorScheme {
+            case .stormyMorningLight: return Color(hex: "#22C55E")
+            case .stormyMorningDark: return Color(hex: "#4ADE80")
+            case .peachSkylineLight: return Color(hex: "#76B041")
+            case .peachSkylineDark: return Color(hex: "#B7E778")
+            case .emeraldOdysseyLight: return Color(hex: "#22C55E")
+            case .emeraldOdysseyDark: return Color(hex: "#6EE7B7")
+            case .purpleGalaxyLight: return Color(hex: "#76B041")
+            case .purpleGalaxyDark: return Color(hex: "#B7E778")
+            case .neonJungleLight, .neonJungleDark: return Color(hex: "#00FF85")
+            case .cappuccinoLight: return Color(hex: "#43A047")
+            case .cappuccinoDark: return Color(hex: "#81C784")
+            default: return secondaryForegroundColor
+            }
+        case "diffusion":
+            switch colorScheme {
+            case .stormyMorningLight: return Color(hex: "#F59E42")
+            case .stormyMorningDark: return Color(hex: "#FBBF24")
+            case .peachSkylineLight: return Color(hex: "#FFC857")
+            case .peachSkylineDark: return Color(hex: "#FFD580")
+            case .emeraldOdysseyLight: return Color(hex: "#FBBF24")
+            case .emeraldOdysseyDark: return Color(hex: "#FDE68A")
+            case .purpleGalaxyLight: return Color(hex: "#FFC857")
+            case .purpleGalaxyDark: return Color(hex: "#FFD580")
+            case .neonJungleLight, .neonJungleDark: return Color(hex: "#FFD600")
+            case .cappuccinoLight: return Color(hex: "#FFB300")
+            case .cappuccinoDark: return Color(hex: "#FFD54F")
+            default: return secondaryForegroundColor
+            }
+        default: return secondaryForegroundColor
         }
     }
     public func quantizationColor(for quant: String) -> Color {
         switch quant.lowercased() {
-        case "4bit", "8bit", "fp16", "fp32": return .purple
-        default: return .gray
+        case "4bit", "8bit", "fp16", "fp32": return accentColor
+        default: return secondaryForegroundColor
         }
     }
-    public var successColor: Color { .green }
-    public var infoColor: Color { .blue }
+    public var successColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight: return Color(hex: "#22C55E")
+        case .stormyMorningDark: return Color(hex: "#4ADE80")
+        case .peachSkylineLight: return Color(hex: "#76B041")
+        case .peachSkylineDark: return Color(hex: "#B7E778")
+        case .emeraldOdysseyLight: return Color(hex: "#22C55E")
+        case .emeraldOdysseyDark: return Color(hex: "#6EE7B7")
+        case .purpleGalaxyLight: return Color(hex: "#76B041")
+        case .purpleGalaxyDark: return Color(hex: "#B7E778")
+        case .neonJungleLight, .neonJungleDark: return Color(hex: "#00FF85")
+        case .cappuccinoLight: return Color(hex: "#43A047")
+        case .cappuccinoDark: return Color(hex: "#81C784")
+        default: return Color.green
+        }
+    }
+    public var infoColor: Color {
+        switch colorScheme {
+        case .stormyMorningLight, .stormyMorningDark: return accentColor
+        case .peachSkylineLight, .peachSkylineDark: return accentColor
+        case .emeraldOdysseyLight, .emeraldOdysseyDark: return accentColor
+        case .purpleGalaxyLight, .purpleGalaxyDark: return accentColor
+        case .neonJungleLight, .neonJungleDark: return accentColor
+        case .cappuccinoLight, .cappuccinoDark: return accentColor
+        default: return Color.blue
+        }
+    }
     public func logLevelColor(for level: String) -> Color {
         switch level.lowercased() {
-        case "debug": return .gray
-        case "info": return .blue
-        case "warning": return .orange
-        case "error": return .red
-        case "critical": return .purple
-        default: return .gray
+        case "debug": return secondaryForegroundColor
+        case "info": return accentColor
+        case "warning": return warningColor
+        case "error": return errorColor
+        case "critical": return Color.purple
+        default: return secondaryForegroundColor
         }
     }
 }

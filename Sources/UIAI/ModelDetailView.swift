@@ -55,6 +55,25 @@ public struct ModelDetailView: View {
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+                // Branding Logo
+                HStack {
+                    Spacer()
+                    if let logo = uiaiStyle.logo {
+                        logo
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+                            .padding(.top, 8)
+                    } else {
+                        Image(systemName: "cube.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 32, height: 32)
+                            .foregroundColor(uiaiStyle.accentColor)
+                            .padding(.top, 8)
+                    }
+                    Spacer()
+                }
                 if let errorMessage = errorMessage, showError {
                     ErrorBanner(message: errorMessage, style: .error, isPresented: $showError)
                 }

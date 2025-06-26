@@ -61,6 +61,25 @@ public struct ModelCardView: View {
     
     public var body: some View {
         VStack(spacing: 0) {
+            // Branding Logo
+            HStack {
+                Spacer()
+                if let logo = uiaiStyle.logo {
+                    logo
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 36, height: 36)
+                        .padding(.top, 8)
+                } else {
+                    Image(systemName: "cube.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 28, height: 28)
+                        .foregroundColor(uiaiStyle.accentColor)
+                        .padding(.top, 8)
+                }
+                Spacer()
+            }
             if let errorMessage = errorMessage, showError {
                 ErrorBanner(message: errorMessage, style: .error, isPresented: $showError)
             }

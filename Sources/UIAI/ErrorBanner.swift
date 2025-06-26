@@ -29,8 +29,15 @@ public struct ErrorBanner: View {
     public var body: some View {
         if isPresented {
             HStack(spacing: 12) {
-                Image(systemName: iconName)
-                    .foregroundColor(iconColor)
+                if let logo = uiaiStyle.logo {
+                    logo
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                } else {
+                    Image(systemName: iconName)
+                        .foregroundColor(iconColor)
+                }
                 Text(message)
                     .font(uiaiStyle.font)
                     .foregroundColor(uiaiStyle.foregroundColor)
