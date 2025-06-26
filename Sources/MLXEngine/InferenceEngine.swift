@@ -304,7 +304,7 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
     ///
     /// Use this to check for LoRA, quantization, VLM, embedding, diffusion, custom prompts, or multi-modal support at runtime.
     ///
-    /// TODO: Detect and enable these features when implemented:
+    /// Feature detection is not yet implemented. Structure is ready for future expansion to support:
     ///   - .loraAdapters
     ///   - .quantizationSupport
     ///   - .visionLanguageModels

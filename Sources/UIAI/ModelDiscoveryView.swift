@@ -389,8 +389,43 @@ public struct ModelDiscoveryView: View {
     }
 
     private func updateModel(_ model: ModelDiscoveryService.ModelSummary) {
-        // TODO: Implement update logic (re-download or check for new version)
-        error = "Update not yet implemented."
+        guard downloadedModelIds.contains(model.id) else {
+            error = "Model must be downloaded before it can be updated."
+            return
+        }
+        downloadingModelId = model.id
+        downloadProgress[model.id] = 0.0
+        Task {
+            do {
+                let downloader = ModelDownloader()
+                _ = try await downloader.downloadModel(
+                    ModelConfiguration(
+                        name: model.name,
+                        hubId: model.id,
+                        description: model.description,
+                        parameters: model.parameters,
+                        quantization: model.quantization,
+                        architecture: model.architecture
+                    ),
+                    progress: { progress in
+                        Task { @MainActor in
+                            downloadProgress[model.id] = progress
+                        }
+                    }
+                )
+                await MainActor.run {
+                    downloadProgress[model.id] = 1.0
+                    downloadingModelId = nil
+                    error = nil
+                }
+            } catch {
+                await MainActor.run {
+                    handleError(error)
+                    downloadingModelId = nil
+                    downloadProgress[model.id] = nil
+                }
+            }
+        }
     }
 
     private func loadRecommendedModel() {

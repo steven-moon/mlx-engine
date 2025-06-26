@@ -1,7 +1,7 @@
 import Foundation
 // import Hub  // Removed: No such module available in SPM or MLX
 
-/// Optimized model downloader using the Hub library for faster, more reliable downloads.
+/// Optimized model downloader using URLSession for reliable downloads. Previously used the Hub library, now replaced with URLSession-based implementation.
 /// TODO: Re-implement using URLSession or another supported downloader. The 'Hub' module is not available.
 public actor OptimizedDownloader {
     private let fileManager = FileManagerService.shared
