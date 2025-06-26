@@ -1,18 +1,19 @@
 # MLXEngine API Reference
 
-> **Last Updated**: June 24, 2025
+> **Last Updated**: June 27, 2025
 
-This document provides a comprehensive reference for all public APIs in MLXEngine.
+**Note:** MLXEngine APIs require Apple Silicon (M1/M2/M3/M4) and the MLX runtime (including Metal libraries) for full functionality. Some APIs (e.g., InferenceEngine) will use a fallback implementation on unsupported platforms or in the iOS Simulator. See [architecture.md](architecture.md#platform-support) for details.
 
 ## Table of Contents
-
 - [InferenceEngine](#inferenceengine)
 - [ModelConfiguration](#modelconfiguration)
 - [ModelRegistry](#modelregistry)
 - [ChatSession](#chatsession)
-- [OptimizedDownloader (was ModelDownloader)](#optimizeddownloader)
+- [OptimizedDownloader (was ModelDownloader)](#optimizeddownloader-was-modeldownloader)
 - [HuggingFaceAPI](#huggingfaceapi)
 - [Error Types](#error-types)
+- [Developer Diagnostics](#developer-diagnostics)
+- [Usage Examples](#usage-examples)
 
 ## InferenceEngine
 
@@ -126,6 +127,30 @@ public func unload()
 engine.unload()
 ```
 
+### Feature Flags: `LLMEngineFeatures`
+
+The engine supports feature flags for experimental and optional capabilities. Use these to check for support and enable/disable features at runtime.
+
+```swift
+public enum LLMEngineFeatures: String, CaseIterable, Sendable {
+    case loraAdapters           // Enable LoRA adapter support (training/inference)
+    case quantizationSupport    // Enable quantization support (4bit, 8bit, fp16, etc.)
+    case visionLanguageModels   // Enable vision-language model (VLM) support
+    case embeddingModels        // Enable embedding model support (text embedding, semantic search)
+    case diffusionModels        // Enable diffusion model support (image generation)
+    case customPrompts          // Enable custom system/user prompt support
+    case multiModalInput        // Enable multi-modal input (text, image, etc.)
+}
+```
+
+#### Example: Checking for Feature Support
+
+```swift
+if InferenceEngine.supportedFeatures.contains(.visionLanguageModels) {
+    // Enable VLM-specific UI or logic
+}
+```
+
 ## ModelConfiguration
 
 Configuration for LLM models with metadata and generation parameters.
@@ -198,7 +223,12 @@ public func isSmallModel() -> Bool
 
 ## ModelRegistry
 
-Pre-configured collection of popular MLX-compatible models.
+Pre-configured collection of popular MLX-compatible models, including:
+- Large Language Models (LLMs)
+- Vision Language Models (VLMs)
+- Embedding Models
+- Diffusion Models (image generation)
+- Models with various quantizations (4bit, 8bit, fp16, etc.)
 
 ### Struct
 
@@ -268,6 +298,30 @@ public static func findSmallModels() -> [ModelConfiguration]
 ```
 
 **Returns:** Array of small models
+
+### Discovering Models by Type
+
+```swift
+// Find all VLMs
+let vlms = ModelRegistry.findModels(by: "LLaVA")
+
+// Find all embedding models
+let embedders = ModelRegistry.findModels(by: "BGE")
+
+// Find all diffusion models
+let diffusion = ModelRegistry.findModels(by: "StableDiffusionXL")
+
+// Find all models with fp16 quantization
+let fp16Models = ModelRegistry.findModels(byQuantization: "fp16")
+```
+
+### Example: Listing All Models
+
+```swift
+for model in ModelRegistry.allModels {
+    print("\(model.name) [\(model.architecture ?? "?")], quant: \(model.quantization ?? "?")")
+}
+```
 
 ## ChatSession
 
@@ -691,6 +745,37 @@ public enum HuggingFaceError: Error, LocalizedError {
 }
 ```
 
+## Developer Diagnostics
+
+### In-App DebugPanel (ChatApp)
+
+The ChatApp example provides a DebugPanel (DEBUG builds only) for rapid diagnostics:
+- View and filter recent logs by level.
+- Generate and copy a comprehensive debug report (system info, logs, model info).
+- Access from the Settings screen via "Show Debug Panel".
+
+### CLI Debug Tools
+
+The `mlxengine-debug-report` CLI can generate debug reports, list models, and clean up cache:
+
+```bash
+swift run mlxengine-debug-report debug
+swift run mlxengine-debug-report debug --errors-only
+swift run mlxengine-debug-report list-models
+swift run mlxengine-debug-report cleanup-cache
+```
+
+### Programmatic Debug Report Generation
+
+You can generate debug reports in code:
+
+```swift
+let report = await DebugUtility.shared.generateDebugReport(onlyErrorsAndWarnings: true)
+print(report)
+```
+
+These tools are designed to make diagnostics and troubleshooting fast and actionable for both developers and advanced users.
+
 ## Usage Examples
 
 ### Basic Text Generation
@@ -764,4 +849,4 @@ print("Logged in as: \(username)")
 
 ---
 
-*Last updated: June 24, 2025* 
+*Last updated: June 27, 2025* 

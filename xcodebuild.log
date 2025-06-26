@@ -1,0 +1,11 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme MLXChatApp -destination "platform=iOS Simulator,name=iPhone 16 Plus" -project MLXChatApp/MLXChatApp.xcodeproj -configuration Debug build
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  mlx-swift: https://github.com/ml-explore/mlx-swift.git @ 0.25.5
+  MLXEngine: https://github.com/steven-moon/mlx-engine @ main (f84c179)
+  swift-numerics: https://github.com/apple/swift-numerics @ 1.0.3
+

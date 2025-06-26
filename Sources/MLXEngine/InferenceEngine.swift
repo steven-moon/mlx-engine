@@ -4,7 +4,6 @@ import Foundation
 import MLX
 import MLXLLM
 import MLXLMCommon
-import os.log
 #endif
 
 // MARK: - Inference Engine Implementation
@@ -20,7 +19,6 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
     #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
     private var modelContainer: MLXLMCommon.ModelContainer?
     private var chatSession: MLXLMCommon.ChatSession?
-    private let logger = Logger(subsystem: "com.mlxengine", category: "InferenceEngine")
     private var mlxAvailable = false
     #endif
     
@@ -30,6 +28,11 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
     }
     
     public static func loadModel(_ config: ModelConfiguration, progress: @escaping @Sendable (Double) -> Void = { _ in }) async throws -> InferenceEngine {
+        #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
+        AppLogger.shared.info("InferenceEngine", "[DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at compile time.")
+        #else
+        AppLogger.shared.info("InferenceEngine", "[DIAGNOSTIC] MLX, MLXLLM, or MLXLMCommon are NOT available at compile time.")
+        #endif
         let engine = InferenceEngine(config: config)
         try await engine.loadModelInternal(progress: progress)
         return engine
@@ -37,51 +40,58 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
     
     private func loadModelInternal(progress: @escaping @Sendable (Double) -> Void) async throws {
         #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
-        // Check if this is a mock model (hub ID starts with "mock/")
+        AppLogger.shared.info("InferenceEngine", "[DIAGNOSTIC] Entering MLX model load logic. MLX should be available.", context: ["hubId": config.hubId])
         if config.hubId.hasPrefix("mock/") {
-            print("🔧 Using mock implementation for test model: \(config.name)")
+            AppLogger.shared.info("InferenceEngine", "🔧 Using mock implementation for test model", context: ["model": config.name])
             try await loadMockModel(progress: progress)
             return
         }
-        
-        // Try to use MLX with better error handling
         do {
             try await loadMLXModel(progress: progress)
         } catch {
-            // Log the error but continue with mock implementation
             let errorMessage = error.localizedDescription
-            print("⚠️ MLX not available, using mock implementation: \(errorMessage)")
-            
-            // Check if it's a Metal library error
+            AppLogger.shared.error("InferenceEngine", "⚠️ MLX not available, using mock implementation", context: ["error": errorMessage])
             if errorMessage.contains("metal") || 
                errorMessage.contains("steel_attention") || 
                errorMessage.contains("Unable to load function") ||
                errorMessage.contains("Function") && errorMessage.contains("was not found in the library") {
-                print("🔧 Detected Metal library error - this is expected in some environments")
+                AppLogger.shared.info("InferenceEngine", "🔧 Detected Metal library error - this is expected in some environments")
             }
-            
             try await loadMockModel(progress: progress)
         }
         #else
-        // Use mock implementation
+        AppLogger.shared.info("InferenceEngine", "[DIAGNOSTIC] MLX not available at runtime. Falling back to mock implementation.", context: ["hubId": config.hubId])
         try await loadMockModel(progress: progress)
         #endif
     }
     
     #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
     private func loadMLXModel(progress: @escaping @Sendable (Double) -> Void) async throws {
-        logger.info("🔧 Attempting to load MLX model: \(self.config.name)")
-        
-        // Set GPU memory limits
-        MLX.GPU.set(cacheLimit: 512 * 1024 * 1024) // 512MB
-        
-        // Create MLX configuration
+        AppLogger.shared.info("InferenceEngine", "🔧 Attempting to load MLX model", context: ["model": self.config.name])
+        // Validate model directory and required files
+        let modelDir = try FileManagerService.shared.getModelsDirectory().appendingPathComponent(config.hubId)
+        let requiredFiles = ["main.mlx", "config.json", "tokenizer.json"]
+        var missingFiles: [String] = []
+        for file in requiredFiles {
+            let filePath = modelDir.appendingPathComponent(file)
+            if !FileManager.default.fileExists(atPath: filePath.path) {
+                missingFiles.append(file)
+            }
+        }
+        if !missingFiles.isEmpty {
+            let presentFiles = (try? FileManager.default.contentsOfDirectory(atPath: modelDir.path)) ?? []
+            AppLogger.shared.error("InferenceEngine", "❌ Required files missing in model directory", context: [
+                "modelDir": modelDir.path,
+                "missingFiles": missingFiles.joined(separator: ", "),
+                "presentFiles": presentFiles.joined(separator: ", ")
+            ])
+            throw MLXEngineError.loadingFailed("Missing required files: \(missingFiles.joined(separator: ", ")) in \(modelDir.path)")
+        }
+        MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
         let mlxConfig = MLXLMCommon.ModelConfiguration(
             id: self.config.hubId,
             defaultPrompt: self.config.defaultSystemPrompt ?? "Hello, how can I help you?"
         )
-        
-        // Load model container with comprehensive error handling
         let modelContainer: MLXLMCommon.ModelContainer
         do {
             modelContainer = try await LLMModelFactory.shared.loadContainer(
@@ -90,79 +100,67 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
                 progress(prog.fractionCompleted)
             }
         } catch {
-            // Convert MLX errors to our error type
             let errorMessage = error.localizedDescription
-            logger.error("❌ MLX model loading failed: \(errorMessage)")
-            
-            // Check for specific MLX runtime errors
+            AppLogger.shared.error("InferenceEngine", "❌ MLX model loading failed", context: ["error": errorMessage])
             if errorMessage.contains("metal") || 
                errorMessage.contains("steel_attention") || 
                errorMessage.contains("Unable to load function") ||
-               errorMessage.contains("Function") && errorMessage.contains("was not found in the library") ||
+               (errorMessage.contains("Function") && errorMessage.contains("was not found in the library")) ||
                errorMessage.contains("File not found") {
                 throw MLXEngineError.mlxRuntimeError("MLX runtime not available: \(errorMessage)")
             } else {
                 throw MLXEngineError.loadingFailed("Failed to load MLX model: \(errorMessage)")
             }
         }
-        
         self.modelContainer = modelContainer
-        
-        // Create chat session
-        let generateParameters = MLXLMCommon.GenerateParameters(
-            maxTokens: self.maxTokens,
-            temperature: 0.7,
-            topP: 0.9
-        )
-        
+        self.mlxAvailable = true
         self.chatSession = MLXLMCommon.ChatSession(
             modelContainer,
-            instructions: self.config.defaultSystemPrompt,
-            generateParameters: generateParameters
+            instructions: config.defaultSystemPrompt
         )
-        
-        self.mlxAvailable = true
-        logger.info("✅ MLX model loaded successfully")
+        AppLogger.shared.info("InferenceEngine", "✅ MLX model loaded successfully", context: ["model": self.config.name])
     }
     #endif
     
     private func loadMockModel(progress: @escaping @Sendable (Double) -> Void) async throws {
+        AppLogger.shared.info("InferenceEngine", "✅ Mock model loaded successfully", context: ["model": config.name])
         // Simulate loading progress
         for i in 1...10 {
             try await Task.sleep(nanoseconds: 50_000_000) // 50ms
             progress(Double(i) / 10.0)
         }
-        print("✅ Mock model loaded successfully")
     }
     
     public func generate(_ prompt: String, params: GenerateParams = .init()) async throws -> String {
         guard !isUnloaded else { throw EngineError.unloaded }
         
         #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
-        if mlxAvailable, chatSession != nil {
+        AppLogger.shared.info("InferenceEngine", "[DIAGNOSTIC] MLX, MLXLLM, and MLXLMCommon are available at runtime for inference.")
+        if mlxAvailable, let chatSession = chatSession {
             do {
-                return try await generateWithMLX(prompt: prompt, params: params, chatSession: self.chatSession!)
+                return try await generateWithMLX(prompt: prompt, params: params, chatSession: chatSession)
             } catch {
-                // If MLX generation fails, fall back to mock
                 let errorMessage = error.localizedDescription
-                logger.error("⚠️ MLX generation failed, falling back to mock: \(errorMessage)")
-                
-                // Check for fatal MLX runtime errors
+                AppLogger.shared.error("InferenceEngine", "[DIAGNOSTIC] MLX inference error", context: ["error": errorMessage])
+                AppLogger.shared.error("InferenceEngine", "⚠️ MLX generation failed, falling back to mock", context: ["error": errorMessage])
                 if errorMessage.contains("metal") || 
                    errorMessage.contains("steel_attention") || 
                    errorMessage.contains("Unable to load function") ||
                    errorMessage.contains("Function") && errorMessage.contains("was not found in the library") ||
                    errorMessage.contains("fatal") ||
                    errorMessage.contains("Fatal") {
-                    logger.error("❌ Detected fatal MLX runtime error, disabling MLX for future requests")
+                    AppLogger.shared.error("InferenceEngine", "❌ Detected fatal MLX runtime error, disabling MLX for future requests")
                     mlxAvailable = false
-                    chatSession = nil
-                    modelContainer = nil
+                    self.chatSession = nil
+                    self.modelContainer = nil
                 }
-                
                 return try await generateMock(prompt: prompt, params: params)
             }
+        } else {
+            AppLogger.shared.info("InferenceEngine", "[DIAGNOSTIC] MLX is not available for inference.", context: ["mlxAvailable": "\(mlxAvailable)", "chatSession": "\(String(describing: chatSession))"])
         }
+        #else
+        AppLogger.shared.info("InferenceEngine", "[DIAGNOSTIC] MLX not available at runtime for inference. Falling back to mock.")
         #endif
         
         return try await generateMock(prompt: prompt, params: params)
@@ -184,7 +182,7 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
                         } catch {
                             // If MLX streaming fails, fall back to mock
                             let errorMessage = error.localizedDescription
-                            self.logger.error("⚠️ MLX streaming failed, falling back to mock: \(errorMessage)")
+                            AppLogger.shared.error("InferenceEngine", "⚠️ MLX streaming failed, falling back to mock: \(errorMessage)")
                             
                             // Check for fatal MLX runtime errors
                             if errorMessage.contains("metal") || 
@@ -193,7 +191,7 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
                                errorMessage.contains("Function") && errorMessage.contains("was not found in the library") ||
                                errorMessage.contains("fatal") ||
                                errorMessage.contains("Fatal") {
-                                self.logger.error("❌ Detected fatal MLX runtime error, disabling MLX for future requests")
+                                AppLogger.shared.error("InferenceEngine", "❌ Detected fatal MLX runtime error, disabling MLX for future requests")
                                 self.mlxAvailable = false
                                 self.chatSession = nil
                                 self.modelContainer = nil
@@ -223,18 +221,18 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
             modelContainer = nil
             mlxAvailable = false
             MLX.GPU.clearCache()
-            logger.info("✅ MLX model unloaded")
+            AppLogger.shared.info("InferenceEngine", "✅ MLX model unloaded", context: ["model": self.config.name])
         }
         #endif
         
-        print("✅ Model unloaded")
+        AppLogger.shared.info("InferenceEngine", "✅ Model unloaded", context: ["model": self.config.name])
     }
     
     // MARK: - MLX Implementation
     
     #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
     private func generateWithMLX(prompt: String, params: GenerateParams, chatSession: MLXLMCommon.ChatSession) async throws -> String {
-        logger.info("🤖 Generating with MLX")
+        AppLogger.shared.info("InferenceEngine", "🤖 Generating with MLX")
         
         // Update parameters if needed
         let generateParameters = MLXLMCommon.GenerateParameters(
@@ -250,13 +248,13 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
         )
         
         let result = try await newChatSession.respond(to: prompt)
-        logger.info("✅ MLX generation completed")
+        AppLogger.shared.info("InferenceEngine", "✅ MLX generation completed")
         
         return result
     }
     
     private func streamWithMLX(prompt: String, params: GenerateParams, chatSession: MLXLMCommon.ChatSession, continuation: AsyncThrowingStream<String, Error>.Continuation) async throws {
-        logger.info("🤖 Streaming with MLX")
+        AppLogger.shared.info("InferenceEngine", "🤖 Streaming with MLX")
         
         let generateParameters = MLXLMCommon.GenerateParameters(
             maxTokens: params.maxTokens,
@@ -277,7 +275,7 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
         }
         
         continuation.finish()
-        logger.info("✅ MLX streaming completed")
+        AppLogger.shared.info("InferenceEngine", "✅ MLX streaming completed")
     }
     #endif
     
@@ -301,6 +299,107 @@ public final class InferenceEngine: LLMEngine, @unchecked Sendable {
         
         continuation.finish()
     }
+    
+    /// Returns the set of supported features for this engine instance.
+    ///
+    /// Use this to check for LoRA, quantization, VLM, embedding, diffusion, custom prompts, or multi-modal support at runtime.
+    ///
+    /// TODO: Detect and enable these features when implemented:
+    ///   - .loraAdapters
+    ///   - .quantizationSupport
+    ///   - .visionLanguageModels
+    ///   - .embeddingModels
+    ///   - .diffusionModels
+    ///   - .customPrompts
+    ///   - .multiModalInput
+    public static var supportedFeatures: Set<LLMEngineFeatures> {
+        // For now, return empty set (no advanced features yet)
+        return []
+    }
+
+    /// Loads a LoRA adapter for the current model (stub).
+    ///
+    /// - Parameter adapterURL: The file URL of the LoRA adapter to load.
+    /// - Throws: An error if LoRA is not supported or loading fails.
+    public func loadLoRAAdapter(from adapterURL: URL) async throws {
+        guard Self.supportedFeatures.contains(.loraAdapters) else {
+            throw MLXEngineError.featureNotSupported("LoRA adapters are not supported by this engine.")
+        }
+        throw MLXEngineError.featureNotSupported("LoRA adapter loading is not implemented yet.")
+    }
+
+    /// Applies a loaded LoRA adapter for inference (stub).
+    ///
+    /// - Parameter adapterName: The name or identifier of the loaded adapter.
+    /// - Throws: An error if LoRA is not supported or application fails.
+    public func applyLoRAAdapter(named adapterName: String) throws {
+        guard Self.supportedFeatures.contains(.loraAdapters) else {
+            throw MLXEngineError.featureNotSupported("LoRA adapters are not supported by this engine.")
+        }
+        throw MLXEngineError.featureNotSupported("LoRA adapter application is not implemented yet.")
+    }
+
+    /// Loads a quantization configuration for the current model (stub).
+    ///
+    /// - Parameter quantizationType: The quantization type to load (e.g., "4bit", "8bit").
+    /// - Throws: An error if quantization is not supported or loading fails.
+    public func loadQuantization(_ quantizationType: String) async throws {
+        guard Self.supportedFeatures.contains(.quantizationSupport) else {
+            throw MLXEngineError.featureNotSupported("Quantization is not supported by this engine.")
+        }
+        throw MLXEngineError.featureNotSupported("Quantization loading is not implemented yet.")
+    }
+
+    /// Loads a vision-language model (VLM) component (stub).
+    ///
+    /// - Throws: An error if VLM is not supported or loading fails.
+    public func loadVisionLanguageModel() async throws {
+        guard Self.supportedFeatures.contains(.visionLanguageModels) else {
+            throw MLXEngineError.featureNotSupported("Vision-language models are not supported by this engine.")
+        }
+        throw MLXEngineError.featureNotSupported("VLM loading is not implemented yet.")
+    }
+
+    /// Loads an embedding model component (stub).
+    ///
+    /// - Throws: An error if embedding models are not supported or loading fails.
+    public func loadEmbeddingModel() async throws {
+        guard Self.supportedFeatures.contains(.embeddingModels) else {
+            throw MLXEngineError.featureNotSupported("Embedding models are not supported by this engine.")
+        }
+        throw MLXEngineError.featureNotSupported("Embedding model loading is not implemented yet.")
+    }
+
+    /// Loads a diffusion model component (stub).
+    ///
+    /// - Throws: An error if diffusion models are not supported or loading fails.
+    public func loadDiffusionModel() async throws {
+        guard Self.supportedFeatures.contains(.diffusionModels) else {
+            throw MLXEngineError.featureNotSupported("Diffusion models are not supported by this engine.")
+        }
+        throw MLXEngineError.featureNotSupported("Diffusion model loading is not implemented yet.")
+    }
+
+    /// Sets a custom system/user prompt for the model (stub).
+    ///
+    /// - Parameter prompt: The custom prompt to set.
+    /// - Throws: An error if custom prompts are not supported.
+    public func setCustomPrompt(_ prompt: String) throws {
+        guard Self.supportedFeatures.contains(.customPrompts) else {
+            throw MLXEngineError.featureNotSupported("Custom prompts are not supported by this engine.")
+        }
+        throw MLXEngineError.featureNotSupported("Custom prompt setting is not implemented yet.")
+    }
+
+    /// Loads multi-modal input support (stub).
+    ///
+    /// - Throws: An error if multi-modal input is not supported or loading fails.
+    public func loadMultiModalInput() async throws {
+        guard Self.supportedFeatures.contains(.multiModalInput) else {
+            throw MLXEngineError.featureNotSupported("Multi-modal input is not supported by this engine.")
+        }
+        throw MLXEngineError.featureNotSupported("Multi-modal input loading is not implemented yet.")
+    }
 }
 
 // MARK: - Error Types
@@ -322,6 +421,7 @@ public enum MLXEngineError: Error, LocalizedError {
     case modelNotLoaded
     case generationFailed(String)
     case loadingFailed(String)
+    case featureNotSupported(String)
     
     public var errorDescription: String? {
         switch self {
@@ -335,6 +435,8 @@ public enum MLXEngineError: Error, LocalizedError {
             return "Text generation failed: \(reason)"
         case .loadingFailed(let reason):
             return "Model loading failed: \(reason)"
+        case .featureNotSupported(let reason):
+            return "Feature not supported: \(reason)"
         }
     }
 }

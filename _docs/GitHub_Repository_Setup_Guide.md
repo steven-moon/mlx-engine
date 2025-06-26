@@ -1053,3 +1053,45 @@ Would you like me to help you execute any of these steps, starting with creating
 ---
 
 *Last updated: 2025-01-27* 
+```
+
+## MLX Package Dependency Management: Best Practices
+
+### Stable/Release Development (Recommended for Most Contributors)
+- The project uses the remote MLX repositories by default:
+  - `mlx-swift` from GitHub, e.g. `from: 0.10.0`
+  - `mlx-swift-examples` from GitHub, branch `main`
+- **To update to a new MLX version:**
+  1. Edit `project.yml` and `Package.swift` to update the version/tag/branch.
+  2. Run `swift package update` and regenerate your Xcode project (`xcodegen generate`).
+  3. Clean and rebuild your project.
+- This ensures all contributors use the same, stable MLX code.
+
+### Local MLX Development (For Core/Advanced Contributors)
+- If you want to make changes to MLX and see them reflected immediately:
+  1. Clone `mlx-swift` locally (e.g., `git clone https://github.com/ml-explore/mlx-swift.git ~/Documents/GitHub/mlx-swift`).
+  2. In `project.yml` and `Package.swift`, change the MLX dependency to use a local path:
+     - `project.yml`:
+       ```yaml
+       packages:
+         mlx-swift:
+           path: ../mlx-swift
+       ```
+     - `Package.swift`:
+       ```swift
+       .package(name: "mlx-swift", path: "../mlx-swift"),
+       ```
+  3. Regenerate your Xcode project and rebuild.
+  4. Any changes you make in `mlx-swift` will now be reflected immediately in your app.
+- **To return to remote/stable:**
+  1. Revert the path to the remote URL and version/tag.
+  2. Run `swift package update` and rebuild.
+
+### General Advice for Open Source Contributors
+- Use remote dependencies for stability and reproducibility.
+- Use local path dependencies only for active MLX development.
+- Always commit and push changes to your fork/branch before updating the app to use a new version/tag.
+- Document any custom changes to MLX in your PRs/issues.
+
+---
+*Last updated: 2025-06-26*

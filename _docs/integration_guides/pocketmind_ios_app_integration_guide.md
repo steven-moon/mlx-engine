@@ -1,5 +1,7 @@
 # PocketMind iOS App Integration Guide
 
+> For dependency setup, see the main [README](../README.md).
+
 > **Purpose**: Leverage PocketMind's real-world MLX integration patterns and iOS-specific optimizations for MLXEngine  
 > **Status**: ✅ **PRODUCTION iOS APP WITH MLX INTEGRATION**  
 > **Priority**: 🟡 **HIGH - REAL-WORLD PATTERNS AND OPTIMIZATIONS**
@@ -484,4 +486,4 @@ The `pocketmind-ios-app-main` project provides **valuable real-world patterns** 
 
 ---
 
-*Last updated: 2025-06-24* 
+*Last updated: 2025-06-27* 

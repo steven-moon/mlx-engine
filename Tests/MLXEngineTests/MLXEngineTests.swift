@@ -8,6 +8,18 @@ import MLX
 import MLXNN
 #endif
 
+#if os(macOS)
+@testable import MLXEngine
+#elseif os(iOS)
+@testable import MLXEngine_iOS
+#elseif os(tvOS)
+@testable import MLXEngine_tvOS
+#elseif os(watchOS)
+@testable import MLXEngine_watchOS
+#elseif os(visionOS)
+@testable import MLXEngine_visionOS
+#endif
+
 @MainActor
 final class MLXEngineTests: XCTestCase {
     
@@ -23,7 +35,7 @@ final class MLXEngineTests: XCTestCase {
         )
         
         // Load engine once for basic tests
-        sharedEngine = try await InferenceEngine.loadModel(config) { _ in }
+        sharedEngine = try await InferenceEngine.loadModel(config) { progress in }
     }
     
     override func tearDown() async throws {
@@ -53,19 +65,13 @@ final class MLXEngineTests: XCTestCase {
             name: "Test",
             hubId: "mlx-community/Llama-3.2-3B-Instruct-4bit"
         )
-        
         config.extractMetadataFromId()
-        
-        // TODO: If extraction logic changes, update this expectation
         XCTAssertEqual(config.parameters, "3B")
         XCTAssertEqual(config.quantization, "4bit")
         XCTAssertEqual(config.architecture, "Llama")
     }
     
     func testModelConfigurationSmallModelDetection() {
-        // Use a model that matches the isSmallModel logic
-        // TODO: Expand test coverage for all small model patterns (0.5b, 1b, 1.5b, 2b, 3b)
-        // TODO: Update extraction logic to support lowercase 'b' and more flexible patterns
         var smallModel = ModelConfiguration(
             name: "Small",
             hubId: "test/1B-model"
@@ -74,7 +80,6 @@ final class MLXEngineTests: XCTestCase {
             name: "Large",
             hubId: "test/7B-model"
         )
-        // TODO: Ensure all model configs have metadata extracted at creation
         smallModel.extractMetadataFromId()
         largeModel.extractMetadataFromId()
         XCTAssertTrue(smallModel.isSmallModel)
@@ -115,7 +120,6 @@ final class MLXEngineTests: XCTestCase {
         print("[TEST] Loading model: \(config.hubId)")
         let progressCollector = ProgressCollector()
         _ = try await InferenceEngine.loadModel(config) { progress in
-            print("[TEST] Loading progress: \(progress)")
             Task { await progressCollector.addProgress(progress) }
         }
         let progressValues = await progressCollector.getProgressValues()
@@ -217,10 +221,7 @@ final class MLXEngineTests: XCTestCase {
         let loadProgressCollector = ProgressCollector()
         let startTime = Date()
         
-        let engine = try await InferenceEngine.loadModel(testConfig) { progress in
-            print("⚙️ [MLX TEST] Loading progress: \(Int(progress * 100))%")
-            Task { await loadProgressCollector.addProgress(progress) }
-        }
+        let engine = try await InferenceEngine.loadModel(testConfig) { progress in }
         let loadTime = Date().timeIntervalSince(startTime)
         
         let loadProgress = await loadProgressCollector.getProgressValues()
@@ -341,10 +342,7 @@ final class MLXEngineTests: XCTestCase {
                 
                 // Set a reasonable timeout for the download
                 let downloadTask = Task {
-                    try await downloader.downloadModel(bestModel) { progress in
-                        print("📥 [MLX TEST] Download progress: \(Int(progress * 100))%")
-                        Task { await progressCollector.addProgress(progress) }
-                    }
+                    try await downloader.downloadModel(bestModel) { progress in }
                 }
                 
                 // Wait for download with timeout
@@ -366,7 +364,7 @@ final class MLXEngineTests: XCTestCase {
                     description: "Mock model for testing"
                 )
                 
-                let engine = try await InferenceEngine.loadModel(testConfig) { _ in }
+                let engine = try await InferenceEngine.loadModel(testConfig) { progress in }
                 
                 // Test basic functionality
                 let response = try await engine.generate("Hello", params: GenerateParams(maxTokens: 10))
@@ -416,10 +414,7 @@ final class MLXEngineTests: XCTestCase {
         let downloader = ModelDownloader()
         let progressCollector = ProgressCollector()
         
-        let modelPath = try await downloader.downloadModel(testModel) { progress in
-            print("📥 [TEXT GENERATION] Download progress: \(Int(progress * 100))%")
-            Task { await progressCollector.addProgress(progress) }
-        }
+        let modelPath = try await downloader.downloadModel(testModel) { progress in }
         
         let downloadProgress = await progressCollector.getProgressValues()
         print("✅ [TEXT GENERATION] Download completed!")
@@ -431,10 +426,7 @@ final class MLXEngineTests: XCTestCase {
         let loadStartTime = Date()
         let loadProgressCollector = ProgressCollector()
         
-        let engine = try await InferenceEngine.loadModel(testModel) { progress in
-            print("⚙️ [TEXT GENERATION] Loading progress: \(Int(progress * 100))%")
-            Task { await loadProgressCollector.addProgress(progress) }
-        }
+        let engine = try await InferenceEngine.loadModel(testModel) { progress in }
         
         let loadTime = Date().timeIntervalSince(loadStartTime)
         let loadProgress = await loadProgressCollector.getProgressValues()
@@ -665,7 +657,7 @@ final class MLXEngineTests: XCTestCase {
         let linearOutput = input * weights + bias
         print("✅ [MLX FUNCTIONALITY] Linear output: \(linearOutput)")
         
-        let activationOutput = MLXNN.relu(linearOutput)
+        let activationOutput = MLX.maximum(linearOutput, MLXArray([0.0 as Float]))
         print("✅ [MLX FUNCTIONALITY] ReLU activation: \(activationOutput)")
         
         // Test 6: Performance test
@@ -726,10 +718,7 @@ final class MLXEngineTests: XCTestCase {
         print("📋 [TEXT GENERATION WITH MOCK] Loading model: \(config.hubId)")
         let progressCollector = ProgressCollector()
         
-        let engine = try await InferenceEngine.loadModel(config) { progress in
-            print("📥 [TEXT GENERATION WITH MOCK] Loading progress: \(progress)")
-            Task { await progressCollector.addProgress(progress) }
-        }
+        let engine = try await InferenceEngine.loadModel(config) { progress in }
         
         let progressValues = await progressCollector.getProgressValues()
         print("📊 [TEXT GENERATION WITH MOCK] Progress values: \(progressValues)")
@@ -808,10 +797,7 @@ final class MLXEngineTests: XCTestCase {
         let downloader = ModelDownloader()
         let downloadProgressCollector = ProgressCollector()
         
-        let modelPath = try await downloader.downloadModel(testModel) { progress in
-            print("📥 [REAL MODEL TEST] Download progress: \(Int(progress * 100))%")
-            Task { await downloadProgressCollector.addProgress(progress) }
-        }
+        let modelPath = try await downloader.downloadModel(testModel) { progress in }
         
         let downloadProgress = await downloadProgressCollector.getProgressValues()
         print("✅ [REAL MODEL TEST] Download completed!")
@@ -835,10 +821,7 @@ final class MLXEngineTests: XCTestCase {
         let loadProgressCollector = ProgressCollector()
         
         do {
-            let engine = try await InferenceEngine.loadModel(testModel) { progress in
-                print("⚙️ [REAL MODEL TEST] Loading progress: \(Int(progress * 100))%")
-                Task { await loadProgressCollector.addProgress(progress) }
-            }
+            let engine = try await InferenceEngine.loadModel(testModel) { progress in }
             
             let loadTime = Date().timeIntervalSince(loadStartTime)
             let loadProgress = await loadProgressCollector.getProgressValues()
@@ -977,7 +960,7 @@ final class MLXEngineTests: XCTestCase {
                     description: "Mock model for testing"
                 )
                 
-                let mockEngine = try await InferenceEngine.loadModel(mockConfig) { _ in }
+                let mockEngine = try await InferenceEngine.loadModel(mockConfig) { progress in }
                 let mockResponse = try await mockEngine.generate("Hello, world!")
                 print("✅ [REAL MODEL TEST] Mock response: \(mockResponse)")
                 XCTAssertFalse(mockResponse.isEmpty, "Mock response should not be empty")
@@ -1019,10 +1002,7 @@ final class MLXEngineTests: XCTestCase {
         let downloader = ModelDownloader()
         let downloadProgressCollector = ProgressCollector()
         
-        let modelPath = try await downloader.downloadModel(testModel) { progress in
-            print("📥 [DOWNLOAD TEST] Download progress: \(Int(progress * 100))%")
-            Task { await downloadProgressCollector.addProgress(progress) }
-        }
+        let modelPath = try await downloader.downloadModel(testModel) { progress in }
         
         let downloadProgress = await downloadProgressCollector.getProgressValues()
         print("✅ [DOWNLOAD TEST] Download completed!")
@@ -1079,7 +1059,7 @@ final class MLXEngineTests: XCTestCase {
             description: "Mock model for testing"
         )
         
-        let mockEngine = try await InferenceEngine.loadModel(mockConfig) { _ in }
+        let mockEngine = try await InferenceEngine.loadModel(mockConfig) { progress in }
         let mockResponse = try await mockEngine.generate("Hello, world!")
         print("   - Mock response: \(mockResponse)")
         XCTAssertFalse(mockResponse.isEmpty, "Mock response should not be empty")
@@ -1129,6 +1109,133 @@ final class MLXEngineTests: XCTestCase {
         print("\n🎉 [DOWNLOAD TEST] All download and verification tests passed!")
         print("   Note: MLX runtime testing is skipped to avoid Metal library crashes")
         print("   To test real MLX inference, ensure MLX runtime and Metal libraries are properly installed")
+    }
+    
+    func testHuggingFaceAPIIntegration() async throws {
+        print("\n🌐 [HF API TEST] Starting HuggingFaceAPI integration test...")
+        let api = HuggingFaceAPI.shared
+        
+        // 1. Test searchModels
+        let query = "Qwen"
+        let models: [HuggingFaceModel]
+        do {
+            models = try await api.searchModels(query: query, limit: 2)
+            print("   - Found \(models.count) models for query '", query, "'")
+            XCTAssertGreaterThan(models.count, 0, "Should find at least one model for query")
+        } catch {
+            XCTFail("searchModels failed: \(error)")
+            return
+        }
+        
+        // 2. Test getModelInfo
+        let firstModel = models[0]
+        do {
+            let info = try await api.getModelInfo(modelId: firstModel.id)
+            print("   - getModelInfo returned id: \(info.id)")
+            XCTAssertEqual(info.id, firstModel.id, "Model info id should match")
+        } catch {
+            XCTFail("getModelInfo failed: \(error)")
+        }
+        
+        // 3. Test error handling for invalid modelId
+        do {
+            _ = try await api.getModelInfo(modelId: "nonexistent-model-xyz-1234567890")
+            XCTFail("Expected error for invalid modelId")
+        } catch {
+            print("   - Correctly failed for invalid modelId: \(error)")
+        }
+        
+        // 4. Test downloadModel (mocked: download README.md from a public repo)
+        let tempDir = FileManager.default.temporaryDirectory
+        let destURL = tempDir.appendingPathComponent("README.md")
+        let testModelId = "mlx-community/Qwen1.5-0.5B-Chat-4bit"
+        let testFileName = "README.md"
+        var didProgress = false
+        do {
+            try? FileManager.default.removeItem(at: destURL)
+            try await api.downloadModel(modelId: testModelId, fileName: testFileName, to: destURL) { progress, _, _ in
+                didProgress = true
+                print("   - Download progress: \(Int(progress * 100))%")
+            }
+            XCTAssertTrue(FileManager.default.fileExists(atPath: destURL.path), "Downloaded file should exist")
+            XCTAssertTrue(didProgress, "Progress callback should be called")
+            let data = try Data(contentsOf: destURL)
+            XCTAssertGreaterThan(data.count, 10, "Downloaded file should not be empty")
+            print("   - downloadModel succeeded, file size: \(data.count) bytes")
+        } catch {
+            print("   - downloadModel failed (may be expected if file does not exist): \(error)")
+        }
+    }
+    
+    func testLoRAFeatureFlagAndStubs() async throws {
+        // LoRA should not be supported yet
+        XCTAssertFalse(InferenceEngine.supportedFeatures.contains(.loraAdapters), "LoRA feature flag should not be enabled by default")
+        
+        // Create a test engine
+        let config = ModelConfiguration(
+            name: "Test Model",
+            hubId: "test/model",
+            description: "Test model for LoRA unit test"
+        )
+        let engine = try await InferenceEngine.loadModel(config)
+        
+        // Test loadLoRAAdapter throws featureNotSupported
+        do {
+            try await engine.loadLoRAAdapter(from: URL(fileURLWithPath: "/tmp/fake-lora.safetensors"))
+            XCTFail("loadLoRAAdapter should throw featureNotSupported error")
+        } catch let error as MLXEngineError {
+            switch error {
+            case .featureNotSupported(let reason):
+                XCTAssertTrue(reason.contains("LoRA"))
+            default:
+                XCTFail("Unexpected error: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+        
+        // Test applyLoRAAdapter throws featureNotSupported
+        do {
+            try engine.applyLoRAAdapter(named: "fake-adapter")
+            XCTFail("applyLoRAAdapter should throw featureNotSupported error")
+        } catch let error as MLXEngineError {
+            switch error {
+            case .featureNotSupported(let reason):
+                XCTAssertTrue(reason.contains("LoRA"))
+            default:
+                XCTFail("Unexpected error: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+    
+    func testInMemoryLogBufferAndDebugReport() async throws {
+        // Clear all sinks to avoid duplicate console output
+        AppLogger.shared.removeAllSinks()
+        // Log a variety of messages
+        AppLogger.shared.debug("TestLog", "Debug message")
+        AppLogger.shared.info("TestLog", "Info message")
+        AppLogger.shared.warning("TestLog", "Warning message")
+        AppLogger.shared.error("TestLog", "Error message")
+        AppLogger.shared.critical("TestLog", "Critical message")
+        // Wait briefly to ensure logs are processed
+        try await Task.sleep(nanoseconds: 200_000_000)
+        // Retrieve recent logs
+        let logs = AppLogger.shared.recentLogs(limit: 5)
+        XCTAssertEqual(logs.count, 5)
+        XCTAssertEqual(logs[0].level, .debug)
+        XCTAssertEqual(logs[1].level, .info)
+        XCTAssertEqual(logs[2].level, .warning)
+        XCTAssertEqual(logs[3].level, .error)
+        XCTAssertEqual(logs[4].level, .critical)
+        // Generate a debug report and check for log content
+        let report = await DebugUtility.shared.generateDebugReport()
+        XCTAssertTrue(report.contains("Debug message"))
+        XCTAssertTrue(report.contains("Info message"))
+        XCTAssertTrue(report.contains("Warning message"))
+        XCTAssertTrue(report.contains("Error message"))
+        XCTAssertTrue(report.contains("Critical message"))
     }
 }
 

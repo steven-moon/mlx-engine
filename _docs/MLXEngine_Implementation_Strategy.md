@@ -135,4 +135,27 @@ This document summarizes the architecture, strengths, and unique features of fou
 
 ---
 
+## Diagnostics & Developer Tooling
+
+A core part of MLXEngine's strategy is to provide robust, actionable diagnostics for both developers and advanced users. This includes:
+
+- **In-App DebugPanel (DEBUG builds):**
+  - Accessible from the ChatApp Settings screen.
+  - Shows recent logs with log level filtering.
+  - Allows generation and copying of comprehensive debug reports (system info, logs, model info).
+  - Designed for rapid troubleshooting and sharing diagnostics with maintainers.
+
+- **CLI Debug Tools:**
+  - `mlxengine-debug-report` CLI for generating debug reports, listing models, and cleaning up cache.
+  - Useful for headless environments, CI, and remote debugging.
+
+- **Philosophy:**
+  - Surface actionable information (not just raw logs) to speed up root cause analysis.
+  - Make it easy to share diagnostics with maintainers and the community.
+  - Ensure all diagnostics are available both programmatically and via UI/CLI.
+
+This approach ensures that issues can be quickly identified and resolved, improving developer velocity and reliability for all users.
+
+---
+
 *Last updated: {{date}}* 

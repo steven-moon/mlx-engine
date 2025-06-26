@@ -1,5 +1,7 @@
 # MLX Swift Examples Integration Guide
 
+> For dependency setup, see the main [README](../README.md).
+
 > **Purpose**: Leverage the official MLX Swift Examples project for proven MLX integration patterns and model implementations  
 > **Status**: ✅ **OFFICIAL MLX LIBRARIES AVAILABLE**  
 > **Priority**: 🔴 **CRITICAL - FOUNDATION FOR REAL MLX INTEGRATION**
@@ -453,4 +455,4 @@ The `mlx-swift-examples` project provides the **official foundation** for real M
 
 ---
 
-*Last updated: 2025-06-24* 
+*Last updated: 2025-06-27* 

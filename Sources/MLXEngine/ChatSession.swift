@@ -157,7 +157,40 @@ public final class ChatSession: @unchecked Sendable {
     
     /// Imports a conversation from a formatted string.
     public func importConversation(_ conversation: String) {
-        // TODO: Implement conversation import
-        // This would parse the exported format and reconstruct the messages
+        // Parse the exported format and reconstruct the messages
+        let lines = conversation.components(separatedBy: .newlines)
+        var parsedMessages: [ChatMessage] = []
+        var currentRole: ChatMessage.Role? = nil
+        var currentTimestamp: Date? = nil
+        var currentContent: String = ""
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .medium
+        dateFormatter.locale = .current
+
+        for line in lines {
+            if line.hasPrefix("[SYSTEM]") || line.hasPrefix("[USER]") || line.hasPrefix("[ASSISTANT]") {
+                // Save previous message if any
+                if let role = currentRole, let timestamp = currentTimestamp {
+                    parsedMessages.append(ChatMessage(role: role, content: currentContent.trimmingCharacters(in: .whitespacesAndNewlines), timestamp: timestamp))
+                }
+                // Parse new header
+                let parts = line.components(separatedBy: "] ")
+                if parts.count == 2 {
+                    let roleString = parts[0].trimmingCharacters(in: CharacterSet(charactersIn: "[]")).lowercased()
+                    let timestampString = parts[1]
+                    currentRole = ChatMessage.Role(rawValue: roleString)
+                    currentTimestamp = dateFormatter.date(from: timestampString) ?? Date()
+                    currentContent = ""
+                }
+            } else if !line.trimmingCharacters(in: .whitespaces).isEmpty {
+                currentContent += (currentContent.isEmpty ? "" : "\n") + line
+            }
+        }
+        // Add the last message
+        if let role = currentRole, let timestamp = currentTimestamp {
+            parsedMessages.append(ChatMessage(role: role, content: currentContent.trimmingCharacters(in: .whitespacesAndNewlines), timestamp: timestamp))
+        }
+        queue.sync { messages = parsedMessages }
     }
 } 

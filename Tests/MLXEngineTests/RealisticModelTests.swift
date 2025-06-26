@@ -9,127 +9,131 @@ final class RealisticModelTests: XCTestCase {
     // MARK: - Real Model Download Tests
     
     func testRealModelDownloadAndInference() async throws {
-        // Skip this test if we're in a CI environment or if MLX is not available
         #if targetEnvironment(simulator)
+        AppLogger.shared.info("RealisticModelTests", "Skipping real model test in simulator - MLX not available")
         throw XCTSkip("Skipping real model test in simulator - MLX not available")
         #endif
-        
-        // Check if we should run real model tests
         let shouldRunRealTests = ProcessInfo.processInfo.environment["MLXENGINE_RUN_REAL_TESTS"] == "true"
         if !shouldRunRealTests {
+            AppLogger.shared.info("RealisticModelTests", "Skipping real model test - set MLXENGINE_RUN_REAL_TESTS=true to enable")
             throw XCTSkip("Skipping real model test - set MLXENGINE_RUN_REAL_TESTS=true to enable")
         }
-        
-        print("\n🚀 [REAL MODEL TEST] Starting comprehensive real model test...")
-        
-        // Step 1: Select a small, fast model for testing
-        let testModel = ModelRegistry.qwen05B
-        print("✅ [REAL MODEL TEST] Selected model: \(testModel.name)")
-        print("   - Hub ID: \(testModel.hubId)")
-        print("   - Parameters: \(testModel.parameters ?? "Unknown")")
-        print("   - Estimated Size: \(testModel.estimatedSizeGB ?? 0) GB")
-        
-        // Step 2: Download the model
-        print("\n📥 [REAL MODEL TEST] Downloading model...")
+        AppLogger.shared.info("RealisticModelTests", "🚀 Starting comprehensive real model test...")
+        let testStartTime = Date()
+        let testModel = ModelConfiguration(
+            name: "Qwen3 0.6B 4bit",
+            hubId: "mlx-community/Qwen3-0.6B-4bit",
+            description: "Qwen3 0.6B 4bit from MLX sample",
+            parameters: "0.6B",
+            quantization: "4bit",
+            architecture: "Qwen3",
+            maxTokens: 4096,
+            estimatedSizeGB: 0.3,
+            defaultSystemPrompt: "Why is the sky blue?"
+        )
+        AppLogger.shared.info("RealisticModelTests", "Selected model", context: ["model": testModel.name, "hubId": testModel.hubId])
+        let downloadStartTime = Date()
         let downloader = ModelDownloader()
         let downloadProgressCollector = ProgressCollector()
-        
+        AppLogger.shared.info("RealisticModelTests", "Initiating model download", context: ["startTime": "\(downloadStartTime)"])
         let modelPath = try await downloader.downloadModel(testModel) { progress in
-            print("📥 [REAL MODEL TEST] Download progress: \(Int(progress * 100))%")
+            AppLogger.shared.info("RealisticModelTests", "Download progress", context: ["progress": "\(Int(progress * 100))%", "time": "\(Date())"])
             Task { await downloadProgressCollector.addProgress(progress) }
         }
-        
+        let downloadEndTime = Date()
+        AppLogger.shared.info("RealisticModelTests", "Model download complete", context: ["elapsed": "\(downloadEndTime.timeIntervalSince(downloadStartTime))s"])
         let downloadProgress = await downloadProgressCollector.getProgressValues()
-        print("✅ [REAL MODEL TEST] Download completed!")
-        print("   - Model path: \(modelPath.path)")
-        print("   - Progress points: \(downloadProgress.count)")
-        
-        // Verify the model files exist
+        AppLogger.shared.info("RealisticModelTests", "Download completed", context: ["modelPath": modelPath.path, "progressPoints": "\(downloadProgress.count)"])
+        let fileManager = FileManager.default
+        let modelFiles = ["config.json", "tokenizer.json", "model.safetensors"]
+        var totalModelSize: Int64 = 0
+        for file in modelFiles {
+            let fileURL = modelPath.appendingPathComponent(file)
+            if let attrs = try? fileManager.attributesOfItem(atPath: fileURL.path), let size = attrs[.size] as? Int64 {
+                AppLogger.shared.info("RealisticModelTests", "Model file size", context: ["file": file, "size": "\(size)", "time": "\(Date())"])
+                totalModelSize += size
+            } else {
+                AppLogger.shared.warning("RealisticModelTests", "Model file not found or unreadable", context: ["file": file, "time": "\(Date())"])
+            }
+        }
+        AppLogger.shared.info("RealisticModelTests", "Total model size", context: ["bytes": "\(totalModelSize)", "MB": "\(String(format: "%.2f", Double(totalModelSize) / 1024 / 1024))"])
         let configFile = modelPath.appendingPathComponent("config.json")
         let tokenizerFile = modelPath.appendingPathComponent("tokenizer.json")
         let modelFile = modelPath.appendingPathComponent("model.safetensors")
-        
-        XCTAssertTrue(FileManager.default.fileExists(atPath: configFile.path), "Config file should exist")
-        XCTAssertTrue(FileManager.default.fileExists(atPath: tokenizerFile.path), "Tokenizer file should exist")
-        XCTAssertTrue(FileManager.default.fileExists(atPath: modelFile.path), "Model file should exist")
-        
-        print("✅ [REAL MODEL TEST] All model files verified!")
-        
-        // Step 3: Test model loading
-        print("\n⚙️ [REAL MODEL TEST] Testing model loading...")
+        AppLogger.shared.info("RealisticModelTests", "Verifying model files", context: ["time": "\(Date())"])
+        XCTAssertTrue(fileManager.fileExists(atPath: configFile.path), "Config file should exist")
+        XCTAssertTrue(fileManager.fileExists(atPath: tokenizerFile.path), "Tokenizer file should exist")
+        XCTAssertTrue(fileManager.fileExists(atPath: modelFile.path), "Model file should exist")
+        AppLogger.shared.info("RealisticModelTests", "All model files verified", context: ["time": "\(Date())"])
+        AppLogger.shared.info("RealisticModelTests", "Testing model loading", context: ["time": "\(Date())"])
         let loadStartTime = Date()
         let loadProgressCollector = ProgressCollector()
-        
         do {
             let engine = try await InferenceEngine.loadModel(testModel) { progress in
-                print("⚙️ [REAL MODEL TEST] Loading progress: \(Int(progress * 100))%")
+                AppLogger.shared.info("RealisticModelTests", "Model load progress", context: ["progress": "\(Int(progress * 100))%", "time": "\(Date())"])
                 Task { await loadProgressCollector.addProgress(progress) }
             }
-            
-            let loadTime = Date().timeIntervalSince(loadStartTime)
+            let loadEndTime = Date()
+            AppLogger.shared.info("RealisticModelTests", "Model loaded", context: ["elapsed": "\(loadEndTime.timeIntervalSince(loadStartTime))s"])
+            let loadTime = loadEndTime.timeIntervalSince(loadStartTime)
             let loadProgress = await loadProgressCollector.getProgressValues()
-            print("✅ [REAL MODEL TEST] Model loaded successfully!")
+            print("✅ [REAL MODEL TEST] Model loaded successfully at \(loadEndTime)!")
             print("   - Load time: \(String(format: "%.2f", loadTime)) seconds")
             print("   - Progress points: \(loadProgress.count)")
             
             // Step 4: Test text generation
-            print("\n💬 [REAL MODEL TEST] Testing text generation...")
+            print("\n💬 [REAL MODEL TEST] Testing text generation at \(Date())...")
             let testPrompts = [
                 "Hello! Please respond with a short, friendly greeting.",
                 "What is 2 + 2? Please answer briefly.",
                 "Tell me a short joke."
             ]
-            
             for (index, prompt) in testPrompts.enumerated() {
-                print("\n📝 [REAL MODEL TEST] Test \(index + 1): \"\(prompt)\"")
-                
+                print("\n📝 [REAL MODEL TEST] Test \(index + 1): \"\(prompt)\" at \(Date())")
                 let generateStartTime = Date()
                 let response = try await engine.generate(prompt, params: GenerateParams(maxTokens: 50, temperature: 0.7))
-                let generateTime = Date().timeIntervalSince(generateStartTime)
-                
-                print("✅ [REAL MODEL TEST] Generation completed!")
+                let generateEndTime = Date()
+                let generateTime = generateEndTime.timeIntervalSince(generateStartTime)
+                print("✅ [REAL MODEL TEST] Generation completed at \(generateEndTime)!")
                 print("   - Generation time: \(String(format: "%.2f", generateTime)) seconds")
                 print("   - Response: \"\(response)\"")
-                
                 // Verify we got a meaningful response
                 XCTAssertFalse(response.isEmpty, "Generated response should not be empty")
                 XCTAssertGreaterThan(response.count, 5, "Response should be substantial")
-                
+                // Fail if a mock response is returned on Apple Silicon
+                #if arch(arm64)
+                XCTAssertFalse(response.contains("[Mock"), "Should not be a mock response on Apple Silicon")
+                #endif
                 // Check if it's a real MLX response (not mock)
                 if response.contains("[Mock") || response.contains("mock") {
-                    print("⚠️ [REAL MODEL TEST] Using mock response - MLX may not be fully available")
+                    print("⚠️ [REAL MODEL TEST] Using mock response - MLX may not be fully available at \(Date())")
                 } else {
-                    print("✅ [REAL MODEL TEST] Using real MLX response!")
+                    print("✅ [REAL MODEL TEST] Using real MLX response at \(Date())!")
                 }
             }
-            
             // Step 5: Test chat session
-            print("\n💭 [REAL MODEL TEST] Testing chat session...")
+            print("\n💭 [REAL MODEL TEST] Testing chat session at \(Date())...")
             let chatSession = ChatSession(engine: engine)
-            
             let chatStartTime = Date()
             let chatResponse = try await chatSession.generateResponse("Hi! What's your name?")
-            let chatTime = Date().timeIntervalSince(chatStartTime)
-            
-            print("✅ [REAL MODEL TEST] Chat completed!")
+            let chatEndTime = Date()
+            let chatTime = chatEndTime.timeIntervalSince(chatStartTime)
+            print("✅ [REAL MODEL TEST] Chat completed at \(chatEndTime)!")
             print("   - Chat time: \(String(format: "%.2f", chatTime)) seconds")
             print("   - Chat response: \"\(chatResponse)\"")
-            
             // Verify chat response
             XCTAssertFalse(chatResponse.isEmpty, "Chat response should not be empty")
-            
             // Step 6: Cleanup
-            print("\n🧹 [REAL MODEL TEST] Cleaning up resources...")
+            print("\n🧹 [REAL MODEL TEST] Cleaning up resources at \(Date())...")
             engine.unload()
-            print("✅ [REAL MODEL TEST] Resources cleaned up!")
-            
-            print("\n🎉 [REAL MODEL TEST] All real model tests passed!")
-            
+            print("✅ [REAL MODEL TEST] Resources cleaned up at \(Date())!")
+            print("\n🎉 [REAL MODEL TEST] All real model tests passed at \(Date())!")
         } catch {
-            let loadTime = Date().timeIntervalSince(loadStartTime)
-            print("⚠️ [REAL MODEL TEST] Model loading failed after \(String(format: "%.2f", loadTime))s")
+            let loadEndTime = Date()
+            let loadTime = loadEndTime.timeIntervalSince(loadStartTime)
+            AppLogger.shared.error("RealisticModelTests", "Model loading failed", context: ["elapsed": "\(loadTime)s", "error": error.localizedDescription])
+            print("⚠️ [REAL MODEL TEST] Model loading failed after \(String(format: "%.2f", loadTime))s at \(loadEndTime)")
             print("   - Error: \(error.localizedDescription)")
-            
             // Check if it's a known MLX runtime issue
             let errorString = error.localizedDescription.lowercased()
             if errorString.contains("metal") || 
@@ -137,32 +141,29 @@ final class RealisticModelTests: XCTestCase {
                errorString.contains("library not found") ||
                errorString.contains("mlx runtime") ||
                errorString.contains("file not found") {
-                print("✅ [REAL MODEL TEST] Expected MLX runtime error - this is normal in test environments")
+                print("✅ [REAL MODEL TEST] Expected MLX runtime error - this is normal in test environments at \(Date())")
                 print("   - The model was successfully downloaded and verified")
                 print("   - MLX runtime needs proper installation for full functionality")
                 print("   - Mock implementation is working correctly as fallback")
-                
                 // Test that mock implementation works with the downloaded model
-                print("\n🔄 [REAL MODEL TEST] Testing mock implementation with downloaded model...")
+                print("\n🔄 [REAL MODEL TEST] Testing mock implementation with downloaded model at \(Date())...")
                 let mockConfig = ModelConfiguration(
                     name: "Mock Test",
                     hubId: "mock/test",
                     description: "Mock model for testing"
                 )
-                
                 let mockEngine = try await InferenceEngine.loadModel(mockConfig) { _ in }
                 let mockResponse = try await mockEngine.generate("Hello, world!")
-                print("✅ [REAL MODEL TEST] Mock response: \(mockResponse)")
+                print("✅ [REAL MODEL TEST] Mock response: \(mockResponse) at \(Date())")
                 XCTAssertFalse(mockResponse.isEmpty, "Mock response should not be empty")
                 mockEngine.unload()
-                
-                print("\n🎉 [REAL MODEL TEST] Download and mock tests passed!")
-                
+                print("\n🎉 [REAL MODEL TEST] Download and mock tests passed at \(Date())!")
             } else {
                 // This might be a real error we should investigate
                 XCTFail("Unexpected error in real model test: \(error)")
             }
         }
+        AppLogger.shared.info("RealisticModelTests", "Real model test finished", context: ["elapsed": "\(Date().timeIntervalSince(testStartTime))s"])
     }
     
     // MARK: - HuggingFace API Tests

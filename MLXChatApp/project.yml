@@ -1,0 +1,79 @@
+name: MLXChatApp
+options:
+  bundleIdPrefix: com.clevercoding
+  deploymentTarget:
+    iOS: '17.0'
+    macOS: '13.0'
+    tvOS: '16.0'
+    watchOS: '9.0'
+    visionOS: '1.0'
+packages:
+  MLXEngine:
+    path: ../
+  UIAI:
+    path: ../
+
+targets:
+  MLXChatApp-iOS:
+    type: application
+    platform: iOS
+    sources: [Sources/Shared, Sources/iOS]
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      DEVELOPMENT_TEAM: M3W42R75UU
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-iOS
+    dependencies:
+      - package: MLXEngine
+      - package: UIAI
+    info:
+      path: Sources/iOS/Info.plist
+  MLXChatApp-macOS:
+    type: application
+    platform: macOS
+    sources: [Sources/Shared, Sources/macOS]
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      DEVELOPMENT_TEAM: M3W42R75UU
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-macOS
+    dependencies:
+      - package: MLXEngine
+  MLXChatApp-tvOS:
+    type: application
+    platform: tvOS
+    sources: [Sources/Shared, Sources/tvOS]
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      DEVELOPMENT_TEAM: M3W42R75UU
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-tvOS
+    dependencies:
+      - package: MLXEngine
+  MLXChatApp-watchOS:
+    type: application
+    platform: watchOS
+    sources: [Sources/Shared, Sources/watchOS]
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      DEVELOPMENT_TEAM: M3W42R75UU
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-watchOS
+    dependencies:
+      - package: MLXEngine
+  MLXChatApp-visionOS:
+    type: application
+    platform: visionOS
+    sources: [Sources/Shared, Sources/visionOS]
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      DEVELOPMENT_TEAM: M3W42R75UU
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-visionOS
+    dependencies:
+      - package: MLXEngine
+  MLXEngineTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources: [../Tests/MLXEngineTests]
+    dependencies:
+      - package: MLXEngine
+    settings:
+      ENABLE_TEST_DISCOVERY: YES
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_FILE: ../Tests/MLXEngineTests/Info.plist 

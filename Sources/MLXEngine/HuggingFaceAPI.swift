@@ -1,18 +1,13 @@
 import Foundation
-import os.log
 
-/// Hugging Face Hub API client for searching and downloading models.
-public class HuggingFaceAPI: @unchecked Sendable {
-    /// Shared singleton instance of the API client.
+/// Hugging Face Hub API client for searching and downloading models
+public actor HuggingFaceAPI {
     public static let shared = HuggingFaceAPI()
     
     private let baseURL = "https://huggingface.co/api"
     private let session: URLSession
-    private var hfToken: String?
-    private let logger = Logger(subsystem: "com.mlxengine", category: "HuggingFaceAPI")
     
-    private init() {
-        // Enhanced URLSession configuration for better performance
+    public init() {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 300 // 5 minutes
         configuration.timeoutIntervalForResource = 3600 // 1 hour
@@ -25,238 +20,105 @@ public class HuggingFaceAPI: @unchecked Sendable {
         configuration.httpShouldUsePipelining = true
         configuration.httpMaximumConnectionsPerHost = 6 // Allow multiple concurrent connections
         
-        // Enable connection pooling and reuse
-        configuration.connectionProxyDictionary = [
-            kCFNetworkProxiesHTTPEnable: true,
-            kCFNetworkProxiesHTTPSEnable: true
-        ]
-        
         session = URLSession(configuration: configuration)
-        
-        // Try to load token from various sources
-        self.hfToken = Self.loadHuggingFaceToken()
     }
     
-    /// Sets the Hugging Face token for authentication.
-    public func setToken(_ token: String) {
-        self.hfToken = token
-    }
-    
-    /// Clears the current token.
-    public func clearToken() {
-        self.hfToken = nil
-    }
-    
-    /// Returns true if a token is available.
-    public var hasToken: Bool {
-        return hfToken != nil
-    }
-    
-    /// Loads Hugging Face token from various sources following established patterns
-    private static func loadHuggingFaceToken() -> String? {
-        let possibleTokens = [
-            // Environment variables
-            { ProcessInfo.processInfo.environment["HF_TOKEN"] },
-            { ProcessInfo.processInfo.environment["HUGGING_FACE_HUB_TOKEN"] },
-            
-            // Token file paths from environment
-            {
-                ProcessInfo.processInfo.environment["HF_TOKEN_PATH"].flatMap {
-                    try? String(
-                        contentsOf: URL(filePath: NSString(string: $0).expandingTildeInPath),
-                        encoding: .utf8
-                    ).trimmingCharacters(in: .whitespacesAndNewlines)
-                }
-            },
-            {
-                ProcessInfo.processInfo.environment["HF_HOME"].flatMap {
-                    try? String(
-                        contentsOf: URL(filePath: NSString(string: $0).expandingTildeInPath).appending(path: "token"),
-                        encoding: .utf8
-                    ).trimmingCharacters(in: .whitespacesAndNewlines)
-                }
-            },
-            
-            // Standard token file locations
-            { 
-                try? String(
-                    contentsOf: FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".cache/huggingface/token"), 
-                    encoding: .utf8
-                ).trimmingCharacters(in: .whitespacesAndNewlines)
-            },
-            { 
-                try? String(
-                    contentsOf: FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".huggingface/token"), 
-                    encoding: .utf8
-                ).trimmingCharacters(in: .whitespacesAndNewlines)
-            },
-            
-            // MLXEngine-specific token location
-            {
-                #if os(iOS)
-                let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                #else
-                let documentsPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-                #endif
-                let tokenPath = documentsPath.appendingPathComponent("MLXEngine/hf_token")
-                return try? String(contentsOf: tokenPath, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines)
-            }
-        ]
-        
-        return possibleTokens
-            .lazy
-            .compactMap { $0() }
-            .filter { !$0.isEmpty }
-            .first
-    }
-    
-    /// Saves the Hugging Face token to a secure location.
-    public func saveToken(_ token: String) throws {
-        #if os(iOS)
-        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        #else
-        let documentsPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        #endif
-        
-        let mlxEnginePath = documentsPath.appendingPathComponent("MLXEngine")
-        let tokenPath = mlxEnginePath.appendingPathComponent("hf_token")
-        
-        // Create directory if it doesn't exist
-        try FileManager.default.createDirectory(at: mlxEnginePath, withIntermediateDirectories: true)
-        
-        // Save token
-        try token.write(to: tokenPath, atomically: true, encoding: .utf8)
-        
-        // Set token for current session
-        self.hfToken = token
-    }
-    
-    /// Tests the current authentication by making a simple API call.
-    public func testAuthentication() async throws -> String {
-        guard let token = hfToken else {
-            throw HuggingFaceError.authenticationRequired
-        }
-        
-        let url = URL(string: "https://huggingface.co/api/whoami")!
-        let request = createAuthenticatedRequest(for: url)
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw HuggingFaceError.networkError
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if httpResponse.statusCode == 401 {
-                throw HuggingFaceError.authenticationRequired
-            } else {
-                throw HuggingFaceError.httpError(httpResponse.statusCode)
-            }
-        }
-        
-        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        let username = json?["name"] as? String ?? "unknown"
-        
-        return username
-    }
-    
-    /// Creates an authenticated URLRequest with proper headers
-    private func createAuthenticatedRequest(for url: URL) -> URLRequest {
-        var request = URLRequest(url: url)
-        
-        // Add authentication header if token is available
-        if let token = hfToken {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
-        
-        // Add standard headers
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("MLXEngine/1.0", forHTTPHeaderField: "User-Agent")
-        
-        return request
-    }
-    
-    /// Performs an authenticated HTTP request with proper error handling
-    private func performAuthenticatedRequest(for url: URL) async throws -> (Data, HTTPURLResponse) {
-        let request = createAuthenticatedRequest(for: url)
-        
-        do {
-            let (data, response) = try await session.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw HuggingFaceError.networkError
-            }
-            
-            switch httpResponse.statusCode {
-            case 200..<300:
-                return (data, httpResponse)
-            case 401, 403:
-                throw HuggingFaceError.authenticationRequired
-            case 404:
-                throw HuggingFaceError.modelNotFound(url.lastPathComponent)
-            case 429:
-                throw HuggingFaceError.rateLimitExceeded
-            default:
-                throw HuggingFaceError.httpError(httpResponse.statusCode)
-            }
-        } catch let error as HuggingFaceError {
-            throw error
-        } catch {
-            throw HuggingFaceError.networkError
-        }
+    // Helper to get the current token from AppStorage (UserDefaults)
+    private func currentToken() -> String? {
+        UserDefaults.standard.string(forKey: "huggingFaceToken")
     }
     
     /// Searches for models on Hugging Face Hub
     public func searchModels(query: String, limit: Int = 20) async throws -> [HuggingFaceModel] {
+        AppLogger.shared.info("HuggingFaceAPI", "Searching models with query: \(query), limit: \(limit)")
         let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let urlString = "\(baseURL)/models?search=\(encodedQuery)&limit=\(limit)"
+        
+        AppLogger.shared.debug("HuggingFaceAPI", "Request URL: \(urlString)")
         
         guard let url = URL(string: urlString) else {
             throw HuggingFaceError.invalidURL
         }
         
-        let (data, response) = try await session.data(from: url)
+        var request = URLRequest(url: url)
+        if let token = currentToken(), !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (data, response) = try await session.data(for: request)
+        
+        AppLogger.shared.debug("HuggingFaceAPI", "Response size: \(data.count) bytes")
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw HuggingFaceError.networkError
         }
         
+        AppLogger.shared.info("HuggingFaceAPI", "HTTP response status: \(httpResponse.statusCode)")
         if httpResponse.statusCode != 200 {
-            logger.error("HTTP Error: \(httpResponse.statusCode)")
+            AppLogger.shared.error("HuggingFaceAPI", "HTTP Error: \(httpResponse.statusCode)")
             if let errorData = String(data: data, encoding: .utf8) {
-                logger.error("Error response: \(errorData)")
+                AppLogger.shared.error("HuggingFaceAPI", "Error response: \(errorData)")
             }
             throw HuggingFaceError.networkError
         }
         
         let models = try JSONDecoder().decode([HuggingFaceModel].self, from: data)
+        AppLogger.shared.info("HuggingFaceAPI", "Models found: \(models.count)")
         return models
     }
     
     /// Gets detailed information about a specific model
     public func getModelInfo(modelId: String) async throws -> HuggingFaceModel {
+        AppLogger.shared.info("HuggingFaceAPI", "Getting model info for: \(modelId)")
         let encodedModelId = modelId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         let urlString = "\(baseURL)/models/\(encodedModelId)"
+        
+        AppLogger.shared.debug("HuggingFaceAPI", "Request URL: \(urlString)")
         
         guard let url = URL(string: urlString) else {
             throw HuggingFaceError.invalidURL
         }
         
-        let (data, _) = try await performAuthenticatedRequest(for: url)
+        var request = URLRequest(url: url)
+        if let token = currentToken(), !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (data, response) = try await session.data(for: request)
+        
+        AppLogger.shared.debug("HuggingFaceAPI", "Response size: \(data.count) bytes")
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw HuggingFaceError.networkError
+        }
+        
+        AppLogger.shared.info("HuggingFaceAPI", "HTTP response status: \(httpResponse.statusCode)")
         let model = try JSONDecoder().decode(HuggingFaceModel.self, from: data)
+        AppLogger.shared.info("HuggingFaceAPI", "Model info retrieved")
         return model
     }
     
-    /// Downloads a model file from Hugging Face with progress callback.
-    public func downloadModel(modelId: String, fileName: String, to destinationURL: URL, progress: @escaping @Sendable (Double) -> Void) async throws {
+    /// Downloads a model file from Hugging Face
+    public func downloadModel(modelId: String, fileName: String, to destinationURL: URL, progress: @escaping (Double, Int64, Int64) -> Void) async throws {
         let encodedModelId = modelId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         let encodedFileName = fileName.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         let urlString = "https://huggingface.co/\(encodedModelId)/resolve/main/\(encodedFileName)"
         
+        AppLogger.shared.debug("HuggingFaceAPI", "Request URL: \(urlString)")
+        
         guard let url = URL(string: urlString) else {
             throw HuggingFaceError.invalidURL
         }
         
-        let (asyncBytes, response) = try await session.bytes(from: url)
+        var request = URLRequest(url: url)
+        if let token = currentToken(), !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (asyncBytes, response) = try await session.bytes(for: request)
+        
+        AppLogger.shared.debug("HuggingFaceAPI", "Response size: \(response.expectedContentLength) bytes")
         
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
@@ -292,7 +154,7 @@ public class HuggingFaceAPI: @unchecked Sendable {
                         let now = Date()
                         if now.timeIntervalSince(lastProgressUpdateTime) >= progressUpdateInterval {
                             let progressValue = Double(downloadedBytes) / Double(totalBytes)
-                            progress(progressValue)
+                            progress(progressValue, downloadedBytes, totalBytes)
                             lastProgressUpdateTime = now
                         }
                     }
@@ -310,7 +172,7 @@ public class HuggingFaceAPI: @unchecked Sendable {
             // Always send a final progress update at 100%
             if totalBytes > 0 {
                 let progressValue = Double(downloadedBytes) / Double(totalBytes)
-                progress(progressValue)
+                progress(progressValue, downloadedBytes, totalBytes)
             }
         } catch {
             // Remove partial file on error or cancellation
@@ -333,6 +195,9 @@ public class HuggingFaceAPI: @unchecked Sendable {
         }
         var request = URLRequest(url: url)
         request.httpMethod = "HEAD"
+        if let token = currentToken(), !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         let (_, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
@@ -347,11 +212,20 @@ public class HuggingFaceAPI: @unchecked Sendable {
         let encodedModelId = modelId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         let urlString = "\(baseURL)/models/\(encodedModelId)"
         
+        AppLogger.shared.debug("HuggingFaceAPI", "Request URL: \(urlString)")
+        
         guard let url = URL(string: urlString) else {
             throw HuggingFaceError.invalidURL
         }
         
-        let (data, response) = try await session.data(from: url)
+        var request = URLRequest(url: url)
+        if let token = currentToken(), !token.isEmpty {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        
+        let (data, response) = try await session.data(for: request)
+        
+        AppLogger.shared.debug("HuggingFaceAPI", "Response size: \(data.count) bytes")
         
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
@@ -368,12 +242,60 @@ public class HuggingFaceAPI: @unchecked Sendable {
         // Fallback to raw data
         return String(data: data, encoding: .utf8) ?? "Unable to decode JSON"
     }
+    
+    /// Lists all files in a Hugging Face model repo (main branch) using the siblings field.
+    public func listModelFiles(modelId: String) async throws -> [String] {
+        let modelInfo = try await getModelInfo(modelId: modelId)
+        guard let siblings = modelInfo.siblings else {
+            AppLogger.shared.warning("HuggingFaceAPI", "No siblings (file list) found for model: \(modelId)")
+            return []
+        }
+        let fileNames = siblings.map { $0.rfilename }
+        AppLogger.shared.info("HuggingFaceAPI", "Model \(modelId) has \(fileNames.count) files: \(fileNames)")
+        return fileNames
+    }
+    
+    // Platform-safe Hugging Face token loader
+    public func loadHuggingFaceToken() -> String? { nil }
+    
+    /// Validates a Hugging Face token by calling the whoami endpoint.
+    /// Returns the username if valid, or nil if invalid.
+    public func validateToken(token: String) async throws -> String? {
+        guard !token.isEmpty else { return nil }
+        let url = URL(string: "https://huggingface.co/api/whoami-v2")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        do {
+            let (data, response) = try await session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                return nil
+            }
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let user = json["user"] as? [String: Any],
+               let name = user["name"] as? String {
+                return name
+            }
+            return "(valid, no username)"
+        } catch {
+            AppLogger.shared.error("HuggingFaceAPI", "Token validation failed: \(error)")
+            return nil
+        }
+    }
+
+    private func validateTokenViaSearch(token: String) async throws -> Bool {
+        var request = URLRequest(url: URL(string: "https://huggingface.co/api/models?search=mlx&limit=1")!)
+        request.httpMethod = "GET"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (_, response) = try await session.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else { return false }
+        return httpResponse.statusCode == 200
+    }
 }
 
 // MARK: - Data Models
 
-/// Represents a model on Hugging Face Hub with metadata and configuration extraction.
-public struct HuggingFaceModel: Codable, Identifiable, Hashable, Sendable {
+public struct HuggingFaceModel: Codable, Identifiable, Hashable {
     public let id: String
     public let modelId: String?
     public let author: String?
@@ -383,27 +305,48 @@ public struct HuggingFaceModel: Codable, Identifiable, Hashable, Sendable {
     public let pipeline_tag: String?
     public let createdAt: String?
     public let lastModified: String?
-    
-    // Additional fields from detailed model info
     public let private_: Bool?
     public let gated: Bool?
     public let disabled: Bool?
     public let sha: String?
     public let library_name: String?
-    public let safetensors: Bool?
+    public let safetensors: SafetensorsField?
     public let usedStorage: Int?
     public let trendingScore: Int?
-    
-    // Complex nested structures
     public let cardData: [String: AnyCodable]?
     public let siblings: [Sibling]?
     public let config: [String: AnyCodable]?
     public let transformersInfo: [String: AnyCodable]?
     public let spaces: [String]?
     public let modelIndex: String?
-    public let widgetData: [String: AnyCodable]?
-    
-    public init(id: String, modelId: String? = nil, author: String? = nil, downloads: Int? = nil, likes: Int? = nil, tags: [String]? = nil, pipeline_tag: String? = nil, createdAt: String? = nil, lastModified: String? = nil, private_: Bool? = nil, gated: Bool? = nil, disabled: Bool? = nil, sha: String? = nil, library_name: String? = nil, safetensors: Bool? = nil, usedStorage: Int? = nil, trendingScore: Int? = nil, cardData: [String: AnyCodable]? = nil, siblings: [Sibling]? = nil, config: [String: AnyCodable]? = nil, transformersInfo: [String: AnyCodable]? = nil, spaces: [String]? = nil, modelIndex: String? = nil, widgetData: [String: AnyCodable]? = nil) {
+    public let widgetData: WidgetDataField?
+
+    public init(
+        id: String,
+        modelId: String? = nil,
+        author: String? = nil,
+        downloads: Int? = nil,
+        likes: Int? = nil,
+        tags: [String]? = nil,
+        pipeline_tag: String? = nil,
+        createdAt: String? = nil,
+        lastModified: String? = nil,
+        private_: Bool? = nil,
+        gated: Bool? = nil,
+        disabled: Bool? = nil,
+        sha: String? = nil,
+        library_name: String? = nil,
+        safetensors: SafetensorsField? = nil,
+        usedStorage: Int? = nil,
+        trendingScore: Int? = nil,
+        cardData: [String: AnyCodable]? = nil,
+        siblings: [Sibling]? = nil,
+        config: [String: AnyCodable]? = nil,
+        transformersInfo: [String: AnyCodable]? = nil,
+        spaces: [String]? = nil,
+        modelIndex: String? = nil,
+        widgetData: WidgetDataField? = nil
+    ) {
         self.id = id
         self.modelId = modelId
         self.author = author
@@ -429,14 +372,69 @@ public struct HuggingFaceModel: Codable, Identifiable, Hashable, Sendable {
         self.modelIndex = modelIndex
         self.widgetData = widgetData
     }
-    
-    // MARK: - Enhanced Metadata Extraction
-    
-    public func extractParameters() -> String? {
-        // Try multiple sources for parameter information
+
+    // Custom Equatable/Hashable: only use id
+    public static func == (lhs: HuggingFaceModel, rhs: HuggingFaceModel) -> Bool {
+        lhs.id == rhs.id
+    }
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    // Utility: MLX compatibility check
+    public func hasMLXFiles() -> Bool {
+        if let library = library_name, library.lowercased() == "mlx" { return true }
+        if let tags = tags, tags.contains(where: { $0.lowercased() == "mlx" }) { return true }
+        if id.lowercased().contains("mlx") { return true }
+        if let siblings = siblings {
+            for sib in siblings {
+                if sib.rfilename.lowercased().contains("mlx") { return true }
+            }
+        }
+        return false
+    }
+
+    // Utility: Convert to ModelConfiguration (now with metadata extraction)
+    public func toModelConfiguration() -> ModelConfiguration {
+        ModelConfiguration(
+            name: id,
+            hubId: id,
+            description: "Model from Hugging Face Hub",
+            parameters: self.extractParameters(),
+            quantization: self.extractQuantization(),
+            architecture: self.extractArchitecture(),
+            maxTokens: 4096,
+            estimatedSizeGB: nil,
+            defaultSystemPrompt: nil,
+            endOfTextTokens: nil
+        )
+    }
+
+    // Utility: Extract quantization
+    public func extractQuantization() -> String? {
         let name = id.lowercased()
-        
-        // Check name patterns
+        if name.contains("4bit") || name.contains("q4") { return "4bit" }
+        if name.contains("6bit") || name.contains("q6") { return "6bit" }
+        if name.contains("8bit") || name.contains("q8") { return "8bit" }
+        if name.contains("fp16") { return "fp16" }
+        if name.contains("fp32") { return "fp32" }
+        if name.contains("bf16") { return "bf16" }
+        if let tags = tags {
+            for tag in tags {
+                if tag.contains("4-bit") || tag.contains("q4") { return "4bit" }
+                if tag.contains("6-bit") || tag.contains("q6") { return "6bit" }
+                if tag.contains("8-bit") || tag.contains("q8") { return "8bit" }
+                if tag.contains("fp16") { return "fp16" }
+                if tag.contains("fp32") { return "fp32" }
+                if tag.contains("bf16") { return "bf16" }
+            }
+        }
+        return nil
+    }
+
+    // Utility: Extract parameters
+    public func extractParameters() -> String? {
+        let name = id.lowercased()
         if name.contains("0.5b") { return "0.5B" }
         if name.contains("1b") { return "1B" }
         if name.contains("1.5b") { return "1.5B" }
@@ -448,17 +446,6 @@ public struct HuggingFaceModel: Codable, Identifiable, Hashable, Sendable {
         if name.contains("9b") { return "9B" }
         if name.contains("13b") { return "13B" }
         if name.contains("30b") { return "30B" }
-        
-        // Check cardData for parameter info
-        if let cardData = cardData {
-            if let modelCard = cardData["model-card"]?.value as? [String: Any],
-               let modelInfo = modelCard["model-info"] as? [String: Any],
-               let params = modelInfo["parameters"] as? String {
-                return params
-            }
-        }
-        
-        // Check tags for parameter hints
         if let tags = tags {
             for tag in tags {
                 if tag.contains("0.5b") { return "0.5B" }
@@ -471,40 +458,12 @@ public struct HuggingFaceModel: Codable, Identifiable, Hashable, Sendable {
                 if tag.contains("30b") { return "30B" }
             }
         }
-        
         return nil
     }
-    
-    public func extractQuantization() -> String? {
-        let name = id.lowercased()
-        
-        // Check name patterns
-        if name.contains("4bit") || name.contains("q4") { return "4bit" }
-        if name.contains("6bit") || name.contains("q6") { return "6bit" }
-        if name.contains("8bit") || name.contains("q8") { return "8bit" }
-        if name.contains("fp16") { return "fp16" }
-        if name.contains("fp32") { return "fp32" }
-        if name.contains("bf16") { return "bf16" }
-        
-        // Check tags for quantization hints
-        if let tags = tags {
-            for tag in tags {
-                if tag.contains("4-bit") || tag.contains("q4") { return "4bit" }
-                if tag.contains("6-bit") || tag.contains("q6") { return "6bit" }
-                if tag.contains("8-bit") || tag.contains("q8") { return "8bit" }
-                if tag.contains("fp16") { return "fp16" }
-                if tag.contains("fp32") { return "fp32" }
-                if tag.contains("bf16") { return "bf16" }
-            }
-        }
-        
-        return nil
-    }
-    
+
+    // Utility: Extract architecture
     public func extractArchitecture() -> String? {
         let name = id.lowercased()
-        
-        // Check name patterns
         if name.contains("llama") { return "Llama" }
         if name.contains("qwen") { return "Qwen" }
         if name.contains("mistral") { return "Mistral" }
@@ -512,154 +471,37 @@ public struct HuggingFaceModel: Codable, Identifiable, Hashable, Sendable {
         if name.contains("gemma") { return "Gemma" }
         if name.contains("deepseek") { return "DeepSeek" }
         if name.contains("devstral") { return "Devstral" }
-        
-        // Check tags for architecture hints
         if let tags = tags {
             for tag in tags {
-                if tag.contains("llama") { return "Llama" }
-                if tag.contains("qwen") { return "Qwen" }
-                if tag.contains("mistral") { return "Mistral" }
-                if tag.contains("phi") { return "Phi" }
-                if tag.contains("gemma") { return "Gemma" }
-                if tag.contains("deepseek") { return "DeepSeek" }
-                if tag.contains("devstral") { return "Devstral" }
+                if tag.lowercased().contains("llama") { return "Llama" }
+                if tag.lowercased().contains("qwen") { return "Qwen" }
+                if tag.lowercased().contains("mistral") { return "Mistral" }
+                if tag.lowercased().contains("phi") { return "Phi" }
+                if tag.lowercased().contains("gemma") { return "Gemma" }
+                if tag.lowercased().contains("deepseek") { return "DeepSeek" }
+                if tag.lowercased().contains("devstral") { return "Devstral" }
             }
         }
-        
-        // Check cardData for architecture info
-        if let cardData = cardData {
-            if let modelCard = cardData["model-card"]?.value as? [String: Any],
-               let modelInfo = modelCard["model-info"] as? [String: Any],
-               let arch = modelInfo["architecture"] as? String {
-                return arch
-            }
-        }
-        
         return nil
-    }
-    
-    /// Check if model has MLX-compatible files
-    public func hasMLXFiles() -> Bool {
-        // Primary check: library_name is mlx
-        if library_name?.lowercased() == "mlx" {
-            return true
-        }
-        
-        // Secondary check: tags contain mlx
-        if let tags = tags {
-            if tags.contains(where: { $0.lowercased() == "mlx" }) {
-                return true
-            }
-        }
-        
-        // Tertiary check: model name contains mlx
-        if id.lowercased().contains("mlx") {
-            return true
-        }
-        
-        // Quaternary check: siblings contain .mlx files (most strict)
-        if let siblings = siblings {
-            for sibling in siblings {
-                let filename = sibling.rfilename.lowercased()
-                if filename.contains(".mlx") || filename.contains("mlx") {
-                    return true
-                }
-            }
-        }
-        
-        return false
-    }
-    
-    /// Check if model is accessible (not private, gated, or disabled)
-    public func isAccessible() -> Bool {
-        return !(private_ == true || gated == true || disabled == true)
-    }
-    
-    /// Get estimated file size in MB
-    public func getEstimatedSizeMB() -> Int? {
-        guard let parameters = extractParameters() else { return nil }
-        
-        // Rough estimation based on parameters and quantization
-        let paramCount: Int
-        if parameters.contains("0.5B") { paramCount = 500_000_000 }
-        else if parameters.contains("1B") { paramCount = 1_000_000_000 }
-        else if parameters.contains("1.5B") { paramCount = 1_500_000_000 }
-        else if parameters.contains("2B") { paramCount = 2_000_000_000 }
-        else if parameters.contains("3B") { paramCount = 3_000_000_000 }
-        else if parameters.contains("7B") { paramCount = 7_000_000_000 }
-        else if parameters.contains("8B") { paramCount = 8_000_000_000 }
-        else if parameters.contains("13B") { paramCount = 13_000_000_000 }
-        else if parameters.contains("30B") { paramCount = 30_000_000_000 }
-        else { return nil }
-        
-        let quantization = extractQuantization() ?? ""
-        let bytesPerParam: Double
-        
-        if quantization.contains("4bit") { bytesPerParam = 0.5 }
-        else if quantization.contains("6bit") { bytesPerParam = 0.75 }
-        else if quantization.contains("8bit") { bytesPerParam = 1.0 }
-        else if quantization.contains("fp16") || quantization.contains("bf16") { bytesPerParam = 2.0 }
-        else { bytesPerParam = 4.0 } // fp32 default
-        
-        let sizeBytes = Double(paramCount) * bytesPerParam
-        return Int(sizeBytes / 1_048_576) // Convert to MB
-    }
-    
-    // MARK: - Hashable Implementation
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    public static func == (lhs: HuggingFaceModel, rhs: HuggingFaceModel) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    /// Converts HuggingFaceModel metadata to a ModelConfiguration.
-    public func toModelConfiguration() -> ModelConfiguration {
-        let displayName = id.components(separatedBy: "/").last?.replacingOccurrences(of: "-", with: " ") ?? id
-        let parameters = extractParameters() ?? "Unknown"
-        let quantization = extractQuantization() ?? "fp16"
-        let architecture = extractArchitecture() ?? "Unknown"
-        let estimatedSize = Double(getEstimatedSizeMB() ?? 1000) / 1000.0 // Convert MB to GB
-        
-        return ModelConfiguration(
-            name: displayName,
-            hubId: id,
-            description: "\(architecture) \(parameters) model with \(quantization) quantization",
-            parameters: parameters,
-            quantization: quantization,
-            architecture: architecture,
-            maxTokens: 4096,
-            estimatedSizeGB: estimatedSize
-        )
     }
 }
 
-// MARK: - Supporting Structures
-
-public struct Sibling: Codable, Sendable {
+public struct Sibling: Codable {
     public let rfilename: String
     public let size: Int?
-    
     public init(rfilename: String, size: Int?) {
         self.rfilename = rfilename
         self.size = size
     }
 }
 
-// MARK: - AnyCodable for flexible JSON parsing
-
-public struct AnyCodable: Codable, Sendable {
+public struct AnyCodable: Codable, @unchecked Sendable {
     public let value: Any
-    
     public init(_ value: Any) {
         self.value = value
     }
-    
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        
         if container.decodeNil() {
             self.value = NSNull()
         } else if let bool = try? container.decode(Bool.self) {
@@ -680,10 +522,8 @@ public struct AnyCodable: Codable, Sendable {
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "AnyCodable value cannot be decoded")
         }
     }
-    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        
         switch self.value {
         case is NSNull:
             try container.encodeNil()
@@ -708,19 +548,11 @@ public struct AnyCodable: Codable, Sendable {
     }
 }
 
-// MARK: - Error Types
-
-/// Errors related to Hugging Face API operations.
 public enum HuggingFaceError: Error, LocalizedError {
     case invalidURL
     case networkError
     case decodingError
     case fileError
-    case authenticationRequired
-    case modelNotFound(String)
-    case rateLimitExceeded
-    case httpError(Int)
-    
     public var errorDescription: String? {
         switch self {
         case .invalidURL:
@@ -731,14 +563,54 @@ public enum HuggingFaceError: Error, LocalizedError {
             return "Failed to decode response"
         case .fileError:
             return "File operation failed"
-        case .authenticationRequired:
-            return "Authentication required"
-        case .modelNotFound(let modelId):
-            return "Model not found: \(modelId)"
-        case .rateLimitExceeded:
-            return "Rate limit exceeded"
-        case .httpError(let code):
-            return "HTTP error: \(code)"
+        }
+    }
+}
+
+public enum SafetensorsField: Codable, Sendable {
+    case bool(Bool)
+    case object([String: AnyCodable])
+    case unknown
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let b = try? container.decode(Bool.self) {
+            self = .bool(b)
+        } else if let obj = try? container.decode([String: AnyCodable].self) {
+            self = .object(obj)
+        } else {
+            self = .unknown
+        }
+    }
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .bool(let b): try container.encode(b)
+        case .object(let obj): try container.encode(obj)
+        case .unknown: try container.encodeNil()
+        }
+    }
+}
+
+public enum WidgetDataField: Codable {
+    case dict([String: AnyCodable])
+    case array([AnyCodable])
+    case unknown
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let dict = try? container.decode([String: AnyCodable].self) {
+            self = .dict(dict)
+        } else if let arr = try? container.decode([AnyCodable].self) {
+            self = .array(arr)
+        } else {
+            self = .unknown
+        }
+    }
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .dict(let dict): try container.encode(dict)
+        case .array(let arr): try container.encode(arr)
+        case .unknown: try container.encodeNil()
         }
     }
 } 

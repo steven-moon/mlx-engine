@@ -1,0 +1,257 @@
+name: MLXEngine
+options:
+  bundleIdPrefix: com.clevercoding
+  deploymentTarget:
+    iOS: '17.0'
+    macOS: '14.0'
+    tvOS: '17.0'
+    watchOS: '10.0'
+    visionOS: '1.0'
+
+packages:
+  mlx-swift:
+    url: https://github.com/ml-explore/mlx-swift
+    from: 0.10.0
+  mlx-swift-examples:
+    url: https://github.com/ml-explore/mlx-swift-examples
+    branch: main
+
+# Main XcodeGen targets
+
+targets:
+  MLXEngine_macOS:
+    type: framework
+    platform: macOS
+    deploymentTarget: '14.0'
+    sources: [Sources/MLXEngine]
+    dependencies:
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      MACH_O_TYPE: mh_dylib
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngine.macOS
+  MLXEngine_iOS:
+    type: framework
+    platform: iOS
+    deploymentTarget: '17.0'
+    sources: [Sources/MLXEngine]
+    dependencies:
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      MACH_O_TYPE: mh_dylib
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngine.iOS
+      module_name: MLXEngine
+      PRODUCT_NAME: MLXEngine
+  MLXEngine_tvOS:
+    type: framework
+    platform: tvOS
+    deploymentTarget: '17.0'
+    sources: [Sources/MLXEngine]
+    dependencies:
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      MACH_O_TYPE: mh_dylib
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngine.tvOS
+  MLXEngine_watchOS:
+    type: framework
+    platform: watchOS
+    deploymentTarget: '10.0'
+    sources: [Sources/MLXEngine]
+    dependencies:
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      MACH_O_TYPE: mh_dylib
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngine.watchOS
+  MLXEngine_visionOS:
+    type: framework
+    platform: visionOS
+    deploymentTarget: '1.0'
+    sources: [Sources/MLXEngine]
+    dependencies:
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      MACH_O_TYPE: mh_dylib
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngine.visionOS
+  MLXEngineTests_macOS:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: '14.0'
+    sources: [Tests/MLXEngineTests]
+    dependencies:
+      - target: MLXEngine_macOS
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      ENABLE_TEST_DISCOVERY: YES
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngineTests.macOS
+      FRAMEWORK_SEARCH_PATHS: ["$(inherited)", "$(BUILT_PRODUCTS_DIR)"]
+      OTHER_LDFLAGS: ["-framework", "MLXEngine_macOS"]
+  MLXEngineTests_iOS:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: '17.0'
+    sources: [Tests/MLXEngineTests]
+    dependencies:
+      - target: MLXEngine_iOS
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      ENABLE_TEST_DISCOVERY: YES
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngineTests.iOS
+      FRAMEWORK_SEARCH_PATHS: ["$(inherited)", "$(BUILT_PRODUCTS_DIR)"]
+      OTHER_LDFLAGS: ["-framework", "MLXEngine_iOS"]
+  MLXEngineTests_tvOS:
+    type: bundle.unit-test
+    platform: tvOS
+    deploymentTarget: '17.0'
+    sources: [Tests/MLXEngineTests]
+    dependencies:
+      - target: MLXEngine_tvOS
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      ENABLE_TEST_DISCOVERY: YES
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngineTests.tvOS
+      FRAMEWORK_SEARCH_PATHS: ["$(inherited)", "$(BUILT_PRODUCTS_DIR)"]
+      OTHER_LDFLAGS: ["-framework", "MLXEngine_tvOS"]
+  MLXEngineTests_watchOS:
+    type: bundle.unit-test
+    platform: watchOS
+    deploymentTarget: '10.0'
+    sources: [Tests/MLXEngineTests]
+    dependencies:
+      - target: MLXEngine_watchOS
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      ENABLE_TEST_DISCOVERY: YES
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngineTests.watchOS
+      FRAMEWORK_SEARCH_PATHS: ["$(inherited)", "$(BUILT_PRODUCTS_DIR)"]
+      OTHER_LDFLAGS: ["-framework", "MLXEngine_watchOS"]
+  MLXEngineTests_visionOS:
+    type: bundle.unit-test
+    platform: visionOS
+    deploymentTarget: '1.0'
+    sources: [Tests/MLXEngineTests]
+    dependencies:
+      - target: MLXEngine_visionOS
+      - package: mlx-swift
+        product: MLX
+      - package: mlx-swift-examples
+        product: MLXLLM
+      - package: mlx-swift-examples
+        product: MLXLMCommon
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      ENABLE_TEST_DISCOVERY: YES
+      GENERATE_INFOPLIST_FILE: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXEngineTests.visionOS
+      FRAMEWORK_SEARCH_PATHS: ["$(inherited)", "$(BUILT_PRODUCTS_DIR)"]
+      OTHER_LDFLAGS: ["-framework", "MLXEngine_visionOS"]
+  MLXChatApp:
+    type: application
+    platform: macOS
+    deploymentTarget: '13.3'
+    sources: [Examples/ChatApp/Sources/MLXChatApp]
+    dependencies:
+      - target: MLXEngine_macOS
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      GENERATE_INFOPLIST_FILE: YES
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp
+  MLXChatApp_iOS:
+    type: application
+    platform: iOS
+    deploymentTarget: '17.0'
+    sources: [Examples/ChatApp/Sources/MLXChatApp]
+    dependencies:
+      - target: MLXEngine_iOS
+      - target: UIAI_iOS
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      GENERATE_INFOPLIST_FILE: YES
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp.iOS
+  UIAI_iOS:
+    type: framework
+    platform: iOS
+    deploymentTarget: '17.0'
+    sources: [Sources/UIAI]
+    dependencies:
+      - target: MLXEngine_iOS
+    settings:
+      CODE_SIGN_IDENTITY: "-"
+      GENERATE_INFOPLIST_FILE: YES
+      EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.UIAI.iOS
+      module_name: UIAI
+      PRODUCT_NAME: UIAI 

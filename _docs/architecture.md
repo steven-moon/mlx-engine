@@ -303,6 +303,17 @@ All errors conform to `LocalizedError` and provide user-friendly descriptions.
 - **Advanced Concurrency**: Enhanced async/await patterns
 - **Cross-Platform**: Additional platform support
 
+## Diagnostics & Developer Tooling Architecture
+
+MLXEngine provides a unified diagnostics and developer tooling architecture:
+
+- **AppLogger:** Centralized, thread-safe logging with in-memory buffer and log level filtering. Used by all engine components.
+- **DebugUtility:** Actor that generates comprehensive debug reports (system info, logs, model info) for both in-app and CLI use.
+- **DebugPanel (SwiftUI):** In-app diagnostics panel (DEBUG builds) for viewing logs, filtering by level, and generating/copying debug reports. Accessible from the ChatApp Settings screen.
+- **mlxengine-debug-report CLI:** Command-line tool for generating debug reports, listing models, and cleaning up cache. Mirrors the in-app diagnostics for headless and CI environments.
+
+This architecture ensures that actionable diagnostics are always available, whether running in a UI, on the command line, or in CI. All diagnostics are surfaced through a single code path (DebugUtility), ensuring consistency and reliability.
+
 ---
 
 *Last updated: June 24, 2025* 

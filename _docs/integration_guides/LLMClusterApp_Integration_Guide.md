@@ -1,5 +1,7 @@
 # LLMClusterApp Integration Guide
 
+> For dependency setup, see the main [README](../README.md).
+
 > **Purpose**: Leverage LLMClusterApp's production-ready MLX integration and enhanced model management for MLXEngine  
 > **Status**: ✅ **PRODUCTION-READY CODE AVAILABLE**  
 > **Priority**: 🔴 **CRITICAL - IMMEDIATE INTEGRATION NEEDED**
@@ -485,4 +487,4 @@ The LLMClusterApp provides a solid foundation for transforming MLXEngine from a 
 
 ---
 
-*Last updated: 2025-01-27* 
+*Last updated: 2025-06-27* 

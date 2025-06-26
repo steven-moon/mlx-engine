@@ -1,5 +1,5 @@
 import XCTest
-import MLXEngine
+@testable import MLXEngine
 
 #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
 import MLX
@@ -284,7 +284,7 @@ final class MLXIntegrationTests: XCTestCase {
     
     func testStubInferenceEngineStaticMethod() {
         // Test that the static loadModel method exists and has correct signature
-        let config = ModelConfiguration(
+        _ = ModelConfiguration(
             name: "Test Model",
             hubId: "test/model",
             description: "Test model for unit testing",

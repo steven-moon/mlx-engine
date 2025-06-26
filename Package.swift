@@ -5,19 +5,37 @@ let package = Package(
     name: "MLXEngine",
     platforms: [.macOS(.v14), .iOS(.v17)],
     products: [
-        .library(name: "MLXEngine", targets: ["MLXEngine"])
+        .library(name: "MLXEngine", targets: ["MLXEngine"]),
+        .executable(name: "mlxengine-debug-report", targets: ["mlxengine-debug-report"]),
+        .library(name: "UIAI", targets: ["UIAI"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ml-explore/mlx-swift.git", from: "0.2.0")
+        .package(url: "https://github.com/ml-explore/mlx-swift", from: "0.10.0"),
+        .package(url: "https://github.com/ml-explore/mlx-swift-examples", branch: "main"),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.3")
     ],
     targets: [
         .target(
             name: "MLXEngine",
             dependencies: [
                 .product(name: "MLX", package: "mlx-swift"),
-                .product(name: "MLXNN", package: "mlx-swift")
+                .product(name: "MLXNN", package: "mlx-swift"),
+                .product(name: "MLXLLM", package: "mlx-swift-examples"),
+                .product(name: "MLXLMCommon", package: "mlx-swift-examples"),
+                .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
-            path: "Sources/MLXEngine"
+            path: "Sources/MLXEngine",
+            exclude: ["macOS"]
+        ),
+        .executableTarget(
+            name: "mlxengine-debug-report",
+            dependencies: ["MLXEngine"],
+            path: "Sources/mlxengine-debug-report"
+        ),
+        .target(
+            name: "UIAI",
+            dependencies: ["MLXEngine"],
+            path: "Sources/UIAI"
         ),
         .testTarget(
             name: "MLXEngineTests",

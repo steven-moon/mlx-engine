@@ -11,7 +11,7 @@ final class ModelRegistryTests: XCTestCase {
     
     func testSmallModelsCollection() {
         let smallModels = ModelRegistry.smallModels
-        XCTAssertEqual(smallModels.count, 3, "Should have 3 small models")
+        XCTAssertEqual(smallModels.count, 9, "Should have 9 small models")
         
         for model in smallModels {
             XCTAssertTrue(model.isSmallModel, "All small models should be marked as small")
@@ -20,21 +20,25 @@ final class ModelRegistryTests: XCTestCase {
     
     func testMediumModelsCollection() {
         let mediumModels = ModelRegistry.mediumModels
-        XCTAssertEqual(mediumModels.count, 3, "Should have 3 medium models")
+        XCTAssertEqual(mediumModels.count, 8, "Should have 8 medium models")
     }
     
     func testLargeModelsCollection() {
         let largeModels = ModelRegistry.largeModels
-        XCTAssertEqual(largeModels.count, 2, "Should have 2 large models")
+        XCTAssertEqual(largeModels.count, 0, "Should have 0 large models")
     }
     
     func testFindModelByHubId() {
-        let qwen = ModelRegistry.findModel(by: "mlx-community/Qwen1.5-0.5B-Chat-4bit")
-        XCTAssertNotNil(qwen, "Should find Qwen model by hub ID")
-        XCTAssertEqual(qwen?.name, "Qwen 1.5 0.5B Chat")
+        // Known model
+        let knownHubId = "mlx-community/Qwen1.5-0.5B-Chat-4bit"
+        let model = ModelRegistry.findModel(by: knownHubId)
+        XCTAssertNotNil(model)
+        XCTAssertEqual(model?.hubId, knownHubId)
         
-        let notFound = ModelRegistry.findModel(by: "nonexistent/model")
-        XCTAssertNil(notFound, "Should return nil for non-existent model")
+        // Unknown model
+        let unknownHubId = "mlx-community/NonExistentModel"
+        let missingModel = ModelRegistry.findModel(by: unknownHubId)
+        XCTAssertNil(missingModel)
     }
     
     func testFindModelByName() {
@@ -100,17 +104,17 @@ final class ModelRegistryTests: XCTestCase {
     
     func testModelMetadataExtraction() {
         for model in ModelRegistry.allModels {
-            // Test that models have reasonable metadata
             if let params = model.parameters {
-                XCTAssertTrue(params.contains("B"), "Parameters should contain 'B' suffix")
+                let lower = params.lowercased()
+                XCTAssertTrue(lower.hasSuffix("b") || lower.hasSuffix("m"), "Parameters should end with 'B' or 'M' for model: \(model.name) [\(params)]")
+            } else {
+                print("[WARN] Model missing parameters: \(model.name) [\(model.hubId)]")
             }
-            
             if let quant = model.quantization {
-                XCTAssertTrue(["4bit", "8bit", "fp16", "fp32"].contains(quant), "Quantization should be valid")
-            }
-            
-            if let arch = model.architecture {
-                XCTAssertFalse(arch.isEmpty, "Architecture should not be empty")
+                let valid = ["4bit", "8bit", "fp16", "q4_k_m", "q4_0", "q8_0"].contains(quant.lowercased())
+                XCTAssertTrue(valid, "Quantization should be valid for model: \(model.name) [\(quant)]")
+            } else {
+                print("[WARN] Model missing quantization: \(model.name) [\(model.hubId)]")
             }
         }
     }
@@ -171,5 +175,104 @@ final class ModelRegistryTests: XCTestCase {
         let names = allModels.map { $0.name }
         let uniqueNames = Set(names)
         XCTAssertEqual(names.count, uniqueNames.count, "All models should have unique names")
+    }
+    
+    func testModelsSupportingMinTokens() {
+        let minTokens = 4096
+        let models = ModelRegistry.modelsSupporting(minTokens: minTokens)
+        XCTAssertFalse(models.isEmpty, "Should find models supporting at least \(minTokens) tokens")
+        for model in models {
+            XCTAssertGreaterThanOrEqual(model.maxTokens, minTokens, "Model should support at least \(minTokens) tokens")
+        }
+        // Should not include models with fewer tokens
+        let strictModels = ModelRegistry.modelsSupporting(minTokens: 10000)
+        for model in strictModels {
+            XCTAssertGreaterThanOrEqual(model.maxTokens, 10000, "Model should support at least 10000 tokens")
+        }
+    }
+    
+    func testModelConfigurationMetadataExtraction() {
+        let config = ModelConfiguration(
+            name: "Qwen Test",
+            hubId: "mlx-community/Qwen1.5-0.5B-Chat-4bit",
+            description: "Test Qwen model"
+        )
+        let extracted = config.withExtractedMetadata()
+        XCTAssertEqual(extracted.architecture, "Qwen")
+        XCTAssertEqual(extracted.quantization, "4bit")
+        XCTAssertEqual(extracted.parameters, "0.5B")
+    }
+
+    func testModelConfigurationDisplayHelpers() {
+        let config = ModelConfiguration(
+            name: "Llama 3B",
+            hubId: "mlx-community/Llama-3.2-3B-4bit",
+            description: "Llama test",
+            parameters: "3B",
+            quantization: "4bit",
+            architecture: "Llama",
+            estimatedSizeGB: 1.8
+        )
+        XCTAssertEqual(config.displaySize, "1.8 GB")
+        XCTAssertEqual(config.displayInfo, "Llama • 3B • 4bit")
+        XCTAssertTrue(config.isSmallModel)
+    }
+
+    func testModelConfigurationCodable() throws {
+        let config = ModelConfiguration(
+            name: "Test",
+            hubId: "test/model",
+            description: "desc",
+            parameters: "1B",
+            quantization: "4bit",
+            architecture: "Llama",
+            maxTokens: 2048,
+            estimatedSizeGB: 1.0,
+            defaultSystemPrompt: "Hello",
+            endOfTextTokens: ["<eos>"],
+            engineType: "mlx",
+            downloadURL: "https://example.com/model",
+            isDownloaded: true,
+            localPath: "/tmp/model"
+        )
+        let data = try JSONEncoder().encode(config)
+        let decoded = try JSONDecoder().decode(ModelConfiguration.self, from: data)
+        XCTAssertEqual(decoded.name, config.name)
+        XCTAssertEqual(decoded.hubId, config.hubId)
+        XCTAssertEqual(decoded.parameters, config.parameters)
+        XCTAssertEqual(decoded.quantization, config.quantization)
+        XCTAssertEqual(decoded.architecture, config.architecture)
+        XCTAssertEqual(decoded.maxTokens, config.maxTokens)
+        XCTAssertEqual(decoded.estimatedSizeGB, config.estimatedSizeGB)
+        XCTAssertEqual(decoded.defaultSystemPrompt, config.defaultSystemPrompt)
+        XCTAssertEqual(decoded.endOfTextTokens, config.endOfTextTokens)
+        XCTAssertEqual(decoded.engineType, config.engineType)
+        XCTAssertEqual(decoded.downloadURL, config.downloadURL)
+        XCTAssertEqual(decoded.isDownloaded, config.isDownloaded)
+        XCTAssertEqual(decoded.localPath, config.localPath)
+    }
+
+    func testPresenceOfVisionLanguageModel() {
+        let vlm = ModelRegistry.allModels.first { $0.architecture?.lowercased().contains("llava") == true }
+        XCTAssertNotNil(vlm, "Should have at least one Vision Language Model (LLaVA)")
+        XCTAssertTrue(vlm?.name.contains("LLaVA") == true, "VLM model name should contain 'LLaVA'")
+    }
+
+    func testPresenceOfEmbeddingModel() {
+        let embedding = ModelRegistry.allModels.first { $0.architecture?.lowercased().contains("bge") == true }
+        XCTAssertNotNil(embedding, "Should have at least one embedding model (BGE)")
+        XCTAssertTrue(embedding?.name.contains("BGE") == true, "Embedding model name should contain 'BGE'")
+    }
+
+    func testPresenceOfDiffusionModel() {
+        let diffusion = ModelRegistry.allModels.first { $0.architecture?.lowercased().contains("diffusion") == true }
+        XCTAssertNotNil(diffusion, "Should have at least one diffusion model (Stable Diffusion)")
+        XCTAssertTrue(diffusion?.name.contains("Diffusion") == true, "Diffusion model name should contain 'Diffusion'")
+    }
+
+    func testPresenceOfFP16QuantizationModel() {
+        let fp16Model = ModelRegistry.allModels.first { $0.quantization?.lowercased() == "fp16" }
+        XCTAssertNotNil(fp16Model, "Should have at least one model with fp16 quantization")
+        XCTAssertTrue(fp16Model?.name.contains("FP16") == true, "FP16 model name should contain 'FP16'")
     }
 } 

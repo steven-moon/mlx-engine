@@ -6,14 +6,14 @@ public struct ModelRegistry {
     // MARK: - Model Type Definitions
     
     /// Model type categories (LLM, VLM, Embedder, Diffusion)
-    public enum ModelType: String, CaseIterable {
+    internal enum ModelType: String, CaseIterable {
         case llm = "LLM"           // Large Language Model
         case vlm = "VLM"           // Vision Language Model
         case embedder = "Embedder" // Text Embedding Model
         case diffusion = "Diffusion" // Image Generation Model
         
         /// Human-readable description of the model type
-        public var description: String {
+        var description: String {
             switch self {
             case .llm:
                 return "Text generation and conversation"
@@ -27,10 +27,9 @@ public struct ModelRegistry {
         }
     }
     
-    // MARK: - Small Models (0.5B - 3B parameters)
+    // MARK: - Model Definitions (internal)
     
-    /// Ultra-compact model for testing and mobile devices
-    public static let tinyLlama11B = ModelConfiguration(
+    internal static let tinyLlama11B = ModelConfiguration(
         name: "TinyLlama 1.1B Chat",
         hubId: "mlx-community/TinyLlama-1.1B-Chat-v1.0-4bit",
         description: "Ultra-compact model for mobile devices and testing",
@@ -43,8 +42,7 @@ public struct ModelRegistry {
         endOfTextTokens: ["<|im_end|>"]
     )
     
-    /// Small, efficient chat model
-    public static let qwen05B = ModelConfiguration(
+    internal static let qwen05B = ModelConfiguration(
         name: "Qwen 1.5 0.5B Chat",
         hubId: "mlx-community/Qwen1.5-0.5B-Chat-4bit",
         description: "Small, fast chat model good for testing and quick responses",
@@ -55,8 +53,7 @@ public struct ModelRegistry {
         estimatedSizeGB: 0.3
     )
     
-    /// Fast and efficient 1B parameter model
-    public static let llama32_1B = ModelConfiguration(
+    internal static let llama32_1B = ModelConfiguration(
         name: "Llama 3.2 1B",
         hubId: "mlx-community/Llama-3.2-1B-4bit",
         description: "Fast and efficient 1B parameter model",
@@ -67,8 +64,7 @@ public struct ModelRegistry {
         estimatedSizeGB: 0.6
     )
     
-    /// Good quality 3B parameter model
-    public static let llama32_3B = ModelConfiguration(
+    internal static let llama32_3B = ModelConfiguration(
         name: "Llama 3.2 3B",
         hubId: "mlx-community/Llama-3.2-3B-4bit",
         description: "Good quality 3B parameter model with reasonable speed",
@@ -79,10 +75,7 @@ public struct ModelRegistry {
         estimatedSizeGB: 1.8
     )
     
-    // MARK: - Medium Models (3B - 8B parameters)
-    
-    /// Microsoft's efficient Phi-3.1 Mini model
-    public static let phi31Mini = ModelConfiguration(
+    internal static let phi31Mini = ModelConfiguration(
         name: "Phi-3.1 Mini",
         hubId: "mlx-community/Phi-3.1-mini-4bit",
         description: "Microsoft's efficient Phi-3.1 Mini model",
@@ -93,8 +86,7 @@ public struct ModelRegistry {
         estimatedSizeGB: 2.3
     )
     
-    /// Google's efficient Gemma 2 2B model
-    public static let gemma2_2B = ModelConfiguration(
+    internal static let gemma2_2B = ModelConfiguration(
         name: "Gemma 2 2B",
         hubId: "mlx-community/gemma-2-2b-4bit",
         description: "Google's efficient Gemma 2 2B model",
@@ -105,10 +97,7 @@ public struct ModelRegistry {
         estimatedSizeGB: 1.2
     )
     
-    // MARK: - Large Models (8B+ parameters)
-    
-    /// High-performance model for complex reasoning tasks
-    public static let llama31_8B = ModelConfiguration(
+    internal static let llama31_8B = ModelConfiguration(
         name: "Llama 3.1 8B Instruct",
         hubId: "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
         description: "High-performance model for complex reasoning tasks",
@@ -119,8 +108,7 @@ public struct ModelRegistry {
         estimatedSizeGB: 4.9
     )
     
-    /// Popular Mistral 7B model
-    public static let mistral7B = ModelConfiguration(
+    internal static let mistral7B = ModelConfiguration(
         name: "Mistral 7B Instruct",
         hubId: "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
         description: "High-quality instruction-following model",
@@ -133,10 +121,7 @@ public struct ModelRegistry {
         endOfTextTokens: ["</s>"]
     )
     
-    // MARK: - Vision Language Models
-    
-    /// Vision language model for image understanding
-    public static let llava16_3B = ModelConfiguration(
+    internal static let llava16_3B = ModelConfiguration(
         name: "LLaVA 1.6 3B",
         hubId: "mlx-community/llava-v1.6-3b-4bit",
         description: "Vision language model for image understanding and analysis",
@@ -149,10 +134,7 @@ public struct ModelRegistry {
         endOfTextTokens: ["<|im_end|>"]
     )
     
-    // MARK: - Text Embedding Models
-    
-    /// Efficient text embedding model for semantic search
-    public static let bgeSmallEn = ModelConfiguration(
+    internal static let bgeSmallEn = ModelConfiguration(
         name: "BGE Small En",
         hubId: "mlx-community/bge-small-en-v1.5-4bit",
         description: "Efficient text embedding model for semantic search and similarity",
@@ -165,73 +147,84 @@ public struct ModelRegistry {
         endOfTextTokens: nil
     )
     
-    // MARK: - Model Collections
+    internal static let llava15_7B = ModelConfiguration(
+        name: "LLaVA 1.5 7B",
+        hubId: "mlx-community/llava-v1.5-7b-4bit",
+        description: "Vision language model for image understanding and analysis (LLaVA 1.5 7B)",
+        parameters: "7B",
+        quantization: "4bit",
+        architecture: "LLaVA",
+        maxTokens: 4096,
+        estimatedSizeGB: 4.2,
+        defaultSystemPrompt: "You are a helpful assistant that can analyze and describe images.",
+        endOfTextTokens: ["<|im_end|>"]
+        // Feature: visionLanguageModels
+    )
+
+    internal static let bgeLargeEn = ModelConfiguration(
+        name: "BGE Large En",
+        hubId: "mlx-community/bge-large-en-v1.5-4bit",
+        description: "High-quality text embedding model for semantic search and similarity (BGE Large)",
+        parameters: "1.2B",
+        quantization: "4bit",
+        architecture: "BGE",
+        maxTokens: 1024,
+        estimatedSizeGB: 0.7,
+        defaultSystemPrompt: nil,
+        endOfTextTokens: nil
+        // Feature: embeddingModels
+    )
+
+    internal static let stableDiffusionXL = ModelConfiguration(
+        name: "Stable Diffusion XL",
+        hubId: "mlx-community/stable-diffusion-xl-base-1.0-4bit",
+        description: "Image generation model (Stable Diffusion XL)",
+        parameters: "2.3B",
+        quantization: "4bit",
+        architecture: "StableDiffusionXL",
+        maxTokens: 77,
+        estimatedSizeGB: 2.5,
+        defaultSystemPrompt: "Generate a high-quality image from the given prompt.",
+        endOfTextTokens: nil
+        // Feature: diffusionModels
+    )
+
+    internal static let llama32_3B_fp16 = ModelConfiguration(
+        name: "Llama 3.2 3B FP16",
+        hubId: "mlx-community/Llama-3.2-3B-fp16",
+        description: "Llama 3.2 3B model with FP16 quantization",
+        parameters: "3B",
+        quantization: "fp16",
+        architecture: "Llama",
+        maxTokens: 4096,
+        estimatedSizeGB: 3.2,
+        defaultSystemPrompt: nil,
+        endOfTextTokens: nil
+        // Feature: quantizationSupport
+    )
+    
+    // MARK: - Public API
     
     /// Returns all pre-configured models
     public static var allModels: [ModelConfiguration] {
         [
-            // Small LLM models first
             tinyLlama11B,
             qwen05B,
             llama32_1B,
             llama32_3B,
-            // Medium LLM models
             phi31Mini,
             gemma2_2B,
-            // Large LLM models
             llama31_8B,
             mistral7B,
-            // Vision Language Models
             llava16_3B,
-            // Text Embedding Models
-            bgeSmallEn
+            bgeSmallEn,
+            // New models for feature coverage:
+            llava15_7B,      // VLM
+            bgeLargeEn,      // Embedding
+            stableDiffusionXL, // Diffusion
+            llama32_3B_fp16  // Quantization (fp16)
         ]
     }
-    
-    /// Small models suitable for mobile devices and testing
-    public static var smallModels: [ModelConfiguration] {
-        [tinyLlama11B, qwen05B, llama32_1B]
-    }
-    
-    /// Medium models for balanced performance
-    public static var mediumModels: [ModelConfiguration] {
-        [llama32_3B, phi31Mini, gemma2_2B]
-    }
-    
-    /// Large models for high-performance devices
-    public static var largeModels: [ModelConfiguration] {
-        [llama31_8B, mistral7B]
-    }
-    
-    /// Text-only language models
-    public static var textModels: [ModelConfiguration] {
-        [
-            tinyLlama11B, qwen05B, llama32_1B, llama32_3B,
-            phi31Mini, gemma2_2B, llama31_8B, mistral7B
-        ]
-    }
-    
-    /// Vision language models for image understanding
-    public static var visionModels: [ModelConfiguration] {
-        [llava16_3B]
-    }
-    
-    /// Text embedding models for semantic search
-    public static var embeddingModels: [ModelConfiguration] {
-        [bgeSmallEn]
-    }
-    
-    /// Models suitable for mobile devices (< 2GB)
-    public static var mobileOptimizedModels: [ModelConfiguration] {
-        allModels.filter { ($0.estimatedSizeGB ?? 0) < 2.0 }
-    }
-    
-    /// Recommended starter models for new users
-    public static var starterModels: [ModelConfiguration] {
-        [tinyLlama11B, qwen05B, llama32_1B]
-    }
-    
-    // MARK: - Search and Filter Methods
     
     /// Finds a model by its hub ID
     public static func findModel(by hubId: String) -> ModelConfiguration? {
@@ -253,7 +246,32 @@ public struct ModelRegistry {
         allModels.filter { $0.isSmallModel }
     }
     
-    /// Finds models by parameter count range
+    // MARK: - Model Size Categories
+    
+    /// Returns small models (≤3B parameters)
+    public static var smallModels: [ModelConfiguration] {
+        allModels.filter { $0.isSmallModel }
+    }
+    
+    /// Returns medium models (3B-8B parameters)
+    public static var mediumModels: [ModelConfiguration] {
+        allModels.filter { model in
+            guard let params = model.parameters?.lowercased() else { return false }
+            return params.contains("3b") || params.contains("7b") || params.contains("8b")
+        }
+    }
+    
+    /// Returns large models (>8B parameters)
+    public static var largeModels: [ModelConfiguration] {
+        allModels.filter { model in
+            guard let params = model.parameters?.lowercased() else { return false }
+            return params.contains("13b") || params.contains("14b") || params.contains("30b")
+        }
+    }
+    
+    // MARK: - Advanced Search Methods
+    
+    /// Finds models within a parameter range
     public static func findModels(parameterRange: ClosedRange<Double>) -> [ModelConfiguration] {
         allModels.filter { model in
             guard let params = model.parameters?.lowercased() else { return false }
@@ -266,6 +284,8 @@ public struct ModelRegistry {
             else if params.contains("3b") { paramValue = 3.0 }
             else if params.contains("7b") { paramValue = 7.0 }
             else if params.contains("8b") { paramValue = 8.0 }
+            else if params.contains("13b") { paramValue = 13.0 }
+            else if params.contains("30b") { paramValue = 30.0 }
             else { return false }
             
             return parameterRange.contains(paramValue)
@@ -277,40 +297,14 @@ public struct ModelRegistry {
         allModels.filter { $0.quantization?.lowercased() == quantization.lowercased() }
     }
     
-    /// Searches models by text query (name, architecture, or parameters)
+    /// Searches models by query (name, architecture, or parameters)
     public static func searchModels(query: String) -> [ModelConfiguration] {
         let lowercasedQuery = query.lowercased()
-        
         return allModels.filter { model in
-            // Search in name
-            if model.name.lowercased().contains(lowercasedQuery) {
-                return true
-            }
-            
-            // Search in hub ID
-            if model.hubId.lowercased().contains(lowercasedQuery) {
-                return true
-            }
-            
-            // Search in architecture
-            if let architecture = model.architecture?.lowercased(),
-               architecture.contains(lowercasedQuery) {
-                return true
-            }
-            
-            // Search in parameters
-            if let parameters = model.parameters?.lowercased(),
-               parameters.contains(lowercasedQuery) {
-                return true
-            }
-            
-            // Search in quantization
-            if let quantization = model.quantization?.lowercased(),
-               quantization.contains(lowercasedQuery) {
-                return true
-            }
-            
-            return false
+            model.name.lowercased().contains(lowercasedQuery) ||
+            model.architecture?.lowercased().contains(lowercasedQuery) == true ||
+            model.parameters?.lowercased().contains(lowercasedQuery) == true ||
+            model.hubId.lowercased().contains(lowercasedQuery)
         }
     }
     
@@ -327,4 +321,43 @@ public struct ModelRegistry {
     /// Legacy property for backward compatibility
     @available(*, deprecated, message: "Use allModels instead")
     public static let mistral_7B = mistral7B
+    
+    /// Returns all models supporting at least the given minimum maxTokens (context length)
+    public static func modelsSupporting(minTokens: Int) -> [ModelConfiguration] {
+        allModels.filter { $0.maxTokens >= minTokens }
+    }
+    
+    /// Returns the top recommended models for the current device (by RAM and platform)
+    public static func recommendedModelsForCurrentDevice(limit: Int = 3) async -> [ModelConfiguration] {
+        let memoryGB = Double(ProcessInfo.processInfo.physicalMemory) / (1024 * 1024 * 1024)
+        #if os(iOS)
+        let platform = "iOS"
+        #elseif os(macOS)
+        let platform = "macOS"
+        #elseif os(tvOS)
+        let platform = "tvOS"
+        #elseif os(watchOS)
+        let platform = "watchOS"
+        #elseif os(visionOS)
+        let platform = "visionOS"
+        #else
+        let platform = "Unknown"
+        #endif
+        // Only include models that fit in RAM with a 20% safety margin
+        let compatible = allModels.filter { $0.estimatedMemoryGB < memoryGB * 0.8 }
+        // Sort by size (largest that fits), then by maxTokens
+        let sorted = compatible.sorted {
+            if $0.estimatedMemoryGB != $1.estimatedMemoryGB {
+                return $0.estimatedMemoryGB > $1.estimatedMemoryGB
+            }
+            return $0.maxTokens > $1.maxTokens
+        }
+        return Array(sorted.prefix(limit))
+    }
+
+    /// Checks if a model is supported on a device with the given RAM (GB) and platform
+    public static func isModelSupported(_ model: ModelConfiguration, ramGB: Double, platform: String) -> Bool {
+        // For now, only check RAM; can add platform-specific logic later
+        return model.estimatedMemoryGB < ramGB * 0.8
+    }
 } 

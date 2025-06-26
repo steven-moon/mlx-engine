@@ -1894,52 +1894,22 @@ Add to `Sources/Assets.xcassets/AppIcon.appiconset/`
 
 ---
 
-## GitHub Repository Setup
+## DebugPanel: Developer Diagnostics
 
-To enable distribution as a Swift Package Manager dependency, you'll need to set up a GitHub repository for the MLXEngine package.
+The ChatApp now includes a developer-focused DebugPanel for rapid diagnostics and troubleshooting. This panel is only available in DEBUG builds and is accessible from the Settings screen via the "Show Debug Panel" button.
 
-### Repository Structure
+**Features:**
+- View recent logs with filtering by log level (debug, info, warning, error, critical).
+- Adjust the number of logs shown (10–200).
+- Generate a comprehensive debug report (system info, logs, model info) and copy it to the clipboard for sharing or bug reports.
 
-```
-MLXEngine/
-├── Package.swift
-├── README.md
-├── LICENSE
-├── Sources/
-│   └── MLXEngine/
-├── Tests/
-│   └── MLXEngineTests/
-├── Examples/
-│   ├── simple_example.swift
-│   └── interactive_prompt.swift
-├── Documentation/
-│   ├── API_Reference.md
-│   ├── Getting_Started.md
-│   └── Advanced_Usage.md
-└── .github/
-    └── workflows/
-        └── ci.yml
-```
+**How to use:**
+1. Build and run the app in DEBUG mode.
+2. Open the Settings screen.
+3. Tap "Show Debug Panel".
+4. Use the log filters and report tools as needed.
 
-### Next Actions Required
-
-1. **Create GitHub Repository**
-   - Create a new public repository: `github.com/yourusername/MLXEngine`
-   - Add comprehensive README with installation and usage instructions
-   - Include MIT or Apache 2.0 license
-   - Set up GitHub Actions for CI/CD
-
-2. **Package Distribution**
-   - Tag stable releases (v1.0.0, v1.0.1, etc.)
-   - Create detailed release notes
-   - Test package integration with sample projects
-
-3. **Documentation**
-   - DocC documentation generation
-   - Swift Package Index submission
-   - Example projects and tutorials
-
-Would you like me to help you set up the GitHub repository with all the necessary files, CI/CD workflows, and documentation?
+This tool is invaluable for developers and testers to quickly diagnose issues, inspect logs, and share detailed reports with maintainers.
 
 ---
 

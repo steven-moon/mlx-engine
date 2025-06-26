@@ -1,5 +1,7 @@
 # MLX Swift Main Integration Guide
 
+> For dependency setup, see the main [README](../README.md).
+
 > **Purpose**: Leverage the core MLX Swift framework for foundational MLX APIs and low-level operations  
 > **Status**: ✅ **CORE MLX SWIFT FRAMEWORK AVAILABLE**  
 > **Priority**: 🔴 **CRITICAL - FOUNDATION FOR ALL MLX OPERATIONS**
@@ -476,4 +478,4 @@ The `mlx-swift-main` project provides the **core foundation** for all MLX operat
 
 ---
 
-*Last updated: 2025-06-24* 
+*Last updated: 2025-06-27* 

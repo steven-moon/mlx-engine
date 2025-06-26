@@ -1,24 +1,20 @@
 import Foundation
-import os.log
 
 /// Cross-platform file management service for MLXEngine
 public class FileManagerService: @unchecked Sendable {
-    private let logger = Logger(subsystem: "com.mlxengine", category: "FileManagerService")
-    
     public static let shared: FileManagerService = {
         let service = FileManagerService()
         return service
     }()
     
     private init() {
-        logger.info("📁 FileManagerService initialized")
+        // Do not log here to avoid circular dependency with AppLogger
     }
     
     /// Gets the models directory, creating it if it doesn't exist
     /// Uses platform-appropriate directories: iOS documents vs macOS application support
     public func getModelsDirectory() throws -> URL {
-        logger.info("📁 Getting models directory")
-        let startTime = CFAbsoluteTimeGetCurrent()
+        AppLogger.shared.info("FileManagerService", "📁 Getting models directory")
         
         let baseDirectory: URL
         
@@ -50,11 +46,8 @@ public class FileManagerService: @unchecked Sendable {
                 withIntermediateDirectories: true,
                 attributes: nil
             )
-            logger.info("📁 Created models directory at: \(modelsDirectory.path)")
+            AppLogger.shared.info("FileManagerService", "📁 Created models directory at: \(modelsDirectory.path)")
         }
-        
-        let getTime = CFAbsoluteTimeGetCurrent() - startTime
-        logger.info("📁 Got models directory in \(String(format: "%.3f", getTime))s")
         
         return modelsDirectory
     }
@@ -83,8 +76,7 @@ public class FileManagerService: @unchecked Sendable {
     
     /// Gets the cache directory for temporary files
     public func getCacheDirectory() throws -> URL {
-        logger.info("📁 Getting cache directory")
-        let startTime = CFAbsoluteTimeGetCurrent()
+        // Do not log here to avoid circular dependency with AppLogger
         
         let cacheDirectory = try FileManager.default.url(
             for: .cachesDirectory,
@@ -102,19 +94,15 @@ public class FileManagerService: @unchecked Sendable {
                 withIntermediateDirectories: true,
                 attributes: nil
             )
-            logger.info("📁 Created cache directory at: \(mlxCacheDirectory.path)")
+            // Do not log here
         }
-        
-        let getTime = CFAbsoluteTimeGetCurrent() - startTime
-        logger.info("📁 Got cache directory in \(String(format: "%.3f", getTime))s")
         
         return mlxCacheDirectory
     }
     
     /// Gets the application support directory for configuration files
     public func getApplicationSupportDirectory() throws -> URL {
-        logger.info("📁 Getting Application Support directory")
-        let startTime = CFAbsoluteTimeGetCurrent()
+        AppLogger.shared.info("FileManagerService", "📁 Getting Application Support directory")
         
         let appSupport = try FileManager.default.url(
             for: .applicationSupportDirectory,
@@ -132,18 +120,15 @@ public class FileManagerService: @unchecked Sendable {
                 withIntermediateDirectories: true,
                 attributes: nil
             )
-            logger.info("📁 Created application support directory at: \(appDirectory.path)")
+            AppLogger.shared.info("FileManagerService", "📁 Created application support directory at: \(appDirectory.path)")
         }
-        
-        let getTime = CFAbsoluteTimeGetCurrent() - startTime
-        logger.info("📁 Got application support directory in \(String(format: "%.3f", getTime))s")
         
         return appDirectory
     }
     
     /// Gets the temporary directory for downloads in progress
     public func getTemporaryDirectory() throws -> URL {
-        logger.info("📁 Getting temporary directory")
+        AppLogger.shared.info("FileManagerService", "📁 Getting temporary directory")
         
         let tempDirectory = FileManager.default.temporaryDirectory
         let mlxTempDirectory = tempDirectory.appendingPathComponent("MLXEngine")
@@ -155,7 +140,7 @@ public class FileManagerService: @unchecked Sendable {
                 withIntermediateDirectories: true,
                 attributes: nil
             )
-            logger.info("📁 Created temporary directory at: \(mlxTempDirectory.path)")
+            AppLogger.shared.info("FileManagerService", "📁 Created temporary directory at: \(mlxTempDirectory.path)")
         }
         
         return mlxTempDirectory
@@ -163,31 +148,26 @@ public class FileManagerService: @unchecked Sendable {
     
     /// Deletes a model directory or file
     public func deleteModel(at url: URL) throws {
-        logger.info("🗑️ Deleting model at \(url.lastPathComponent)")
-        let startTime = CFAbsoluteTimeGetCurrent()
+        AppLogger.shared.info("FileManagerService", "🗑️ Deleting model at \(url.lastPathComponent)")
         
         guard FileManager.default.fileExists(atPath: url.path) else {
-            logger.warning("⚠️ File does not exist at path: \(url.path)")
+            AppLogger.shared.warning("FileManagerService", "⚠️ File does not exist at path: \(url.path)")
             throw FileManagerError.fileNotFound(url.path)
         }
         
         try FileManager.default.removeItem(at: url)
-        
-        let deleteTime = CFAbsoluteTimeGetCurrent() - startTime
-        logger.info("✅ Model deleted in \(String(format: "%.3f", deleteTime))s")
     }
     
     /// Checks if a file exists
     public func fileExists(at url: URL) -> Bool {
         let exists = FileManager.default.fileExists(atPath: url.path)
-        logger.debug("🔍 File exists at \(url.lastPathComponent): \(exists)")
+        AppLogger.shared.debug("FileManagerService", "🔍 File exists at \(url.lastPathComponent): \(exists)")
         return exists
     }
     
     /// Gets the size of a file in bytes
     public func getFileSize(at url: URL) throws -> Int64 {
-        logger.debug("📏 Getting file size for \(url.lastPathComponent)")
-        let startTime = CFAbsoluteTimeGetCurrent()
+        AppLogger.shared.debug("FileManagerService", "📏 Getting file size for \(url.lastPathComponent)")
         
         guard FileManager.default.fileExists(atPath: url.path) else {
             throw FileManagerError.fileNotFound(url.path)
@@ -196,16 +176,12 @@ public class FileManagerService: @unchecked Sendable {
         let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
         let fileSize = attributes[.size] as? Int64 ?? 0
         
-        let getTime = CFAbsoluteTimeGetCurrent() - startTime
-        logger.debug("📏 File size retrieved in \(String(format: "%.3f", getTime))s: \(fileSize) bytes")
-        
         return fileSize
     }
     
     /// Gets the total size of a directory in bytes
     public func getDirectorySize(at url: URL) throws -> Int64 {
-        logger.info("📏 Getting directory size for \(url.lastPathComponent)")
-        let startTime = CFAbsoluteTimeGetCurrent()
+        AppLogger.shared.info("FileManagerService", "📏 Getting directory size for \(url.lastPathComponent)")
         
         guard FileManager.default.fileExists(atPath: url.path) else {
             throw FileManagerError.directoryNotFound(url.path)
@@ -227,16 +203,12 @@ public class FileManagerService: @unchecked Sendable {
             }
         }
         
-        let getTime = CFAbsoluteTimeGetCurrent() - startTime
-        logger.info("📏 Directory size calculated in \(String(format: "%.3f", getTime))s: \(totalSize) bytes")
-        
         return totalSize
     }
     
     /// Moves a file or directory to a new location
     public func moveItem(from sourceURL: URL, to destinationURL: URL) throws {
-        logger.info("📦 Moving item from \(sourceURL.lastPathComponent) to \(destinationURL.lastPathComponent)")
-        let startTime = CFAbsoluteTimeGetCurrent()
+        AppLogger.shared.info("FileManagerService", "📦 Moving item from \(sourceURL.lastPathComponent) to \(destinationURL.lastPathComponent)")
         
         guard FileManager.default.fileExists(atPath: sourceURL.path) else {
             throw FileManagerError.fileNotFound(sourceURL.path)
@@ -258,15 +230,11 @@ public class FileManagerService: @unchecked Sendable {
         }
         
         try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
-        
-        let moveTime = CFAbsoluteTimeGetCurrent() - startTime
-        logger.info("✅ Item moved in \(String(format: "%.3f", moveTime))s")
     }
     
     /// Copies a file or directory to a new location
     public func copyItem(from sourceURL: URL, to destinationURL: URL) throws {
-        logger.info("📋 Copying item from \(sourceURL.lastPathComponent) to \(destinationURL.lastPathComponent)")
-        let startTime = CFAbsoluteTimeGetCurrent()
+        AppLogger.shared.info("FileManagerService", "📋 Copying item from \(sourceURL.lastPathComponent) to \(destinationURL.lastPathComponent)")
         
         guard FileManager.default.fileExists(atPath: sourceURL.path) else {
             throw FileManagerError.fileNotFound(sourceURL.path)
@@ -288,14 +256,11 @@ public class FileManagerService: @unchecked Sendable {
         }
         
         try FileManager.default.copyItem(at: sourceURL, to: destinationURL)
-        
-        let copyTime = CFAbsoluteTimeGetCurrent() - startTime
-        logger.info("✅ Item copied in \(String(format: "%.3f", copyTime))s")
     }
     
     /// Lists all files in a directory
     public func listFiles(in directory: URL) throws -> [URL] {
-        logger.debug("📂 Listing files in \(directory.lastPathComponent)")
+        AppLogger.shared.debug("FileManagerService", "📂 Listing files in \(directory.lastPathComponent)")
         
         guard FileManager.default.fileExists(atPath: directory.path) else {
             throw FileManagerError.directoryNotFound(directory.path)
@@ -309,14 +274,13 @@ public class FileManagerService: @unchecked Sendable {
             (try? url.resourceValues(forKeys: [.isRegularFileKey]))?.isRegularFile == true
         }
         
-        logger.debug("📂 Found \(files.count) files")
+        AppLogger.shared.debug("FileManagerService", "📂 Found \(files.count) files")
         return files
     }
     
     /// Cleans up temporary files
     public func cleanupTemporaryFiles() throws {
-        logger.info("🧹 Cleaning up temporary files")
-        let startTime = CFAbsoluteTimeGetCurrent()
+        AppLogger.shared.info("FileManagerService", "🧹 Cleaning up temporary files")
         
         let tempDirectory = try getTemporaryDirectory()
         let files = try listFiles(in: tempDirectory)
@@ -327,12 +291,11 @@ public class FileManagerService: @unchecked Sendable {
                 try FileManager.default.removeItem(at: file)
                 deletedCount += 1
             } catch {
-                logger.warning("⚠️ Failed to delete temporary file: \(file.lastPathComponent)")
+                AppLogger.shared.warning("FileManagerService", "⚠️ Failed to delete temporary file: \(file.lastPathComponent)")
             }
         }
         
-        let cleanupTime = CFAbsoluteTimeGetCurrent() - startTime
-        logger.info("🧹 Cleaned up \(deletedCount) temporary files in \(String(format: "%.3f", cleanupTime))s")
+        AppLogger.shared.info("FileManagerService", "🧹 Cleaned up \(deletedCount) temporary files")
     }
 }
 

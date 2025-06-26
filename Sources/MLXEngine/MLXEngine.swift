@@ -1,9 +1,50 @@
+//
+// MLXEngine.swift
+//
+// Usage Example:
+//
+// import MLXEngine
+//
+// let config = ModelConfiguration(
+//     name: "Qwen 0.5B Chat",
+//     hubId: "mlx-community/Qwen1.5-0.5B-Chat-4bit",
+//     description: "Qwen 0.5B Chat model (4-bit quantized)",
+//     parameters: "0.5B",
+//     quantization: "4bit",
+//     architecture: "Qwen",
+//     maxTokens: 4096
+// )
+//
+// Task {
+//     let engine = try await InferenceEngine.loadModel(config) { progress in
+//         print("Loading progress: \(progress * 100)%")
+//     }
+//     let result = try await engine.generate("Hello, world!", params: .init())
+//     print(result)
+// }
+//
+
 import Foundation
 import CommonCrypto
 
 // MARK: - Core Types
 
 /// A comprehensive configuration describing an LLM model.
+///
+/// Use this struct to describe a model you want to load or search for.
+///
+/// Example:
+/// ```swift
+/// let config = ModelConfiguration(
+///     name: "Qwen 0.5B Chat",
+///     hubId: "mlx-community/Qwen1.5-0.5B-Chat-4bit",
+///     description: "Qwen 0.5B Chat model (4-bit quantized)",
+///     parameters: "0.5B",
+///     quantization: "4bit",
+///     architecture: "Qwen",
+///     maxTokens: 4096
+/// )
+/// ```
 public struct ModelConfiguration: Sendable, Codable, Hashable, Identifiable {
     /// Unique identifier for the model configuration (defaults to hubId)
     public let id: String
@@ -27,6 +68,14 @@ public struct ModelConfiguration: Sendable, Codable, Hashable, Identifiable {
     public let defaultSystemPrompt: String?
     /// End-of-text tokens for the model, if any
     public let endOfTextTokens: [String]?
+    /// Engine type (e.g., "mlx", "llama.cpp")
+    public var engineType: String?
+    /// Download URL for the model (if available)
+    public var downloadURL: String?
+    /// Whether the model is downloaded locally (for local state)
+    public var isDownloaded: Bool?
+    /// Local path to the model (if downloaded)
+    public var localPath: String?
     
     public init(
         id: String? = nil,
@@ -39,7 +88,11 @@ public struct ModelConfiguration: Sendable, Codable, Hashable, Identifiable {
         maxTokens: Int = 4096,
         estimatedSizeGB: Double? = nil,
         defaultSystemPrompt: String? = nil,
-        endOfTextTokens: [String]? = nil
+        endOfTextTokens: [String]? = nil,
+        engineType: String? = nil,
+        downloadURL: String? = nil,
+        isDownloaded: Bool? = nil,
+        localPath: String? = nil
     ) {
         self.id = id ?? hubId
         self.name = name
@@ -52,6 +105,10 @@ public struct ModelConfiguration: Sendable, Codable, Hashable, Identifiable {
         self.estimatedSizeGB = estimatedSizeGB
         self.defaultSystemPrompt = defaultSystemPrompt
         self.endOfTextTokens = endOfTextTokens
+        self.engineType = engineType
+        self.downloadURL = downloadURL
+        self.isDownloaded = isDownloaded
+        self.localPath = localPath
     }
     
     /// Extracts metadata from the hub ID
@@ -59,31 +116,29 @@ public struct ModelConfiguration: Sendable, Codable, Hashable, Identifiable {
         let components = hubId.components(separatedBy: "/")
         if components.count >= 2 {
             let modelName = components[1]
-            
-            // Extract parameters
-            if let paramMatch = modelName.range(of: #"\d+\.?\d*B"#, options: .regularExpression) {
-                self.parameters = String(modelName[paramMatch])
+            // Extract parameters (support both B and b, flexible patterns)
+            if let paramMatch = modelName.range(of: #"\d+\.?\d*[Bb]"#, options: .regularExpression) {
+                self.parameters = String(modelName[paramMatch]).uppercased()
             }
-            
             // Extract quantization
-            if modelName.contains("4bit") {
+            if modelName.lowercased().contains("4bit") {
                 self.quantization = "4bit"
-            } else if modelName.contains("8bit") {
+            } else if modelName.lowercased().contains("8bit") {
                 self.quantization = "8bit"
-            } else if modelName.contains("fp16") {
+            } else if modelName.lowercased().contains("fp16") {
                 self.quantization = "fp16"
             }
-            
             // Extract architecture
-            if modelName.lowercased().contains("qwen") {
+            let lower = modelName.lowercased()
+            if lower.contains("qwen") {
                 self.architecture = "Qwen"
-            } else if modelName.lowercased().contains("llama") {
+            } else if lower.contains("llama") {
                 self.architecture = "Llama"
-            } else if modelName.lowercased().contains("mistral") {
+            } else if lower.contains("mistral") {
                 self.architecture = "Mistral"
-            } else if modelName.lowercased().contains("phi") {
+            } else if lower.contains("phi") {
                 self.architecture = "Phi"
-            } else if modelName.lowercased().contains("gemma") {
+            } else if lower.contains("gemma") {
                 self.architecture = "Gemma"
             }
         }
@@ -113,14 +168,68 @@ public struct ModelConfiguration: Sendable, Codable, Hashable, Identifiable {
         else if params.contains("13b") { return 26.0 }
         else { return 8.0 }
     }
+    
+    /// Returns a display string for the model's size or parameters.
+    public var displaySize: String {
+        if let estimatedSizeGB = estimatedSizeGB {
+            return String(format: "%.1f GB", estimatedSizeGB)
+        } else if let params = parameters {
+            return params
+        }
+        return "Unknown"
+    }
+    
+    /// Returns a display string for architecture, parameters, and quantization.
+    public var displayInfo: String {
+        var info: [String] = []
+        if let arch = architecture { info.append(arch) }
+        if let params = parameters { info.append(params) }
+        if let quant = quantization { info.append(quant) }
+        return info.joined(separator: " • ")
+    }
+    
+    /// Extracts metadata from the hubId if not already set.
+    public func withExtractedMetadata() -> ModelConfiguration {
+        var copy = self
+        let components = hubId.components(separatedBy: "/")
+        if components.count >= 2 {
+            let modelName = components[1].lowercased()
+            if copy.parameters == nil {
+                if let paramMatch = modelName.range(of: #"\d+\.?\d*b"#, options: .regularExpression) {
+                    copy.parameters = String(modelName[paramMatch]).uppercased()
+                }
+            }
+            if copy.quantization == nil {
+                if modelName.contains("4bit") { copy.quantization = "4bit" }
+                else if modelName.contains("8bit") { copy.quantization = "8bit" }
+                else if modelName.contains("fp16") { copy.quantization = "fp16" }
+            }
+            if copy.architecture == nil {
+                if modelName.contains("qwen") { copy.architecture = "Qwen" }
+                else if modelName.contains("llama") { copy.architecture = "Llama" }
+                else if modelName.contains("mistral") { copy.architecture = "Mistral" }
+                else if modelName.contains("phi") { copy.architecture = "Phi" }
+                else if modelName.contains("gemma") { copy.architecture = "Gemma" }
+                else if modelName.contains("tinyllama") { copy.architecture = "TinyLlama" }
+            }
+        }
+        return copy
+    }
 }
 
-/// Generation parameters for text generation.
+/// Parameters for text generation.
+///
+/// Controls the sampling and stopping behavior of the LLM.
 public struct GenerateParams: Sendable, Hashable {
+    /// Maximum number of tokens to generate
     public var maxTokens: Int
+    /// Sampling temperature (higher = more random)
     public var temperature: Double
+    /// Nucleus sampling probability
     public var topP: Double
+    /// Top-K sampling
     public var topK: Int
+    /// Stop generation if any of these tokens are produced
     public var stopTokens: [String]
     
     public init(
@@ -138,7 +247,30 @@ public struct GenerateParams: Sendable, Hashable {
     }
 }
 
+/// Feature flags for experimental or optional engine features.
+///
+/// Use these to check for support and enable/disable features at runtime.
+public enum LLMEngineFeatures: String, CaseIterable, Sendable {
+    /// Enable LoRA adapter support (training/inference)
+    case loraAdapters
+    /// Enable quantization support (4bit, 8bit, fp16, etc.)
+    case quantizationSupport
+    /// Enable vision-language model (VLM) support
+    case visionLanguageModels
+    /// Enable embedding model support (text embedding, semantic search)
+    case embeddingModels
+    /// Enable diffusion model support (image generation)
+    case diffusionModels
+    /// Enable custom system/user prompt support
+    case customPrompts
+    /// Enable multi-modal input (text, image, etc.)
+    case multiModalInput
+    // Add future feature flags here
+}
+
 /// Protocol for engines capable of LLM inference.
+///
+/// Conformers must be concurrency-safe and support async/await.
 public protocol LLMEngine: Sendable {
     /// Loads a model with the specified configuration and progress callback.
     static func loadModel(_ config: ModelConfiguration, progress: @escaping @Sendable (Double) -> Void) async throws -> Self
@@ -157,6 +289,14 @@ public protocol LLMEngine: Sendable {
 // MARK: - Model Downloader
 
 /// Downloads and manages MLX models from Hugging Face Hub.
+///
+/// Use this actor to search for, download, and verify models.
+///
+/// Example:
+/// ```swift
+/// let downloader = ModelDownloader()
+/// let models = try await downloader.searchModels(query: "qwen")
+/// ```
 public actor ModelDownloader {
     private let huggingFaceAPI = HuggingFaceAPI.shared
     private let fileManager = FileManagerService.shared
@@ -175,7 +315,7 @@ public actor ModelDownloader {
     public func searchModels(query: String, limit: Int = 20) async throws -> [ModelConfiguration] {
         let huggingFaceModels = try await huggingFaceAPI.searchModels(query: query, limit: limit)
         
-        print("🔍 Found \(huggingFaceModels.count) models from Hugging Face search")
+        AppLogger.shared.info("MLXEngine", "🔍 Found \(huggingFaceModels.count) models from Hugging Face search")
         
         // Filter for MLX-compatible models and convert to our format
         let filteredModels = huggingFaceModels
@@ -193,53 +333,61 @@ public actor ModelDownloader {
                       model.id.lowercased().contains("gemma")))
                 
                 if !isMLXCompatible {
-                    print("❌ Filtered out: \(model.id) (tags: \(model.tags?.joined(separator: ", ") ?? "none"))")
+                    AppLogger.shared.info("MLXEngine", "❌ Filtered out: \(model.id) (tags: \(model.tags?.joined(separator: ", ") ?? "none"))")
                 }
                 
                 return isMLXCompatible
             }
             .map { $0.toModelConfiguration() }
         
-        print("✅ Kept \(filteredModels.count) MLX-compatible models")
+        AppLogger.shared.info("MLXEngine", "✅ Kept \(filteredModels.count) MLX-compatible models")
         return filteredModels
     }
     
     /// Downloads a model to the local cache with optimized downloader if available
     public func downloadModel(_ config: ModelConfiguration, progress: @escaping @Sendable (Double) -> Void) async throws -> URL {
-        // Use optimized downloader if available
+        // Generate a correlation ID for this download operation
+        let correlationId = UUID().uuidString
+        AppLogger.shared.info("MLXEngine", "🚀 Using optimized downloader for faster downloads", context: ["correlationId": correlationId])
         if let optimizedDownloader = optimizedDownloader {
-            print("🚀 Using optimized downloader for faster downloads")
-            return try await optimizedDownloader.downloadModelWithResume(config, progress: progress)
+            return try await optimizedDownloader.downloadModelWithResume(config, progress: { prog in
+                AppLogger.shared.info("MLXEngine", "[Progress] Downloading model...", context: ["progress": String(format: "%.2f", prog), "correlationId": correlationId])
+                progress(prog)
+            })
         } else {
-            print("⚠️ Using fallback downloader (optimized downloader not available)")
-            return try await downloadModelFallback(config, progress: progress)
+            AppLogger.shared.warning("MLXEngine", "⚠️ Using fallback downloader (optimized downloader not available)", context: ["correlationId": correlationId])
+            return try await downloadModelFallback(config, progress: { prog in
+                AppLogger.shared.info("MLXEngine", "[Progress] Downloading model (fallback)...", context: ["progress": String(format: "%.2f", prog), "correlationId": correlationId])
+                progress(prog)
+            })
         }
     }
     
-    /// Fallback download implementation using the original method
+    /// Fallback download implementation using the original method (now downloads all files)
     private func downloadModelFallback(_ config: ModelConfiguration, progress: @escaping @Sendable (Double) -> Void) async throws -> URL {
         let modelsDirectory = try fileManager.ensureModelsDirectoryExists()
         let modelDirectory = modelsDirectory.appendingPathComponent(config.hubId)
-        
-        // Create model directory
         try FileManager.default.createDirectory(at: modelDirectory, withIntermediateDirectories: true)
-        
-        // Download essential files
-        let filesToDownload = ["config.json", "tokenizer.json", "model.safetensors"]
-        
-        for (index, fileName) in filesToDownload.enumerated() {
+        // Download all files in the repo
+        let allFiles = try await huggingFaceAPI.listModelFiles(modelId: config.hubId)
+        if allFiles.isEmpty {
+            throw NSError(domain: "ModelDownloader", code: -1, userInfo: [NSLocalizedDescriptionKey: "No files found in model repo: \(config.hubId)"])
+        }
+        for (index, fileName) in allFiles.enumerated() {
             let destinationURL = modelDirectory.appendingPathComponent(fileName)
-            
+            let destinationDir = destinationURL.deletingLastPathComponent()
+            if !FileManager.default.fileExists(atPath: destinationDir.path) {
+                try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true)
+            }
             try await huggingFaceAPI.downloadModel(
                 modelId: config.hubId,
                 fileName: fileName,
                 to: destinationURL
-            ) { fileProgress in
-                let overallProgress = (Double(index) + fileProgress) / Double(filesToDownload.count)
+            ) { fileProgress, _, _ in
+                let overallProgress = (Double(index) + fileProgress) / Double(allFiles.count)
                 progress(overallProgress)
             }
         }
-        
         return modelDirectory
     }
     

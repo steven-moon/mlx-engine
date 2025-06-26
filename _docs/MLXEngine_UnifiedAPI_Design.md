@@ -153,4 +153,17 @@ let transcript = try await asrEngine.transcribe(audio: myAudioData)
 
 ---
 
+## Unified Diagnostics API
+
+MLXEngine exposes a unified diagnostics API for both in-app and CLI use:
+
+- **AppLogger:** Centralized logging with in-memory buffer and log level filtering.
+- **DebugUtility:** Actor for generating debug reports (system info, logs, model info) used by both the DebugPanel and CLI.
+- **DebugPanel (SwiftUI):** In-app diagnostics panel for developers (DEBUG builds only).
+- **mlxengine-debug-report CLI:** Command-line diagnostics and reporting tool.
+
+All diagnostics and debug reports are generated through DebugUtility, ensuring a single source of truth and consistent output across all interfaces. This design enables rapid troubleshooting, easy sharing of diagnostics, and robust developer tooling for all users.
+
+---
+
 *Last updated: {{date}}* 

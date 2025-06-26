@@ -1,0 +1,143 @@
+//
+//  ChatView.swift
+//  UIAI
+//
+//  Created for MLXEngine Shared SwiftUI Library
+//
+//  A cross-platform SwiftUI view for LLM chat interfaces.
+//  This is a stub for future expansion and integration with MLXEngine chat/session APIs.
+//
+
+import SwiftUI
+import MLXEngine
+
+/// A SwiftUI view for LLM chat interfaces.
+///
+/// - Supports streaming, markdown, and chat history.
+/// - Designed for iOS, macOS, visionOS, tvOS, and watchOS.
+/// - Integrates with MLXEngine chat/session APIs.
+public struct ChatView: View {
+    public struct Message: Identifiable, Hashable {
+        public enum Sender { case user, assistant }
+        public let id: UUID = UUID()
+        public let sender: Sender
+        public let text: String
+        public init(sender: Sender, text: String) {
+            self.sender = sender
+            self.text = text
+        }
+    }
+    @StateObject private var manager = ChatSessionManager()
+    @State private var inputText: String = ""
+    @FocusState private var isInputFocused: Bool
+    @State private var errorMessage: String? = nil
+    @State private var showError: Bool = false
+    @State private var showResetConfirmation: Bool = false
+    
+    public init() {}
+    
+    public var body: some View {
+        #if os(iOS) || os(macOS) || os(visionOS)
+        VStack(spacing: 0) {
+            OnboardingBanner(title: "Welcome to Chat!", message: "Start a conversation with your AI assistant. Select a model in Settings if you want to change it.")
+            if let errorMessage = errorMessage, showError {
+                ErrorBanner(message: errorMessage, style: .error, isPresented: $showError)
+            }
+            HStack {
+                Spacer()
+                Button(role: .destructive) {
+                    showResetConfirmation = true
+                } label: {
+                    Label("Reset Chat", systemImage: "arrow.counterclockwise")
+                }
+                .padding(.trailing)
+            }
+            if manager.messages.isEmpty {
+                Button("Start Chat Session") {
+                    // For demo, use a default model config
+                    let config = ModelConfiguration(
+                        name: "Qwen 0.5B Chat",
+                        hubId: "mlx-community/Qwen1.5-0.5B-Chat-4bit",
+                        description: "Small, fast chat model for testing and quick responses."
+                    )
+                    manager.startSession(model: config)
+                }
+                .padding()
+            } else {
+                ChatHistoryView(messages: manager.messages) { message in
+                    AnyView(
+                        HStack(alignment: .top) {
+                            if message.sender == .assistant {
+                                Image(systemName: "brain.head.profile")
+                                    .foregroundColor(.blue)
+                            } else {
+                                Image(systemName: "person.fill")
+                                    .foregroundColor(.green)
+                            }
+                            Text(message.text)
+                                .padding(8)
+                                .background(
+                                    message.sender == .assistant ? (
+                                        {
+                                            #if os(iOS) || os(tvOS) || os(visionOS)
+                                            return Color(UIColor.systemGray6)
+                                            #elseif os(macOS)
+                                            return Color(NSColor.windowBackgroundColor)
+                                            #else
+                                            return Color.gray.opacity(0.15)
+                                            #endif
+                                        }()
+                                    ) : Color(.systemBlue).opacity(0.15)
+                                )
+                                .cornerRadius(10)
+                            Spacer()
+                        }
+                    )
+                }
+                Divider()
+                ChatInputView(text: $inputText, onSend: sendMessage)
+                    .disabled(manager.isStreaming)
+                if manager.isStreaming {
+                    HStack {
+                        ProgressView()
+                        Text("Assistant is typing...")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.bottom, 8)
+                }
+            }
+        }
+        .alert("Reset Chat?", isPresented: $showResetConfirmation) {
+            Button("Reset", role: .destructive) { manager.reset() }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will clear the chat history and start a new session.")
+        }
+        #else
+        Text("Chat is not yet available on this platform.")
+            .foregroundColor(.secondary)
+        #endif
+    }
+    
+    private func sendMessage() {
+        let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        do {
+            manager.sendMessage(trimmed)
+            inputText = ""
+            isInputFocused = true
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+        }
+    }
+}
+
+#if DEBUG
+#Preview {
+    ChatView()
+        .frame(height: 400)
+        .previewLayout(.sizeThatFits)
+}
+#endif 
