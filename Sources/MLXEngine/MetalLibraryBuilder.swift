@@ -6,6 +6,8 @@ import MetalKit
 /// for different development environments and hardware configurations.
 public struct MetalLibraryBuilder {
     
+    private class BundleFinder {}
+    
     /// Metal library compilation status
     public enum CompilationStatus {
         case success(MTLLibrary)
@@ -63,7 +65,8 @@ public struct MetalLibraryBuilder {
     /// Finds precompiled Metal library in the bundle
     private static func findPrecompiledLibrary(device: MTLDevice) -> MTLLibrary? {
         // Look for precompiled library in bundle
-        guard let libraryURL = Bundle.module.url(forResource: "default", withExtension: "metallib") else {
+        let bundle = Bundle(for: BundleFinder.self)
+        guard let libraryURL = bundle.url(forResource: "default", withExtension: "metallib") else {
             return nil
         }
         

@@ -1,6 +1,8 @@
 import Foundation
 
-/// A comprehensive registry of well-known MLX-compatible models with advanced discovery and filtering capabilities.
+/// Pre-configured collection of popular MLX-compatible models
+/// 
+/// **Agent Workflow Test**: This comment demonstrates the complete build → test → simulate cycle
 public struct ModelRegistry {
     
     // MARK: - Model Type Definitions

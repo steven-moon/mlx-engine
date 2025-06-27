@@ -8,9 +8,9 @@ This directory contains comprehensive documentation for the MLXEngine project, a
 ## Quick Navigation
 
 - **[Build Status Summary](build_status_summary.md)** - Current project status and test results
-- **[Integration Guides](integration_guides/)** - Guides for integrating with sample applications
 - **[Architecture](architecture.md)** - Technical architecture and design decisions
 - **[API Reference](api_reference.md)** - Complete API documentation
+- **[Integration Guides](integration_guides/)** - Guides for integrating with sample applications
 
 ## Project Overview
 
@@ -34,7 +34,7 @@ MLXEngine is built with a clean, modular architecture:
 - **ModelConfiguration**: Model metadata and configuration
 - **ModelRegistry**: Pre-configured model collection
 - **ChatSession**: Multi-turn conversation management
-- **ModelDownloader**: Model downloading and caching
+- **OptimizedDownloader**: Model downloading and caching
 - **HuggingFaceAPI**: Hugging Face Hub integration
 
 ## Performance
@@ -120,7 +120,7 @@ MLXEngine/
 │   ├── InferenceEngine.swift    # Main inference engine
 │   ├── ModelRegistry.swift      # Model configuration registry
 │   ├── ChatSession.swift        # Chat session management
-│   ├── ModelDownloader.swift    # Model downloading and caching
+│   ├── OptimizedDownloader.swift # Model downloading and caching
 │   ├── HuggingFaceAPI.swift     # Hugging Face Hub integration
 │   └── SHA256Helper.swift       # Utility functions
 ├── Tests/                       # Test suite

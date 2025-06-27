@@ -1,0 +1,178 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Agent-Driven Development Workflow
+
+## Core Principle: Code → Build → Test → Simulate
+
+**ALWAYS follow this workflow after ANY code changes:**
+
+1. **Make code changes** using edit_file tool
+2. **Build the project** using run_terminal_cmd with xcodebuild
+3. **Run tests** to verify functionality
+4. **Launch simulator** and monitor logs
+5. **Report results** to user for testing
+
+## Required Workflow Commands
+
+### After Code Changes (MANDATORY)
+```bash
+# 1. Build iOS Simulator target
+xcodebuild -scheme MLXChatApp-iOS \
+  -workspace MLXChatApp/MLXChatApp.xcodeproj/project.xcworkspace \
+  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  build
+
+# 2. Run tests
+swift test --package-path . --filter MLXEngineTests
+
+# 3. Launch simulator and app
+xcrun simctl boot "iPhone 16" 2>/dev/null || true
+xcodebuild -scheme MLXChatApp-iOS \
+  -workspace MLXChatApp/MLXChatApp.xcodeproj/project.xcworkspace \
+  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  -derivedDataPath /tmp/MLXEngine-build \
+  build-for-testing test-without-building
+
+# 4. Monitor simulator logs
+xcrun simctl spawn booted log stream --predicate 'process == "MLXChatApp"' --style compact
+```
+
+### Quick Development Commands
+```bash
+# Clean build
+rm -rf ~/Library/Developer/Xcode/DerivedData/*MLXEngine*
+swift package clean
+
+# Regenerate project
+xcodegen generate
+
+# Reset simulator
+xcrun simctl shutdown "iPhone 16" 2>/dev/null || true
+xcrun simctl erase "iPhone 16"
+```
+
+## Agent Behavior Rules
+
+### MANDATORY Actions After Code Changes:
+1. **ALWAYS** run build command after editing Swift files
+2. **ALWAYS** run tests after build completes
+3. **ALWAYS** launch simulator and monitor logs
+4. **ALWAYS** report build/test status to user
+5. **NEVER** ask user to run commands manually
+
+### Error Handling:
+- If build fails: **IMMEDIATELY** analyze error and fix
+- If tests fail: **IMMEDIATELY** investigate and resolve
+- If simulator fails: **IMMEDIATELY** check device availability and retry
+
+### Communication Pattern:
+```
+✅ Code changes made
+🔨 Building project...
+✅ Build successful
+🧪 Running tests...
+✅ Tests passed
+📱 Launching simulator...
+📊 Monitoring logs...
+🎯 Ready for user testing
+```
+
+## Project-Specific Commands
+
+### MLXEngine Package
+```bash
+# Build package
+swift build
+
+# Test package
+swift test --enable-code-coverage
+
+# Generate documentation
+swift package generate-documentation
+```
+
+### MLXChatApp
+```bash
+# Build iOS app
+xcodebuild -scheme MLXChatApp-iOS \
+  -workspace MLXChatApp/MLXChatApp.xcodeproj/project.xcworkspace \
+  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  build
+
+# Build macOS app
+xcodebuild -scheme MLXChatApp-macOS \
+  -workspace MLXChatApp/MLXChatApp.xcodeproj/project.xcworkspace \
+  build
+```
+
+### SwiftUIKit Package
+```bash
+# Build SwiftUIKit
+swift build --package-path SwiftUIKit
+
+# Test SwiftUIKit
+swift test --package-path SwiftUIKit
+```
+
+## Development Environment Setup
+
+### Required Tools:
+- Xcode 15+ with iOS Simulator
+- xcodegen for project generation
+- swift-format for code formatting
+- simctl for simulator management
+
+### Environment Variables:
+```bash
+export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
+export SIMULATOR_DEVICE="iPhone 16"
+export BUILD_SCHEME="MLXChatApp-iOS"
+export WORKSPACE_PATH="MLXChatApp/MLXChatApp.xcodeproj/project.xcworkspace"
+```
+
+## Monitoring & Logging
+
+### Simulator Log Monitoring:
+```bash
+# Monitor app logs
+xcrun simctl spawn booted log stream --predicate 'process == "MLXChatApp"' --style compact
+
+# Monitor system logs
+xcrun simctl spawn booted log stream --predicate 'category == "MLXEngine"' --style compact
+
+# Monitor crash logs
+xcrun simctl spawn booted log stream --predicate 'eventType == "fault"' --style compact
+```
+
+### Build Artifacts:
+- Build logs: `/tmp/MLXEngine-build/`
+- Test results: `TestResults/`
+- Coverage reports: `.build/debug/codecov/`
+
+## Integration with Existing Rules
+
+This workflow integrates with:
+- @MLXEngine.mdc - Architecture and coding standards
+- @swift-style.mdc - Swift coding style
+- @xcode-cursor-tips.mdc - Xcode productivity tips
+
+## Success Metrics
+
+### Build Success Criteria:
+- ✅ Zero build errors
+- ✅ Zero test failures
+- ✅ Simulator launches successfully
+- ✅ App runs without crashes
+- ✅ Logs show normal operation
+
+### Performance Targets:
+- Build time: <30 seconds
+- Test execution: <10 seconds
+- Simulator launch: <15 seconds
+- App startup: <5 seconds
+
+---
+*Last updated: 2025-06-27*

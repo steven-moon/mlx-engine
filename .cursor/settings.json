@@ -1,0 +1,149 @@
+{
+  "cursor.agent.enabled": true,
+  "cursor.agent.autoRun": true,
+  "cursor.agent.autoRunOnSave": true,
+  "cursor.agent.autoRunOnFileChange": true,
+  "cursor.agent.autoRunOnTerminalCommand": true,
+  "cursor.agent.autoRunOnBuild": true,
+  "cursor.agent.autoRunOnTest": true,
+  "cursor.agent.autoRunOnSimulator": true,
+  
+  "cursor.agent.commands": {
+    "build-ios": "./agent_dev_workflow.sh build-ios",
+    "build-macos": "./agent_dev_workflow.sh build-macos", 
+    "test": "./agent_dev_workflow.sh test",
+    "clean": "./agent_dev_workflow.sh clean",
+    "monitor": "./agent_dev_workflow.sh monitor",
+    "reset-sim": "./agent_dev_workflow.sh reset-sim",
+    "full-cycle": "./agent_dev_workflow.sh full-cycle",
+    "status": "./agent_dev_workflow.sh status"
+  },
+  
+  "cursor.agent.workflow": {
+    "onFileSave": [
+      "build-ios",
+      "test"
+    ],
+    "onSwiftFileChange": [
+      "build-ios",
+      "test",
+      "monitor"
+    ],
+    "onProjectFileChange": [
+      "clean",
+      "build-ios",
+      "test"
+    ]
+  },
+  
+  "cursor.agent.notifications": {
+    "buildSuccess": true,
+    "buildFailure": true,
+    "testSuccess": true,
+    "testFailure": true,
+    "simulatorLaunch": true,
+    "simulatorError": true
+  },
+  
+  "cursor.agent.logging": {
+    "enabled": true,
+    "level": "info",
+    "file": "/tmp/cursor-agent.log",
+    "maxSize": "10MB"
+  },
+  
+  "cursor.agent.autoFix": {
+    "buildErrors": true,
+    "testFailures": true,
+    "lintingIssues": true,
+    "formattingIssues": true
+  },
+  
+  "cursor.agent.simulator": {
+    "autoLaunch": true,
+    "device": "iPhone 16",
+    "autoMonitor": true,
+    "autoResetOnError": true
+  },
+  
+  "cursor.agent.testing": {
+    "autoRun": true,
+    "coverage": true,
+    "parallel": true,
+    "timeout": 300
+  },
+  
+  "cursor.agent.build": {
+    "autoClean": false,
+    "incremental": true,
+    "parallel": true,
+    "timeout": 600
+  },
+  
+  "cursor.agent.development": {
+    "autoSave": true,
+    "autoFormat": true,
+    "autoLint": true,
+    "autoCommit": false
+  },
+  
+  "cursor.agent.integration": {
+    "xcode": true,
+    "simulator": true,
+    "terminal": true,
+    "git": true
+  },
+  
+  "cursor.agent.performance": {
+    "maxConcurrentTasks": 4,
+    "taskTimeout": 300,
+    "memoryLimit": "2GB",
+    "cpuLimit": "50%"
+  },
+  
+  "cursor.agent.security": {
+    "allowFileSystemAccess": true,
+    "allowNetworkAccess": true,
+    "allowTerminalAccess": true,
+    "allowXcodeAccess": true
+  },
+  
+  "cursor.agent.customization": {
+    "projectRoot": "/Users/stevenmoon/GitRepo/mlx-engine",
+    "workspacePath": "MLXChatApp/MLXChatApp.xcodeproj/project.xcworkspace",
+    "scheme": "MLXChatApp-iOS",
+    "destination": "platform=iOS Simulator,name=iPhone 16"
+  },
+  
+  "cursor.agent.monitoring": {
+    "buildLogs": true,
+    "testLogs": true,
+    "simulatorLogs": true,
+    "systemLogs": false,
+    "performanceMetrics": true
+  },
+  
+  "cursor.agent.reporting": {
+    "buildReports": true,
+    "testReports": true,
+    "coverageReports": true,
+    "performanceReports": true,
+    "errorReports": true
+  },
+  
+  "cursor.agent.automation": {
+    "autoRetry": true,
+    "maxRetries": 3,
+    "retryDelay": 5,
+    "autoRecovery": true,
+    "gracefulDegradation": true
+  },
+  
+  "cursor.agent.communication": {
+    "statusUpdates": true,
+    "progressIndicators": true,
+    "errorDetails": true,
+    "successConfirmations": true,
+    "userNotifications": true
+  }
+} 

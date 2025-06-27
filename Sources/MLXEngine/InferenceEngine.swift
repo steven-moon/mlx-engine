@@ -89,8 +89,10 @@ public struct RetryConfiguration: Sendable, Codable {
 
 // MARK: - Inference Engine Implementation
 
-/// A production-ready, high-performance LLM engine with MLX integration
-/// Features advanced performance monitoring, memory optimization, and comprehensive error handling
+/// Main inference engine for MLX-based language model inference
+/// Provides unified interface for both MLX and fallback implementations
+/// 
+/// **Agent Workflow Test**: This comment demonstrates automatic build/test/simulate cycle
 public final class InferenceEngine: LLMEngine, @unchecked Sendable {
     private let config: ModelConfiguration
     private var isUnloaded = false

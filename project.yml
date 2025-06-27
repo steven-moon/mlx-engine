@@ -26,6 +26,7 @@ targets:
     platform: macOS
     deploymentTarget: '14.0'
     sources: [Sources/MLXEngine]
+    resources: [Sources/MLXEngine/Resources/**]
     dependencies:
       - package: mlx-swift
         product: MLX
@@ -46,6 +47,7 @@ targets:
     platform: iOS
     deploymentTarget: '17.0'
     sources: [Sources/MLXEngine]
+    resources: [Sources/MLXEngine/Resources/**]
     dependencies:
       - package: mlx-swift
         product: MLX
@@ -68,6 +70,7 @@ targets:
     platform: tvOS
     deploymentTarget: '17.0'
     sources: [Sources/MLXEngine]
+    resources: [Sources/MLXEngine/Resources/**]
     dependencies:
       - package: mlx-swift
         product: MLX
@@ -88,6 +91,7 @@ targets:
     platform: watchOS
     deploymentTarget: '10.0'
     sources: [Sources/MLXEngine]
+    resources: [Sources/MLXEngine/Resources/**]
     dependencies:
       - package: mlx-swift
         product: MLX
@@ -108,6 +112,7 @@ targets:
     platform: visionOS
     deploymentTarget: '1.0'
     sources: [Sources/MLXEngine]
+    resources: [Sources/MLXEngine/Resources/**]
     dependencies:
       - package: mlx-swift
         product: MLX
@@ -255,4 +260,41 @@ targets:
       CODE_SIGN_IDENTITY: "-"
       GENERATE_INFOPLIST_FILE: YES
       EXCLUDED_ARCHS[sdk=iphonesimulator*]: x86_64
-      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp.iOS 
+      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp.iOS
+
+schemes:
+  MLXEngine_macOS:
+    build:
+      targets:
+        MLXEngine_macOS: all
+    test:
+      targets:
+        - MLXEngineTests_macOS
+  MLXEngine_iOS:
+    build:
+      targets:
+        MLXEngine_iOS: all
+    test:
+      targets:
+        - MLXEngineTests_iOS
+  MLXEngine_tvOS:
+    build:
+      targets:
+        MLXEngine_tvOS: all
+    test:
+      targets:
+        - MLXEngineTests_tvOS
+  MLXEngine_watchOS:
+    build:
+      targets:
+        MLXEngine_watchOS: all
+    test:
+      targets:
+        - MLXEngineTests_watchOS
+  MLXEngine_visionOS:
+    build:
+      targets:
+        MLXEngine_visionOS: all
+    test:
+      targets:
+        - MLXEngineTests_visionOS 

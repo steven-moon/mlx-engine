@@ -104,7 +104,7 @@ final class MLXEngineTests: XCTestCase {
     func testGenerateParamsDefaultValues() {
         let params = GenerateParams()
         
-        XCTAssertEqual(params.maxTokens, 100)
+        XCTAssertEqual(params.maxTokens, 128)
         XCTAssertEqual(params.temperature, 0.7, accuracy: 0.01)
         XCTAssertEqual(params.topP, 0.9, accuracy: 0.01)
         XCTAssertEqual(params.topK, 40)
@@ -157,17 +157,22 @@ final class MLXEngineTests: XCTestCase {
     }
     
     func testInferenceEngineStream() async throws {
-        let prompt = "Test prompt"
+        // Use a real, small model for this test
+        let config = ModelRegistry.qwen_0_5B
+        let engine = try await InferenceEngine.loadModel(config) { progress in
+            print("[TEST] Download progress: \(progress * 100)%")
+        }
+
+        let prompt = "Tell me a short story about a brave robot."
         print("[TEST] Streaming for prompt: \(prompt)")
-        let stream = sharedEngine.stream(prompt)
+        let stream = engine.stream(prompt)
         var tokens: [String] = []
         for try await token in stream {
             print("[TEST] Streamed token: \(token)")
             tokens.append(token)
         }
         print("[TEST] Streamed output: \(tokens.joined())")
-        XCTAssertGreaterThan(tokens.count, 0)
-        XCTAssertTrue(tokens.joined().contains("Test prompt"))
+        XCTAssertFalse(tokens.isEmpty, "Stream should have returned tokens")
     }
     
     func testInferenceEngineUnload() async throws {

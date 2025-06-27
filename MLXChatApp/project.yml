@@ -10,27 +10,27 @@ options:
 packages:
   MLXEngine:
     path: ../
-  UIAI:
-    path: ../
+  SwiftUIKit:
+    path: ../SwiftUIKit
 
 targets:
   MLXChatApp-iOS:
     type: application
     platform: iOS
-    sources: [Sources/Shared, Sources/iOS]
+    sources: [Sources/Shared, Sources/iOS, Sources/MLXChatApp]
     settings:
       GENERATE_INFOPLIST_FILE: YES
       DEVELOPMENT_TEAM: M3W42R75UU
       PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-iOS
     dependencies:
       - package: MLXEngine
-      - package: UIAI
+      - package: SwiftUIKit
     info:
       path: Sources/iOS/Info.plist
   MLXChatApp-macOS:
     type: application
     platform: macOS
-    sources: [Sources/Shared, Sources/macOS]
+    sources: [Sources/Shared, Sources/macOS, Sources/MLXChatApp]
     settings:
       GENERATE_INFOPLIST_FILE: YES
       DEVELOPMENT_TEAM: M3W42R75UU
@@ -40,7 +40,7 @@ targets:
   MLXChatApp-tvOS:
     type: application
     platform: tvOS
-    sources: [Sources/Shared, Sources/tvOS]
+    sources: [Sources/Shared, Sources/tvOS, Sources/MLXChatApp]
     settings:
       GENERATE_INFOPLIST_FILE: YES
       DEVELOPMENT_TEAM: M3W42R75UU
@@ -50,7 +50,7 @@ targets:
   MLXChatApp-watchOS:
     type: application
     platform: watchOS
-    sources: [Sources/Shared, Sources/watchOS]
+    sources: [Sources/Shared, Sources/watchOS, Sources/MLXChatApp]
     settings:
       GENERATE_INFOPLIST_FILE: YES
       DEVELOPMENT_TEAM: M3W42R75UU
@@ -60,7 +60,7 @@ targets:
   MLXChatApp-visionOS:
     type: application
     platform: visionOS
-    sources: [Sources/Shared, Sources/visionOS]
+    sources: [Sources/Shared, Sources/visionOS, Sources/MLXChatApp]
     settings:
       GENERATE_INFOPLIST_FILE: YES
       DEVELOPMENT_TEAM: M3W42R75UU
