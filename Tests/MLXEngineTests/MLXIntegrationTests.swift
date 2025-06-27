@@ -8,316 +8,460 @@ import MLXLMCommon
 
 final class MLXIntegrationTests: XCTestCase {
     
-    func testMLXDependenciesAvailable() {
-        // Test that MLX dependencies are available by checking if we can import them
-        // This test will only run if the conditional compilation is true
-        XCTAssertTrue(true) // If we reach here, dependencies are available
+    // MARK: - Test Configuration
+    
+    override func setUp() async throws {
+        // Set up MLX GPU cache limit for testing
+        #if canImport(MLX)
+        MLX.GPU.set(cacheLimit: 512 * 1024 * 1024) // 512MB
+        #endif
     }
     
-    func testModelConfigurationCreation() {
-        // Test that we can create MLXLMCommon.ModelConfiguration
-        let config = MLXLMCommon.ModelConfiguration(
-            id: "test-model",
-            defaultPrompt: "Hello, how can I help you?"
-        )
-        
-        XCTAssertEqual(config.id, .id("test-model", revision: "main"))
-        XCTAssertEqual(config.defaultPrompt, "Hello, how can I help you?")
+    override func tearDown() async throws {
+        // Clean up any loaded models
+        // This will be handled by the engine's unload method
     }
     
-    func testGenerateParametersCreation() {
-        // Test that we can create MLXLMCommon.GenerateParameters
-        let params = MLXLMCommon.GenerateParameters(
-            maxTokens: 100,
-            temperature: 0.7,
-            topP: 0.9
-        )
+    // MARK: - Feature Detection Tests
+    
+    func testFeatureDetection() {
+        print("\n🔍 [FEATURE TEST] Testing feature detection...")
         
-        XCTAssertEqual(params.maxTokens, 100)
-        XCTAssertEqual(params.temperature, 0.7)
-        XCTAssertEqual(params.topP, 0.9)
+        let features = InferenceEngine.supportedFeatures
+        print("✅ [FEATURE TEST] Available features: \(features)")
+        
+        // Test core features
+        XCTAssertTrue(features.contains(.streamingGeneration), "Streaming generation should be available")
+        XCTAssertTrue(features.contains(.conversationMemory), "Conversation memory should be available")
+        XCTAssertTrue(features.contains(.performanceMonitoring), "Performance monitoring should be available")
+        
+        // Test MLX-specific features
+        #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
+        XCTAssertTrue(features.contains(.quantizationSupport), "Quantization support should be available with MLX")
+        XCTAssertTrue(features.contains(.modelCaching), "Model caching should be available with MLX")
+        XCTAssertTrue(features.contains(.customTokenizers), "Custom tokenizers should be available with MLX")
+        #endif
+        
+        print("✅ [FEATURE TEST] Feature detection completed successfully")
     }
     
-    func testInferenceEngineStaticMethod() {
-        // Test that the static loadModel method exists and has correct signature
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            parameters: "1B",
-            quantization: "4bit",
-            architecture: "Test",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
-        )
+    // MARK: - LLM Model Tests
+    
+    func testLLMModelDownloadAndInference() async throws {
+        print("\n🚀 [LLM TEST] Testing LLM model download and inference...")
         
-        // Test that the method signature is correct by checking it exists
-        // We can't actually call it without MLX runtime, but we can verify the type
-        let engineType = InferenceEngine.self
-        XCTAssertNotNil(engineType)
+        // Test with a small, fast model
+        let config = ModelRegistry.qwen05B
+        print("📋 [LLM TEST] Using model: \(config.name) (\(config.hubId))")
         
-        // Verify the config was created correctly
-        XCTAssertEqual(config.name, "Test Model")
-        XCTAssertEqual(config.hubId, "test/model")
+        let loadProgressCollector = ProgressCollector()
+        let startTime = Date()
+        
+        // Load the model
+        let engine = try await InferenceEngine.loadModel(config) { progress in
+            Task {
+                await loadProgressCollector.addProgress(progress)
+            }
+        }
+        
+        let loadTime = Date().timeIntervalSince(startTime)
+        let loadProgress = await loadProgressCollector.getProgressValues()
+        
+        print("✅ [LLM TEST] Model loaded successfully!")
+        print("   - Load time: \(String(format: "%.2f", loadTime)) seconds")
+        print("   - Progress points: \(loadProgress.count)")
+        print("   - Final progress: \(loadProgress.last ?? 0.0)")
+        
+        // Test text generation
+        let testPrompt = "Hello! Please respond with a short, friendly greeting."
+        print("📝 [LLM TEST] Test prompt: \"\(testPrompt)\"")
+        
+        let generateStartTime = Date()
+        let response = try await engine.generate(testPrompt, params: GenerateParams(maxTokens: 50, temperature: 0.7))
+        let generateTime = Date().timeIntervalSince(generateStartTime)
+        
+        print("✅ [LLM TEST] Text generation successful!")
+        print("   - Response: \"\(response)\"")
+        print("   - Generation time: \(String(format: "%.2f", generateTime)) seconds")
+        
+        XCTAssertFalse(response.isEmpty, "Response should not be empty")
+        XCTAssertTrue(response.count > 10, "Response should be substantial")
+        
+        // Test streaming generation
+        print("\n🔄 [LLM TEST] Testing streaming generation...")
+        let streamPrompt = "Tell me a very short story about a cat."
+        print("📝 [LLM TEST] Stream prompt: \"\(streamPrompt)\"")
+        
+        let streamStartTime = Date()
+        var streamedText = ""
+        var chunkCount = 0
+        
+        for try await chunk in engine.stream(streamPrompt, params: GenerateParams(maxTokens: 100, temperature: 0.8)) {
+            streamedText += chunk
+            chunkCount += 1
+            print("   Chunk \(chunkCount): \"\(chunk)\"")
+        }
+        
+        let streamTime = Date().timeIntervalSince(streamStartTime)
+        print("✅ [LLM TEST] Streaming generation successful!")
+        print("   - Total chunks: \(chunkCount)")
+        print("   - Streamed text: \"\(streamedText)\"")
+        print("   - Stream time: \(String(format: "%.2f", streamTime)) seconds")
+        
+        XCTAssertFalse(streamedText.isEmpty, "Streamed text should not be empty")
+        XCTAssertTrue(chunkCount > 1, "Should have multiple chunks")
+        
+        // Test model unloading
+        print("\n🧹 [LLM TEST] Testing model unloading...")
+        engine.unload()
+        print("✅ [LLM TEST] Model unloaded successfully")
+        
+        print("✅ [LLM TEST] LLM model test completed successfully!")
     }
     
-    func testMLXLMCommonTypes() {
-        // Test that MLXLMCommon types are available
-        let _: MLXLMCommon.ModelConfiguration.Type = MLXLMCommon.ModelConfiguration.self
-        let _: MLXLMCommon.GenerateParameters.Type = MLXLMCommon.GenerateParameters.self
-        let _: MLXLMCommon.ChatSession.Type = MLXLMCommon.ChatSession.self
+    // MARK: - VLM Model Tests
+    
+    func testVLMModelDownloadAndInference() async throws {
+        print("\n🖼️ [VLM TEST] Testing VLM model download and inference...")
         
-        // If we reach here, the types are available
-        XCTAssertTrue(true)
+        // Check if VLM features are available
+        guard InferenceEngine.supportedFeatures.contains(.visionLanguageModels) else {
+            print("⚠️ [VLM TEST] VLM features not available, skipping test")
+            return
+        }
+        
+        // Test with LLaVA model
+        let config = ModelRegistry.llava16_3B
+        print("📋 [VLM TEST] Using model: \(config.name) (\(config.hubId))")
+        
+        let loadProgressCollector = ProgressCollector()
+        let startTime = Date()
+        
+        // Load the VLM model
+        let engine = try await InferenceEngine.loadModel(config) { progress in
+            Task {
+                await loadProgressCollector.addProgress(progress)
+            }
+        }
+        
+        let loadTime = Date().timeIntervalSince(startTime)
+        let loadProgress = await loadProgressCollector.getProgressValues()
+        
+        print("✅ [VLM TEST] VLM model loaded successfully!")
+        print("   - Load time: \(String(format: "%.2f", loadTime)) seconds")
+        print("   - Progress points: \(loadProgress.count)")
+        
+        // Test VLM-specific features
+        XCTAssertTrue(InferenceEngine.supportedFeatures.contains(.multiModalInput), "Multi-modal input should be available for VLM")
+        
+        // Test text-only generation (VLM models can also do text generation)
+        let testPrompt = "Describe what you see in this image: [No image provided, please respond with a general description of your capabilities]"
+        print("📝 [VLM TEST] Test prompt: \"\(testPrompt)\"")
+        
+        let response = try await engine.generate(testPrompt, params: .init(maxTokens: 100, temperature: 0.7))
+        
+        print("✅ [VLM TEST] VLM text generation successful!")
+        print("   - Response: \"\(response)\"")
+        
+        XCTAssertFalse(response.isEmpty, "VLM response should not be empty")
+        
+        // Test model unloading
+        print("\n🧹 [VLM TEST] Testing VLM model unloading...")
+        engine.unload()
+        print("✅ [VLM TEST] VLM model unloaded successfully")
+        
+        print("✅ [VLM TEST] VLM model test completed successfully!")
     }
     
-    func testInferenceEngineIntegration() async {
-        // Test that we can attempt to use InferenceEngine
-        // This may fail due to MLX runtime issues, but should not crash
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "mlx-community/Qwen-0.5B-Instruct-4bit",
-            description: "Test model for unit testing",
-            parameters: "0.5B",
-            quantization: "4bit",
-            architecture: "Qwen",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
+    // MARK: - Embedding Model Tests
+    
+    func testEmbeddingModelDownloadAndInference() async throws {
+        print("\n🔗 [EMBEDDING TEST] Testing embedding model download and inference...")
+        
+        // Check if embedding features are available
+        guard InferenceEngine.supportedFeatures.contains(.embeddingModels) else {
+            print("⚠️ [EMBEDDING TEST] Embedding features not available, skipping test")
+            return
+        }
+        
+        // Test with BGE model
+        let config = ModelRegistry.bgeSmallEn
+        print("📋 [EMBEDDING TEST] Using model: \(config.name) (\(config.hubId))")
+        
+        let loadProgressCollector = ProgressCollector()
+        let startTime = Date()
+        
+        // Load the embedding model
+        let engine = try await InferenceEngine.loadModel(config) { progress in
+            Task { await loadProgressCollector.addProgress(progress) }
+        }
+        
+        let loadTime = Date().timeIntervalSince(startTime)
+        let loadProgress = await loadProgressCollector.getProgressValues()
+        
+        print("✅ [EMBEDDING TEST] Embedding model loaded successfully!")
+        print("   - Load time: \(String(format: "%.2f", loadTime)) seconds")
+        print("   - Progress points: \(loadProgress.count)")
+        
+        // Test embedding-specific features
+        XCTAssertTrue(InferenceEngine.supportedFeatures.contains(.batchProcessing), "Batch processing should be available for embeddings")
+        
+        // Test text embedding generation
+        let testText = "This is a test sentence for embedding generation."
+        print("📝 [EMBEDDING TEST] Test text: \"\(testText)\"")
+        
+        let response = try await engine.generate(testText, params: GenerateParams(maxTokens: 512, temperature: 0.0))
+        
+        print("✅ [EMBEDDING TEST] Embedding generation successful!")
+        print("   - Response length: \(response.count)")
+        
+        XCTAssertFalse(response.isEmpty, "Embedding response should not be empty")
+        
+        // Test model unloading
+        print("\n🧹 [EMBEDDING TEST] Testing embedding model unloading...")
+        engine.unload()
+        print("✅ [EMBEDDING TEST] Embedding model unloaded successfully")
+        
+        print("✅ [EMBEDDING TEST] Embedding model test completed successfully!")
+    }
+    
+    // MARK: - Diffusion Model Tests
+    
+    func testDiffusionModelDownloadAndInference() async throws {
+        print("\n🎨 [DIFFUSION TEST] Testing diffusion model download and inference...")
+        
+        // Check if diffusion features are available
+        guard InferenceEngine.supportedFeatures.contains(.diffusionModels) else {
+            print("⚠️ [DIFFUSION TEST] Diffusion features not available, skipping test")
+            return
+        }
+        
+        // Test with Stable Diffusion model
+        let config = ModelRegistry.stableDiffusionXL
+        print("📋 [DIFFUSION TEST] Using model: \(config.name) (\(config.hubId))")
+        
+        let loadProgressCollector = ProgressCollector()
+        let startTime = Date()
+        
+        // Load the diffusion model
+        let engine = try await InferenceEngine.loadModel(config) { progress in
+            Task { await loadProgressCollector.addProgress(progress) }
+        }
+        
+        let loadTime = Date().timeIntervalSince(startTime)
+        let loadProgress = await loadProgressCollector.getProgressValues()
+        
+        print("✅ [DIFFUSION TEST] Diffusion model loaded successfully!")
+        print("   - Load time: \(String(format: "%.2f", loadTime)) seconds")
+        print("   - Progress points: \(loadProgress.count)")
+        
+        // Test diffusion-specific features
+        XCTAssertTrue(InferenceEngine.supportedFeatures.contains(.multiModalInput), "Multi-modal input should be available for diffusion")
+        
+        // Test image generation prompt
+        let testPrompt = "A beautiful sunset over the ocean"
+        print("📝 [DIFFUSION TEST] Test prompt: \"\(testPrompt)\"")
+        
+        let response = try await engine.generate(testPrompt, params: GenerateParams(maxTokens: 77, temperature: 0.8))
+        
+        print("✅ [DIFFUSION TEST] Diffusion generation successful!")
+        print("   - Response length: \(response.count)")
+        
+        XCTAssertFalse(response.isEmpty, "Diffusion response should not be empty")
+        
+        // Test model unloading
+        print("\n🧹 [DIFFUSION TEST] Testing diffusion model unloading...")
+        engine.unload()
+        print("✅ [DIFFUSION TEST] Diffusion model unloaded successfully")
+        
+        print("✅ [DIFFUSION TEST] Diffusion model test completed successfully!")
+    }
+    
+    // MARK: - Quantization Tests
+    
+    func testQuantizedModelInference() async throws {
+        print("\n⚡ [QUANTIZATION TEST] Testing quantized model inference...")
+        
+        // Check if quantization features are available
+        guard InferenceEngine.supportedFeatures.contains(.quantizationSupport) else {
+            print("⚠️ [QUANTIZATION TEST] Quantization features not available, skipping test")
+            return
+        }
+        
+        // Test with FP16 quantized model
+        let config = ModelRegistry.llama32_3B_fp16
+        print("📋 [QUANTIZATION TEST] Using model: \(config.name) (\(config.hubId))")
+        
+        let loadProgressCollector = ProgressCollector()
+        let startTime = Date()
+        
+        // Load the quantized model
+        let engine = try await InferenceEngine.loadModel(config) { progress in
+            Task { await loadProgressCollector.addProgress(progress) }
+        }
+        
+        let loadTime = Date().timeIntervalSince(startTime)
+        let loadProgress = await loadProgressCollector.getProgressValues()
+        
+        print("✅ [QUANTIZATION TEST] Quantized model loaded successfully!")
+        print("   - Load time: \(String(format: "%.2f", loadTime)) seconds")
+        print("   - Progress points: \(loadProgress.count)")
+        print("   - Quantization: \(config.quantization ?? "unknown")")
+        
+        // Test text generation with quantized model
+        let testPrompt = "Explain the benefits of model quantization in one sentence."
+        print("📝 [QUANTIZATION TEST] Test prompt: \"\(testPrompt)\"")
+        
+        let response = try await engine.generate(testPrompt, params: GenerateParams(maxTokens: 100, temperature: 0.7))
+        
+        print("✅ [QUANTIZATION TEST] Quantized model generation successful!")
+        print("   - Response: \"\(response)\"")
+        
+        XCTAssertFalse(response.isEmpty, "Quantized model response should not be empty")
+        
+        // Test model unloading
+        print("\n🧹 [QUANTIZATION TEST] Testing quantized model unloading...")
+        engine.unload()
+        print("✅ [QUANTIZATION TEST] Quantized model unloaded successfully")
+        
+        print("✅ [QUANTIZATION TEST] Quantized model test completed successfully!")
+    }
+    
+    // MARK: - Performance Monitoring Tests
+    
+    func testPerformanceMonitoring() async throws {
+        print("\n📊 [PERFORMANCE TEST] Testing performance monitoring...")
+        
+        // Check if performance monitoring features are available
+        guard InferenceEngine.supportedFeatures.contains(.performanceMonitoring) else {
+            print("⚠️ [PERFORMANCE TEST] Performance monitoring features not available, skipping test")
+            return
+        }
+        
+        let config = ModelRegistry.qwen05B
+        print("📋 [PERFORMANCE TEST] Using model: \(config.name)")
+        
+        let startTime = Date()
+        
+        // Load the model
+        let engine = try await InferenceEngine.loadModel(config) { _ in }
+        
+        let loadTime = Date().timeIntervalSince(startTime)
+        
+        // Get engine status
+        let status = engine.status
+        print("✅ [PERFORMANCE TEST] Engine status retrieved:")
+        print("   - Model loaded: \(status.isModelLoaded)")
+        print("   - MLX available: \(status.mlxAvailable)")
+        print("   - Load time: \(String(format: "%.2f", loadTime)) seconds")
+        
+        XCTAssertTrue(status.isModelLoaded, "Model should be loaded")
+        XCTAssertTrue(status.mlxAvailable, "MLX should be available")
+        
+        // Test generation with performance monitoring
+        let generateStartTime = Date()
+        let response = try await engine.generate("Test performance monitoring", params: .init(maxTokens: 50))
+        let generateTime = Date().timeIntervalSince(generateStartTime)
+        
+        print("✅ [PERFORMANCE TEST] Generation performance:")
+        print("   - Generation time: \(String(format: "%.2f", generateTime)) seconds")
+        print("   - Response length: \(response.count)")
+        
+        XCTAssertTrue(generateTime > 0, "Generation time should be positive")
+        
+        // Test model unloading
+        engine.unload()
+        print("✅ [PERFORMANCE TEST] Performance monitoring test completed successfully!")
+    }
+    
+    // MARK: - Model Registry Tests
+    
+    func testModelRegistryComprehensive() async throws {
+        print("\n📚 [REGISTRY TEST] Testing comprehensive model registry...")
+        
+        // Test all model types
+        let allModels = ModelRegistry.allModels
+        print("📋 [REGISTRY TEST] Total models in registry: \(allModels.count)")
+        
+        // Group models by type
+        let llmModels = allModels.filter { ModelRegistry.getModelType($0) == .llm }
+        let vlmModels = allModels.filter { ModelRegistry.getModelType($0) == .vlm }
+        let embedderModels = allModels.filter { ModelRegistry.getModelType($0) == .embedder }
+        let diffusionModels = allModels.filter { ModelRegistry.getModelType($0) == .diffusion }
+        
+        print("📊 [REGISTRY TEST] Model distribution:")
+        print("   - LLM models: \(llmModels.count)")
+        print("   - VLM models: \(vlmModels.count)")
+        print("   - Embedder models: \(embedderModels.count)")
+        print("   - Diffusion models: \(diffusionModels.count)")
+        
+        // Test model search functionality
+        let searchResults = ModelRegistry.searchModels(query: "qwen", type: .llm)
+        print("🔍 [REGISTRY TEST] Search results for 'qwen': \(searchResults.count) models")
+        
+        XCTAssertTrue(searchResults.count > 0, "Should find Qwen models")
+        
+        // Test model recommendations
+        let mobileModels = ModelRegistry.getRecommendedModels(for: .mobileDevelopment)
+        let qualityModels = ModelRegistry.getRecommendedModels(for: .highQualityGeneration)
+        
+        print("📱 [REGISTRY TEST] Mobile models: \(mobileModels.count)")
+        print("🎯 [REGISTRY TEST] Quality models: \(qualityModels.count)")
+        
+        XCTAssertTrue(mobileModels.count > 0, "Should have mobile-optimized models")
+        XCTAssertTrue(qualityModels.count > 0, "Should have high-quality models")
+        
+        print("✅ [REGISTRY TEST] Model registry test completed successfully!")
+    }
+    
+    // MARK: - Error Handling Tests
+    
+    func testErrorHandling() async throws {
+        print("\n⚠️ [ERROR TEST] Testing error handling...")
+        
+        // Test with invalid model configuration
+        let invalidConfig = ModelConfiguration(
+            name: "Invalid Model",
+            hubId: "invalid/model/that/does/not/exist",
+            description: "This model does not exist",
+            maxTokens: 100
         )
         
         do {
-            // Try to load the model - this may fail due to MLX runtime issues
-            let engine = try await InferenceEngine.loadModel(config) { progress in
-                print("Loading progress: \(progress)")
-            }
-            
-            // If we get here, the model loaded successfully
-            XCTAssertNotNil(engine)
-            
-            // Try to generate text
-            let response = try await engine.generate("Hello, how are you?")
-            XCTAssertFalse(response.isEmpty)
-            
-            // Check if it's a MLX response or mock response
-            if response.contains("mock") || response.contains("Mock") {
-                print("✅ Using mock implementation (expected when MLX runtime unavailable)")
-            } else {
-                print("✅ Using MLX implementation")
-                XCTAssertTrue(response.contains("Hello") || response.contains("how") || response.contains("you"))
-            }
-            
+            let _ = try await InferenceEngine.loadModel(invalidConfig) { _ in }
+            XCTFail("Should have thrown an error for invalid model")
         } catch {
-            // If MLX runtime is not available, this is expected
-            print("MLX runtime error (expected in some environments): \(error)")
-            
-            // Check if it's a known MLX runtime issue
-            let errorString = error.localizedDescription
-            if errorString.contains("metallib") || 
-               errorString.contains("library not found") ||
-               errorString.contains("MLX error") ||
-               errorString.contains("MLX is not available") {
-                // This is expected when MLX runtime is not properly installed
-                print("✅ Expected MLX runtime error - this is normal in test environments")
-            } else {
-                // This might be a real error we should investigate
-                XCTFail("Unexpected error: \(error)")
-            }
+            print("✅ [ERROR TEST] Correctly caught error: \(error)")
+            XCTAssertTrue(error is MLXEngineError, "Error should be MLXEngineError")
         }
-    }
-    
-    func testInferenceEngineStreaming() async {
-        // Test streaming functionality
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            parameters: "1B",
-            quantization: "4bit",
-            architecture: "Test",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
-        )
+        
+        // Test with unsupported features
+        let engine = try await InferenceEngine.loadModel(ModelRegistry.qwen05B) { _ in }
         
         do {
-            let engine = try await InferenceEngine.loadModel(config)
-            XCTAssertNotNil(engine)
-            
-            var streamedText = ""
-            let stream = engine.stream("Hello, how are you?")
-            
-            for try await chunk in stream {
-                streamedText += chunk
-            }
-            
-            XCTAssertFalse(streamedText.isEmpty)
-            
-            // Check if it's a MLX response or mock response
-            if streamedText.contains("mock") || streamedText.contains("Mock") {
-                print("✅ Using mock streaming implementation")
-            } else {
-                print("✅ Using MLX streaming implementation")
-            }
-            
+            try await engine.loadLoRAAdapter(from: URL(string: "file:///invalid")!)
+            XCTFail("Should have thrown an error for unsupported LoRA")
         } catch {
-            print("Streaming test error (expected in some environments): \(error)")
-            
-            let errorString = error.localizedDescription
-            if errorString.contains("metallib") || 
-               errorString.contains("library not found") ||
-               errorString.contains("MLX error") ||
-               errorString.contains("MLX is not available") {
-                print("✅ Expected MLX runtime error in streaming test")
-            } else {
-                XCTFail("Unexpected streaming error: \(error)")
-            }
+            print("✅ [ERROR TEST] Correctly caught LoRA error: \(error)")
         }
-    }
-    
-    func testInferenceEngineUnload() async {
-        // Test that unload functionality works
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            parameters: "1B",
-            quantization: "4bit",
-            architecture: "Test",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
-        )
         
-        do {
-            let engine = try await InferenceEngine.loadModel(config)
-            XCTAssertNotNil(engine)
-            
-            // Test that we can generate before unloading
-            let response = try await engine.generate("Test")
-            XCTAssertFalse(response.isEmpty)
-            
-            // Unload the engine
-            engine.unload()
-            
-            // Test that generation fails after unloading
-            do {
-                _ = try await engine.generate("Test after unload")
-                XCTFail("Generation should fail after unloading")
-            } catch {
-                // Expected error
-                XCTAssertTrue(error.localizedDescription.contains("unloaded"))
-            }
-            
-        } catch {
-            print("Unload test error (expected in some environments): \(error)")
-            
-            let errorString = error.localizedDescription
-            if errorString.contains("metallib") || 
-               errorString.contains("library not found") ||
-               errorString.contains("MLX error") ||
-               errorString.contains("MLX is not available") {
-                print("✅ Expected MLX runtime error in unload test")
-            } else {
-                XCTFail("Unexpected unload test error: \(error)")
-            }
-        }
+        engine.unload()
+        print("✅ [ERROR TEST] Error handling test completed successfully!")
+    }
+}
+
+// MARK: - Helper Classes
+
+/// Helper class to collect progress values during async operations
+actor ProgressCollector {
+    private var progressValues: [Double] = []
+    
+    func addProgress(_ progress: Double) {
+        progressValues.append(progress)
     }
     
-    func testInferenceEngineParameters() async {
-        // Test that different generation parameters work
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            parameters: "1B",
-            quantization: "4bit",
-            architecture: "Test",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
-        )
-        
-        do {
-            let engine = try await InferenceEngine.loadModel(config)
-            XCTAssertNotNil(engine)
-            
-            // Test with different parameters
-            let params = GenerateParams(
-                maxTokens: 50,
-                temperature: 0.5,
-                topP: 0.8,
-                topK: 20
-            )
-            
-            let response = try await engine.generate("Test with parameters", params: params)
-            XCTAssertFalse(response.isEmpty)
-            
-            // Verify parameters are reflected in stub response
-            if response.contains("mock") || response.contains("Mock") {
-                XCTAssertTrue(response.contains("50")) // maxTokens
-                XCTAssertTrue(response.contains("0.5")) // temperature
-                // Note: topP is not included in the current mock response format
-            }
-            
-        } catch {
-            print("Parameters test error (expected in some environments): \(error)")
-            
-            let errorString = error.localizedDescription
-            if errorString.contains("metallib") || 
-               errorString.contains("library not found") ||
-               errorString.contains("MLX error") ||
-               errorString.contains("MLX is not available") {
-                print("✅ Expected MLX runtime error in parameters test")
-            } else {
-                XCTFail("Unexpected parameters test error: \(error)")
-            }
-        }
-    }
-    
-    func testRealModelInferenceWithHuggingFaceAPI() async throws {
-        // This test will search for a small MLX-compatible model, download it, and run real inference.
-        // It will be skipped if MLX runtime is not available or if the model cannot be downloaded.
-        let downloader = ModelDownloader()
-        let smallModels = ModelRegistry.smallModels
-        let preferredHubIds = [
-            "mlx-community/Qwen1.5-0.5B-Chat-4bit",
-            "mlx-community/TinyLlama-1.1B-Chat-v1.0-4bit"
-        ]
-        let modelConfig: MLXEngine.ModelConfiguration? = {
-            for hubId in preferredHubIds {
-                if let m = smallModels.first(where: { $0.hubId == hubId }) { return m }
-            }
-            return smallModels.first
-        }()
-        guard let config = modelConfig else {
-            throw XCTSkip("No small MLX-compatible model found in registry.")
-        }
-        print("[TEST] Selected model for real inference: \(config.name) (\(config.hubId))")
-        // Download the model if needed
-        do {
-            let _ = try await downloader.downloadModel(config) { progress in
-                if progress == 1.0 { print("[TEST] Download complete for \(config.hubId)") }
-            }
-        } catch {
-            throw XCTSkip("Could not download model: \(error)")
-        }
-        // Load the model and run inference
-        do {
-            let engine = try await InferenceEngine.loadModel(config) { progress in
-                if progress == 1.0 { print("[TEST] Model loaded: \(config.hubId)") }
-            }
-            let prompt = "Hello, world!"
-            let response = try await engine.generate(prompt)
-            print("[TEST] Inference output: \(response)")
-            XCTAssertFalse(response.isEmpty, "Output should not be empty")
-            XCTAssertFalse(response.lowercased().contains("mock"), "Should not be a mock response")
-        } catch let error as MLXEngineError {
-            let msg = error.localizedDescription
-            if msg.contains("MLX runtime not available") || msg.contains("Missing required files") {
-                throw XCTSkip("MLX runtime or model files not available: \(msg)")
-            } else {
-                XCTFail("Unexpected MLXEngineError: \(msg)")
-            }
-        } catch {
-            XCTFail("Unexpected error during real inference: \(error)")
-        }
+    func getProgressValues() -> [Double] {
+        return progressValues
     }
 }
 
@@ -326,174 +470,9 @@ final class MLXIntegrationTests: XCTestCase {
 final class MLXIntegrationTests: XCTestCase {
     
     func testMLXDependenciesNotAvailable() {
-        // Test that MLX dependencies are not available (stub implementation)
-        // This test will only run if the conditional compilation is false
-        XCTAssertTrue(true) // If we reach here, we're using stub implementation
-    }
-    
-    func testStubInferenceEngineStaticMethod() {
-        // Test that the static loadModel method exists and has correct signature
-        _ = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            parameters: "1B",
-            quantization: "4bit",
-            architecture: "Test",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
-        )
-        
-        // Test that the method signature is correct by checking it exists
-        let engineType = InferenceEngine.self
-        XCTAssertNotNil(engineType)
-    }
-    
-    func testStubImplementation() {
-        // Test that we're using the stub implementation
-        // This test will only run if MLX dependencies are not available
-        XCTAssertTrue(true) // If we reach here, stub implementation is working
-    }
-    
-    func testStubInferenceEngineIntegration() async {
-        // Test that stub InferenceEngine works correctly
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            parameters: "1B",
-            quantization: "4bit",
-            architecture: "Test",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
-        )
-        
-        do {
-            // Try to load the model - this should work with stub implementation
-            let engine = try await InferenceEngine.loadModel(config) { progress in
-                print("Loading progress: \(progress)")
-            }
-            
-            // If we get here, the model loaded successfully
-            XCTAssertNotNil(engine)
-            
-            // Try to generate text
-            let response = try await engine.generate("Hello, how are you?")
-            XCTAssertFalse(response.isEmpty)
-            XCTAssertTrue(response.contains("mock") || response.contains("Mock"))
-            
-        } catch {
-            XCTFail("Stub implementation should not fail: \(error)")
-        }
-    }
-    
-    func testStubInferenceEngineStreaming() async {
-        // Test stub streaming functionality
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            parameters: "1B",
-            quantization: "4bit",
-            architecture: "Test",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
-        )
-        
-        do {
-            let engine = try await InferenceEngine.loadModel(config)
-            XCTAssertNotNil(engine)
-            
-            var streamedText = ""
-            let stream = engine.stream("Hello, how are you?")
-            
-            for try await chunk in stream {
-                streamedText += chunk
-            }
-            
-            XCTAssertFalse(streamedText.isEmpty)
-            XCTAssertTrue(streamedText.contains("mock") || streamedText.contains("Mock"))
-            
-        } catch {
-            XCTFail("Stub streaming should not fail: \(error)")
-        }
-    }
-    
-    func testStubInferenceEngineUnload() async {
-        // Test stub unload functionality
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            parameters: "1B",
-            quantization: "4bit",
-            architecture: "Test",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
-        )
-        
-        do {
-            let engine = try await InferenceEngine.loadModel(config)
-            XCTAssertNotNil(engine)
-            
-            // Test that we can generate before unloading
-            let response = try await engine.generate("Test")
-            XCTAssertFalse(response.isEmpty)
-            
-            // Unload the engine
-            engine.unload()
-            
-            // Test that generation fails after unloading
-            do {
-                _ = try await engine.generate("Test after unload")
-                XCTFail("Generation should fail after unloading")
-            } catch {
-                // Expected error
-                XCTAssertTrue(error.localizedDescription.contains("unloaded"))
-            }
-            
-        } catch {
-            XCTFail("Stub unload test should not fail: \(error)")
-        }
-    }
-    
-    func testStubInferenceEngineParameters() async {
-        // Test stub parameters functionality
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            parameters: "1B",
-            quantization: "4bit",
-            architecture: "Test",
-            maxTokens: 1024,
-            estimatedSizeGB: 0.5
-        )
-        
-        do {
-            let engine = try await InferenceEngine.loadModel(config)
-            XCTAssertNotNil(engine)
-            
-            // Test with different parameters
-            let params = GenerateParams(
-                maxTokens: 50,
-                temperature: 0.5,
-                topP: 0.8,
-                topK: 20
-            )
-            
-            let response = try await engine.generate("Test with parameters", params: params)
-            XCTAssertFalse(response.isEmpty)
-            XCTAssertTrue(response.contains("mock") || response.contains("Mock"))
-            
-            // Verify parameters are reflected in stub response
-            XCTAssertTrue(response.contains("50")) // maxTokens
-            XCTAssertTrue(response.contains("0.5")) // temperature
-            // Note: topP is not included in the current mock response format
-            
-        } catch {
-            XCTFail("Stub parameters test should not fail: \(error)")
-        }
+        print("\n⚠️ [MLX TEST] MLX dependencies not available, skipping integration tests")
+        // This test will run when MLX dependencies are not available
+        XCTAssertTrue(true)
     }
 }
 

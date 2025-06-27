@@ -195,7 +195,10 @@ final class ModelRegistryTests: XCTestCase {
         let config = ModelConfiguration(
             name: "Qwen Test",
             hubId: "mlx-community/Qwen1.5-0.5B-Chat-4bit",
-            description: "Test Qwen model"
+            description: "Test Qwen model",
+            modelType: .llm,
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
         let extracted = config.withExtractedMetadata()
         XCTAssertEqual(extracted.architecture, "Qwen")
@@ -211,7 +214,10 @@ final class ModelRegistryTests: XCTestCase {
             parameters: "3B",
             quantization: "4bit",
             architecture: "Llama",
-            estimatedSizeGB: 1.8
+            estimatedSizeGB: 1.8,
+            modelType: .llm,
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
         XCTAssertEqual(config.displaySize, "1.8 GB")
         XCTAssertEqual(config.displayInfo, "Llama • 3B • 4bit")
@@ -230,10 +236,9 @@ final class ModelRegistryTests: XCTestCase {
             estimatedSizeGB: 1.0,
             defaultSystemPrompt: "Hello",
             endOfTextTokens: ["<eos>"],
-            engineType: "mlx",
-            downloadURL: "https://example.com/model",
-            isDownloaded: true,
-            localPath: "/tmp/model"
+            modelType: .llm,
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
         let data = try JSONEncoder().encode(config)
         let decoded = try JSONDecoder().decode(ModelConfiguration.self, from: data)
@@ -246,10 +251,9 @@ final class ModelRegistryTests: XCTestCase {
         XCTAssertEqual(decoded.estimatedSizeGB, config.estimatedSizeGB)
         XCTAssertEqual(decoded.defaultSystemPrompt, config.defaultSystemPrompt)
         XCTAssertEqual(decoded.endOfTextTokens, config.endOfTextTokens)
-        XCTAssertEqual(decoded.engineType, config.engineType)
-        XCTAssertEqual(decoded.downloadURL, config.downloadURL)
-        XCTAssertEqual(decoded.isDownloaded, config.isDownloaded)
-        XCTAssertEqual(decoded.localPath, config.localPath)
+        XCTAssertEqual(decoded.modelType, config.modelType)
+        XCTAssertEqual(decoded.gpuCacheLimit, config.gpuCacheLimit)
+        XCTAssertEqual(decoded.features, config.features)
     }
 
     func testPresenceOfVisionLanguageModel() {

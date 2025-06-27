@@ -24,7 +24,10 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
             path: "Sources/MLXEngine",
-            exclude: ["macOS"]
+            exclude: ["macOS"],
+            resources: [
+                .process("Resources/default.metallib")
+            ]
         ),
         .executableTarget(
             name: "mlxengine-debug-report",

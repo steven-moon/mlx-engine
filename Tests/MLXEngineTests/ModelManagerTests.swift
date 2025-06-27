@@ -37,7 +37,10 @@ final class ModelManagerTests: XCTestCase {
         let config = ModelConfiguration(
             name: "Test Model",
             hubId: "test/model",
-            description: "A test model"
+            description: "A test model",
+            modelType: .llm,
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
         XCTAssertEqual(config.name, "Test Model")
         XCTAssertEqual(config.hubId, "test/model")

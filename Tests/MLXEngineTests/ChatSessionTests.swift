@@ -18,7 +18,7 @@ final class ChatSessionTests: XCTestCase {
         // Load the engine once for all tests to avoid repetitive loading
         // The mock implementation will be used since "mock/test-model" doesn't exist
         engine = try await InferenceEngine.loadModel(config) { _ in }
-        session = ChatSession(engine: engine)
+        session = await ChatSession.testSession()
     }
     
     override func tearDown() async throws {
@@ -74,7 +74,7 @@ final class ChatSessionTests: XCTestCase {
         
         XCTAssertEqual(session.messageCount, 2)
         
-        session.clearHistory()
+        await session.clearHistory()
         
         XCTAssertEqual(session.messageCount, 0)
         XCTAssertNil(session.lastMessage)

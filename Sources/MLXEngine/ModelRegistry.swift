@@ -11,6 +11,9 @@ public struct ModelRegistry {
         case vlm = "VLM"           // Vision Language Model
         case embedder = "Embedder" // Text Embedding Model
         case diffusion = "Diffusion" // Image Generation Model
+        case training = "Training" // Training/Finetuning Models
+        case evaluation = "Evaluation" // Model Evaluation Models
+        case compression = "Compression" // Model Compression Models
         
         /// Human-readable description of the model type
         public var description: String {
@@ -23,6 +26,32 @@ public struct ModelRegistry {
                 return "Text embedding and semantic search"
             case .diffusion:
                 return "Image generation from text"
+            case .training:
+                return "Model training and fine-tuning"
+            case .evaluation:
+                return "Model evaluation and benchmarking"
+            case .compression:
+                return "Model compression and optimization"
+            }
+        }
+        
+        /// Required features for this model type
+        public var requiredFeatures: Set<LLMEngineFeatures> {
+            switch self {
+            case .llm:
+                return [.streamingGeneration, .conversationMemory]
+            case .vlm:
+                return [.visionLanguageModels, .multiModalInput, .streamingGeneration]
+            case .embedder:
+                return [.embeddingModels, .batchProcessing]
+            case .diffusion:
+                return [.diffusionModels, .multiModalInput]
+            case .training:
+                return [.modelTraining, .performanceMonitoring]
+            case .evaluation:
+                return [.modelEvaluation, .performanceMonitoring]
+            case .compression:
+                return [.modelCompression, .quantizationSupport]
             }
         }
     }
@@ -123,6 +152,24 @@ public struct ModelRegistry {
             }
             
             return true
+        }
+    }
+    
+    /// Search for models with query and type
+    public static func searchModels(query: String, type: ModelType) -> [ModelConfiguration] {
+        return searchModels(criteria: SearchCriteria(query: query, modelType: type))
+    }
+    
+    /// Get the model type for a given model configuration
+    public static func getModelType(_ model: ModelConfiguration) -> ModelType {
+        if isModelOfType(model, type: .vlm) {
+            return .vlm
+        } else if isModelOfType(model, type: .embedder) {
+            return .embedder
+        } else if isModelOfType(model, type: .diffusion) {
+            return .diffusion
+        } else {
+            return .llm
         }
     }
     
@@ -269,6 +316,12 @@ public struct ModelRegistry {
         case .diffusion:
             return model.architecture?.lowercased().contains("stable") == true ||
                    model.architecture?.lowercased().contains("diffusion") == true
+        case .training:
+            return false
+        case .evaluation:
+            return false
+        case .compression:
+            return false
         }
     }
     
@@ -293,7 +346,10 @@ public struct ModelRegistry {
         maxTokens: 2048,
         estimatedSizeGB: 0.6,
         defaultSystemPrompt: "You are a helpful assistant that provides concise and accurate responses.",
-        endOfTextTokens: ["<|im_end|>"]
+        endOfTextTokens: ["<|im_end|>"],
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     internal static let qwen05B = ModelConfiguration(
@@ -304,7 +360,10 @@ public struct ModelRegistry {
         quantization: "4bit",
         architecture: "Qwen",
         maxTokens: 4096,
-        estimatedSizeGB: 0.3
+        estimatedSizeGB: 0.3,
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     internal static let llama32_1B = ModelConfiguration(
@@ -315,7 +374,10 @@ public struct ModelRegistry {
         quantization: "4bit",
         architecture: "Llama",
         maxTokens: 4096,
-        estimatedSizeGB: 0.6
+        estimatedSizeGB: 0.6,
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     internal static let llama32_3B = ModelConfiguration(
@@ -326,7 +388,10 @@ public struct ModelRegistry {
         quantization: "4bit",
         architecture: "Llama",
         maxTokens: 4096,
-        estimatedSizeGB: 1.8
+        estimatedSizeGB: 1.8,
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     internal static let phi31Mini = ModelConfiguration(
@@ -337,7 +402,10 @@ public struct ModelRegistry {
         quantization: "4bit",
         architecture: "Phi",
         maxTokens: 4096,
-        estimatedSizeGB: 2.3
+        estimatedSizeGB: 2.3,
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     internal static let gemma2_2B = ModelConfiguration(
@@ -348,7 +416,10 @@ public struct ModelRegistry {
         quantization: "4bit",
         architecture: "Gemma",
         maxTokens: 4096,
-        estimatedSizeGB: 1.2
+        estimatedSizeGB: 1.2,
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     internal static let llama31_8B = ModelConfiguration(
@@ -359,7 +430,10 @@ public struct ModelRegistry {
         quantization: "4bit",
         architecture: "Llama",
         maxTokens: 8192,
-        estimatedSizeGB: 4.9
+        estimatedSizeGB: 4.9,
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     internal static let mistral7B = ModelConfiguration(
@@ -372,7 +446,10 @@ public struct ModelRegistry {
         maxTokens: 8192,
         estimatedSizeGB: 4.2,
         defaultSystemPrompt: "You are a helpful assistant.",
-        endOfTextTokens: ["</s>"]
+        endOfTextTokens: ["</s>"],
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     internal static let llava16_3B = ModelConfiguration(
@@ -385,7 +462,10 @@ public struct ModelRegistry {
         maxTokens: 4096,
         estimatedSizeGB: 2.1,
         defaultSystemPrompt: "You are a helpful assistant that can analyze and describe images.",
-        endOfTextTokens: ["<|im_end|>"]
+        endOfTextTokens: ["<|im_end|>"],
+        modelType: .vlm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: [.visionLanguageModels, .multiModalInput, .streamingGeneration]
     )
     
     internal static let bgeSmallEn = ModelConfiguration(
@@ -398,7 +478,10 @@ public struct ModelRegistry {
         maxTokens: 512,
         estimatedSizeGB: 0.2,
         defaultSystemPrompt: "",
-        endOfTextTokens: nil
+        endOfTextTokens: nil,
+        modelType: .embedding,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: [.embeddingModels, .batchProcessing]
     )
     
     internal static let llava15_7B = ModelConfiguration(
@@ -411,8 +494,10 @@ public struct ModelRegistry {
         maxTokens: 4096,
         estimatedSizeGB: 4.2,
         defaultSystemPrompt: "You are a helpful assistant that can analyze and describe images.",
-        endOfTextTokens: ["<|im_end|>"]
-        // Feature: visionLanguageModels
+        endOfTextTokens: ["<|im_end|>"],
+        modelType: .vlm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: [.visionLanguageModels, .multiModalInput, .streamingGeneration]
     )
 
     internal static let bgeLargeEn = ModelConfiguration(
@@ -425,8 +510,10 @@ public struct ModelRegistry {
         maxTokens: 1024,
         estimatedSizeGB: 0.7,
         defaultSystemPrompt: nil,
-        endOfTextTokens: nil
-        // Feature: embeddingModels
+        endOfTextTokens: nil,
+        modelType: .embedding,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: [.embeddingModels, .batchProcessing]
     )
 
     internal static let stableDiffusionXL = ModelConfiguration(
@@ -439,8 +526,10 @@ public struct ModelRegistry {
         maxTokens: 77,
         estimatedSizeGB: 2.5,
         defaultSystemPrompt: "Generate a high-quality image from the given prompt.",
-        endOfTextTokens: nil
-        // Feature: diffusionModels
+        endOfTextTokens: nil,
+        modelType: .diffusion,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: [.diffusionModels, .multiModalInput]
     )
 
     internal static let llama32_3B_fp16 = ModelConfiguration(
@@ -453,8 +542,10 @@ public struct ModelRegistry {
         maxTokens: 4096,
         estimatedSizeGB: 3.2,
         defaultSystemPrompt: nil,
-        endOfTextTokens: nil
-        // Feature: quantizationSupport
+        endOfTextTokens: nil,
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     // MARK: - Test Models
@@ -466,7 +557,10 @@ public struct ModelRegistry {
         description: "Mock model for testing",
         maxTokens: 100,
         estimatedSizeGB: 0.1,
-        defaultSystemPrompt: "You are a test assistant."
+        defaultSystemPrompt: "You are a test assistant.",
+        modelType: .llm,
+        gpuCacheLimit: 512 * 1024 * 1024,
+        features: []
     )
     
     // MARK: - Public API

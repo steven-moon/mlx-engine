@@ -406,7 +406,10 @@ public struct HuggingFaceModel: Codable, Identifiable, Hashable {
             maxTokens: 4096,
             estimatedSizeGB: nil,
             defaultSystemPrompt: nil,
-            endOfTextTokens: nil
+            endOfTextTokens: nil,
+            modelType: .llm, // Default to LLM, can be refined
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
     }
 

@@ -31,7 +31,10 @@ final class MLXEngineTests: XCTestCase {
         let config = ModelConfiguration(
             name: "Test Model",
             hubId: "test/model",
-            description: "Test model for unit testing"
+            description: "Test model for unit testing",
+            modelType: .llm,
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
         
         // Load engine once for basic tests
@@ -50,7 +53,10 @@ final class MLXEngineTests: XCTestCase {
             description: "A test model",
             parameters: "3B",
             quantization: "4bit",
-            architecture: "Llama"
+            architecture: "Llama",
+            modelType: .llm,
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
         
         XCTAssertEqual(config.name, "Test Model")
@@ -63,7 +69,10 @@ final class MLXEngineTests: XCTestCase {
     func testModelConfigurationMetadataExtraction() {
         var config = ModelConfiguration(
             name: "Test",
-            hubId: "mlx-community/Llama-3.2-3B-Instruct-4bit"
+            hubId: "mlx-community/Llama-3.2-3B-Instruct-4bit",
+            modelType: .llm,
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
         config.extractMetadataFromId()
         XCTAssertEqual(config.parameters, "3B")
@@ -74,11 +83,17 @@ final class MLXEngineTests: XCTestCase {
     func testModelConfigurationSmallModelDetection() {
         var smallModel = ModelConfiguration(
             name: "Small",
-            hubId: "test/1B-model"
+            hubId: "test/1B-model",
+            modelType: .llm,
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
         var largeModel = ModelConfiguration(
             name: "Large",
-            hubId: "test/7B-model"
+            hubId: "test/7B-model",
+            modelType: .llm,
+            gpuCacheLimit: 512 * 1024 * 1024,
+            features: []
         )
         smallModel.extractMetadataFromId()
         largeModel.extractMetadataFromId()
@@ -266,7 +281,7 @@ final class MLXEngineTests: XCTestCase {
         
         // Step 5: Test chat session
         print("\n💭 [MLX TEST] Step 5: Testing chat session...")
-        let chatSession = ChatSession(engine: engine)
+        let chatSession = await ChatSession.testSession()
         
         let chatStartTime = Date()
         let chatResponse = try await chatSession.generateResponse("Hi! What's your name?")
@@ -489,7 +504,7 @@ final class MLXEngineTests: XCTestCase {
         
         // Step 6: Test chat session
         print("\n💭 [TEXT GENERATION] Step 6: Testing chat session...")
-        let chatSession = ChatSession(engine: engine)
+        let chatSession = await ChatSession.testSession()
         
         let chatStartTime = Date()
         let chatResponse = try await chatSession.generateResponse("Hi! What's your name?")
@@ -758,7 +773,7 @@ final class MLXEngineTests: XCTestCase {
         
         // Step 6: Test chat session
         print("\n💭 [TEXT GENERATION WITH MOCK] Step 6: Testing chat session...")
-        let chatSession = ChatSession(engine: engine)
+        let chatSession = await ChatSession.testSession()
         
         let chatResponse = try await chatSession.generateResponse("What is 2 + 2?")
         print("🤖 [TEXT GENERATION WITH MOCK] Chat response: \(chatResponse)")
@@ -894,7 +909,7 @@ final class MLXEngineTests: XCTestCase {
             
             // Step 6: Test chat session with real model
             print("\n💭 [REAL MODEL TEST] Step 6: Testing chat session...")
-            let chatSession = ChatSession(engine: engine)
+            let chatSession = await ChatSession.testSession()
             
             let chatStartTime = Date()
             let chatResponse = try await chatSession.generateResponse("Hi! What's your name?")
@@ -1258,14 +1273,4 @@ final class MLXEngineTests: XCTestCase {
 
 // MARK: - Helper for thread-safe progress collection
 
-private actor ProgressCollector {
-    private var progressValues: [Double] = []
-    
-    func addProgress(_ progress: Double) {
-        progressValues.append(progress)
-    }
-    
-    func getProgressValues() -> [Double] {
-        return progressValues
-    }
-} 
+// ProgressCollector is now defined in MLXIntegrationTests.swift 

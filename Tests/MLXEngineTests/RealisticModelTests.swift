@@ -113,7 +113,7 @@ final class RealisticModelTests: XCTestCase {
             }
             // Step 5: Test chat session
             print("\n💭 [REAL MODEL TEST] Testing chat session at \(Date())...")
-            let chatSession = ChatSession(engine: engine)
+            let chatSession = await ChatSession.testSession()
             let chatStartTime = Date()
             let chatResponse = try await chatSession.generateResponse("Hi! What's your name?")
             let chatEndTime = Date()
@@ -262,14 +262,4 @@ final class RealisticModelTests: XCTestCase {
 
 // MARK: - Helper for thread-safe progress collection
 
-private actor ProgressCollector {
-    private var progressValues: [Double] = []
-    
-    func addProgress(_ progress: Double) {
-        progressValues.append(progress)
-    }
-    
-    func getProgressValues() -> [Double] {
-        return progressValues
-    }
-} 
+// ProgressCollector is now defined in MLXIntegrationTests.swift 

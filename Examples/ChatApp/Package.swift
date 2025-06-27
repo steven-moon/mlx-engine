@@ -14,14 +14,12 @@ let package = Package(
         .executable(name: "MLXChatApp", targets: ["MLXChatApp"])
     ],
     dependencies: [
-        .package(name: "MLXEngine", path: "../../"),
+        .package(path: "../../")
     ],
     targets: [
         .executableTarget(
             name: "MLXChatApp",
-            dependencies: [
-                .product(name: "MLXEngine", package: "MLXEngine"),
-            ],
+            dependencies: ["MLXEngine"],
             path: "Sources/MLXChatApp"
         )
     ]
