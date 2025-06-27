@@ -1,4 +1,9 @@
 // swift-tools-version:5.7
+// Package.swift for SwiftUIKit
+//
+// A cross-platform SwiftUI component library for AI-native and general apps.
+// TODO: Add dependencies (if any) in the future.
+
 import PackageDescription
 
 let package = Package(
@@ -16,11 +21,10 @@ let package = Package(
         )
     ],
     targets: [
-        // SwiftUIKit package is commented out/removed for non-SwiftUI build
-        // .target(
-        //     name: "SwiftUIKit",
-        //     path: "Sources/SwiftUIKit"
-        // ),
+        .target(
+            name: "SwiftUIKit",
+            path: "Sources/SwiftUIKit"
+        ),
         .testTarget(
             name: "SwiftUIKitTests",
             dependencies: ["SwiftUIKit"],

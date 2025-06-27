@@ -1,4 +1,4 @@
-# SwiftUIKit: Universal SwiftUI Component Library Specification
+# UIAI: Universal SwiftUI Component Library Specification
 
 ---
 
@@ -16,10 +16,10 @@
 ## 2. Package Structure
 
 ```
-SwiftUIKit/
+UIAI/
 ├── Package.swift
 ├── Sources/
-│   └── SwiftUIKit/
+│   └── UIAI/
 │       ├── Components/
 │       │   ├── Chat/
 │       │   │   ├── ChatView.swift
@@ -41,8 +41,8 @@ SwiftUIKit/
 │       │   └── Settings/
 │       │       └── SettingsPanel.swift
 │       ├── Style/
-│       │   ├── SwiftUIKitStyle.swift
-│       │   ├── SwiftUIKitStyleRegistry.swift
+│       │   ├── UIAIStyle.swift
+│       │   ├── UIAIStyleRegistry.swift
 │       │   ├── BuiltInStyles.swift
 │       │   └── StyleGallery.swift
 │       ├── Extensions/
@@ -50,7 +50,7 @@ SwiftUIKit/
 │       └── Support/
 │           └── Platform.swift
 ├── Tests/
-│   └── SwiftUIKitTests/
+│   └── UIAITests/
 │       └── (Component and style tests)
 └── README.md
 ```
@@ -61,10 +61,10 @@ SwiftUIKit/
 
 ### 3.1. Style System
 
-- **Protocol-driven**: All theming via a `SwiftUIKitStyle` protocol.
+- **Protocol-driven**: All theming via a `UIAIStyle` protocol.
 - **Built-in Styles**: Neumorphic, Glassmorphic, Minimal, Dark, Vibrant, etc.
 - **Style Registry**: Central registry for built-in and custom styles.
-- **Environment Integration**: Use `.swiftUIKitStyle(...)` at the app root; access via `@Environment(\\.swiftUIKitStyle)`.
+- **Environment Integration**: Use `.uiaiStyle(...)` at the app root; access via `@Environment(\\.uiaiStyle)`.
 - **Runtime Switching**: Support for dynamic style switching (e.g., via `@AppStorage`).
 - **Accessibility**: All styles support dark mode, high contrast, and dynamic type.
 
@@ -118,7 +118,7 @@ SwiftUIKit/
 
 - **Protocol**:
   ```swift
-  public protocol SwiftUIKitStyle: Hashable, Sendable {
+  public protocol UIAIStyle: Hashable, Sendable {
       var backgroundColor: Color { get }
       var foregroundColor: Color { get }
       var accentColor: Color { get }
@@ -130,21 +130,21 @@ SwiftUIKit/
   ```
 - **Registry**:
   ```swift
-  public struct SwiftUIKitStyleRegistry {
-      public static func style(for kind: SwiftUIKitStyleKind) -> SwiftUIKitStyle
-      public static func register(_ style: SwiftUIKitStyle, for key: String)
+  public struct UIAIStyleRegistry {
+      public static func style(for kind: UIAIStyleKind) -> UIAIStyle
+      public static func register(_ style: UIAIStyle, for key: String)
   }
   ```
 - **Environment**:
   ```swift
   extension View {
-      public func swiftUIKitStyle(_ style: SwiftUIKitStyle) -> some View
+      public func uiaiStyle(_ style: UIAIStyle) -> some View
   }
   ```
 - **Usage**:
   ```swift
   struct MyView: View {
-      @Environment(\.swiftUIKitStyle) var style
+      @Environment(\.uiaiStyle) var style
       // ...
   }
   ```
@@ -153,7 +153,7 @@ SwiftUIKit/
 
 ## 6. Extensibility & Customization
 
-- **Custom Styles**: Developers can define and register their own `SwiftUIKitStyle` conforming types.
+- **Custom Styles**: Developers can define and register their own `UIAIStyle` conforming types.
 - **Custom Components**: All major components accept injected subviews or actions.
 - **Settings Integration**: Expose APIs for runtime style switching and user preferences.
 
@@ -178,7 +178,7 @@ SwiftUIKit/
 
 ## 9. Implementation Plan
 
-1. **Extract** all SwiftUIKit components and style system into a new Swift package.
+1. **Extract** all UIAI components and style system into a new Swift package.
 2. **Refactor** to remove any MLXEngine or backend-specific code; use protocols or dependency injection for data.
 3. **Implement** the style system as described, with built-in and custom style support.
 4. **Add** SwiftUI previews and unit tests for all components.
