@@ -1,5 +1,6 @@
 import Foundation
 import MLXEngine
+import Logging
 #if DEBUG || CLI
 import ArgumentParser
 

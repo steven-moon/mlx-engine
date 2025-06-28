@@ -1,4 +1,5 @@
 import XCTest
+import Logging
 @testable import MLXEngine
 
 /// Tests that use real models and can optionally download from HuggingFace

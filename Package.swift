@@ -35,12 +35,18 @@ let package = Package(
         ),
         .executableTarget(
             name: "mlxengine-debug-report",
-            dependencies: ["MLXEngine"],
+            dependencies: [
+                "MLXEngine",
+                .product(name: "SummaCoreSwiftPackage", package: "summa-core-swift-package")
+            ],
             path: "Sources/mlxengine-debug-report"
         ),
         .testTarget(
             name: "MLXEngineTests",
-            dependencies: ["MLXEngine"],
+            dependencies: [
+                "MLXEngine",
+                .product(name: "SummaCoreSwiftPackage", package: "summa-core-swift-package")
+            ],
             path: "Tests/MLXEngineTests"
         )
     ]

@@ -1,4 +1,5 @@
 import XCTest
+import Logging
 @testable import MLXEngine
 
 final class HuggingFaceAPINetworkTests: XCTestCase {
