@@ -24,6 +24,7 @@
 		70BF655EC81C48C7DFD7B882 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C43B66A656BAEBBCB6088E /* AppState.swift */; };
 		851FDB70FBCBDE3B63D034A9 /* ChatSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830AFD9D5C9EED697C68D408 /* ChatSessionTests.swift */; };
 		8610C46AA879988B8AAFF649 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C868A3666D5CB27B1F9D2F90 /* ChatMessage.swift */; };
+		9101BDEF7157A663B4AAB902 /* MLXChatAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF89154B5317C106400DBBF /* MLXChatAppUITests.swift */; };
 		9E4FBDDEF87C935E5CEF12D8 /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778315ED9FD363F26962EBE3 /* ChatInputView.swift */; };
 		B5C058E02E49DCCDCA4CF964 /* RealWorldModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3810CE5942F9250F20A45EF2 /* RealWorldModelTests.swift */; };
 		BC4669A047F86B6B487514B8 /* MLXEngine in Frameworks */ = {isa = PBXBuildFile; productRef = A44D88238931D68F3E0A407A /* MLXEngine */; };
@@ -35,6 +36,16 @@
 		F42611972A6F23E0AA2B8B71 /* MLXIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBD7223D2B1B19254D1BE9 /* MLXIntegrationTests.swift */; };
 		FD0D1924DD2B58D8D2C0E46B /* ModelDiscoveryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FA6B920DDF0E409951D136 /* ModelDiscoveryViewModel.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7E4A90D0E6BCFEE9A590379E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 264141558CC2AB5401AE98B5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7EC2C2AE66F7EEACB5B8F945;
+			remoteInfo = "MLXChatApp-iOS";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		03052EA84463518EF83F4874 /* MessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubble.swift; sourceTree = "<group>"; };
@@ -52,9 +63,11 @@
 		628227A8CDF33573D5CC83D3 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		6D86F5772AAF826C9E212D6F /* ModelDiscoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDiscoveryView.swift; sourceTree = "<group>"; };
 		778315ED9FD363F26962EBE3 /* ChatInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputView.swift; sourceTree = "<group>"; };
+		7EF89154B5317C106400DBBF /* MLXChatAppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXChatAppUITests.swift; sourceTree = "<group>"; };
 		830AFD9D5C9EED697C68D408 /* ChatSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSessionTests.swift; sourceTree = "<group>"; };
 		9221E7E0683B43716206662F /* RealisticModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealisticModelTests.swift; sourceTree = "<group>"; };
 		A0F9AAD8AD16750734F01936 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA54167C77A4DF8779FA1EF8 /* MLXChatAppUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MLXChatAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA74FDF112E30C60A5562338 /* ModelDiscoveryServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDiscoveryServiceTests.swift; sourceTree = "<group>"; };
 		BBD59F36A75D87883E854DA2 /* ModelCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelCardView.swift; sourceTree = "<group>"; };
 		C0A254C41271A4BD89DC1D54 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
@@ -62,6 +75,7 @@
 		C7B6EEA60D8B82D1A3DCDD88 /* ModelDownloaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDownloaderTests.swift; sourceTree = "<group>"; };
 		C868A3666D5CB27B1F9D2F90 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		CB2D60803B79B380D09106A7 /* HuggingFaceAPINetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuggingFaceAPINetworkTests.swift; sourceTree = "<group>"; };
+		CFD08C2651A15F52EA6A0F8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D50DAF353EC29A23594D4801 /* .keep */ = {isa = PBXFileReference; path = .keep; sourceTree = "<group>"; };
 		D7AAB9882326E0E86CDFF259 /* mlx-engine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "mlx-engine"; path = ..; sourceTree = SOURCE_ROOT; };
 		D945D1C027E0B71050C34A7E /* HuggingFaceTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuggingFaceTokenView.swift; sourceTree = "<group>"; };
@@ -139,6 +153,16 @@
 			path = Onboarding;
 			sourceTree = "<group>";
 		};
+		5D2AAEEA4BA80CECB9DD4371 /* MLXChatAppUITests */ = {
+			isa = PBXGroup;
+			children = (
+				CFD08C2651A15F52EA6A0F8D /* Info.plist */,
+				7EF89154B5317C106400DBBF /* MLXChatAppUITests.swift */,
+			);
+			name = MLXChatAppUITests;
+			path = ../Tests/MLXChatAppUITests;
+			sourceTree = "<group>";
+		};
 		6167C316C610A994BE6E0B14 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -186,6 +210,7 @@
 			children = (
 				31615AC866FE55B893E00591 /* iOS */,
 				9F87DD50CFE85DB39B9F50C0 /* MLXChatApp */,
+				5D2AAEEA4BA80CECB9DD4371 /* MLXChatAppUITests */,
 				2C48E76EF7FF89A5CCFB42A6 /* MLXEngineTests */,
 				6167C316C610A994BE6E0B14 /* Packages */,
 				AADA88F42CFDE85B357A3D7A /* Shared */,
@@ -207,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				131C4E552D4B8069EE1D99E1 /* MLXChatApp-iOS.app */,
+				AA54167C77A4DF8779FA1EF8 /* MLXChatAppUITests.xctest */,
 				DCF9534E358626C70707DEA3 /* MLXEngineTests.xctest */,
 			);
 			name = Products;
@@ -254,6 +280,24 @@
 			productReference = DCF9534E358626C70707DEA3 /* MLXEngineTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		E12751FE062A0B9B6683FDCE /* MLXChatAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C667E51D6F06E0E81696E38A /* Build configuration list for PBXNativeTarget "MLXChatAppUITests" */;
+			buildPhases = (
+				36065A66DD69544845ECBCBF /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				72E8A509A9B5C385C72C3EA4 /* PBXTargetDependency */,
+			);
+			name = MLXChatAppUITests;
+			packageProductDependencies = (
+			);
+			productName = MLXChatAppUITests;
+			productReference = AA54167C77A4DF8779FA1EF8 /* MLXChatAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -265,6 +309,9 @@
 				TargetAttributes = {
 					7EC2C2AE66F7EEACB5B8F945 = {
 						DevelopmentTeam = M3W42R75UU;
+					};
+					E12751FE062A0B9B6683FDCE = {
+						TestTargetID = 7EC2C2AE66F7EEACB5B8F945;
 					};
 				};
 			};
@@ -287,12 +334,21 @@
 			projectRoot = "";
 			targets = (
 				7EC2C2AE66F7EEACB5B8F945 /* MLXChatApp-iOS */,
+				E12751FE062A0B9B6683FDCE /* MLXChatAppUITests */,
 				B24F86A9FA49EBD965F43F4B /* MLXEngineTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		36065A66DD69544845ECBCBF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9101BDEF7157A663B4AAB902 /* MLXChatAppUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		45996BEFF610F843B8250E52 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -333,7 +389,33 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		72E8A509A9B5C385C72C3EA4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7EC2C2AE66F7EEACB5B8F945 /* MLXChatApp-iOS */;
+			targetProxy = 7E4A90D0E6BCFEE9A590379E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		1870EAE3B818B16C50F075CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ../Tests/MLXChatAppUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXChatAppUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "MLXChatApp-iOS";
+			};
+			name = Release;
+		};
 		7B8378AE7F6778C0A28DEAD5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -447,6 +529,24 @@
 			};
 			name = Release;
 		};
+		CB6B7C6CAAD3EEC3F7F34B77 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ../Tests/MLXChatAppUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXChatAppUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "MLXChatApp-iOS";
+			};
+			name = Debug;
+		};
 		CC47AEA7B62BC690BAB48EF3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -539,6 +639,15 @@
 			buildConfigurations = (
 				FDCC62984436B1E8B78C97D9 /* Debug */,
 				7B8378AE7F6778C0A28DEAD5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C667E51D6F06E0E81696E38A /* Build configuration list for PBXNativeTarget "MLXChatAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CB6B7C6CAAD3EEC3F7F34B77 /* Debug */,
+				1870EAE3B818B16C50F075CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

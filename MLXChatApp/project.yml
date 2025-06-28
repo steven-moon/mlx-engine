@@ -37,6 +37,15 @@ targets:
       ENABLE_TEST_DISCOVERY: YES
       GENERATE_INFOPLIST_FILE: YES
       INFOPLIST_FILE: ../Tests/MLXEngineTests/Info.plist
+  MLXChatAppUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [../Tests/MLXChatAppUITests]
+    dependencies:
+      - target: MLXChatApp-iOS
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_FILE: ../Tests/MLXChatAppUITests/Info.plist
 
 workspace:
   name: MLXChatApp
