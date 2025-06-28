@@ -11,7 +11,7 @@ packages:
   MLXEngine:
     path: ../
   SwiftUIKit:
-    path: ../SwiftUIKit
+    path: ../../swift-uikit
 
 targets:
   MLXChatApp-iOS:
@@ -27,46 +27,6 @@ targets:
       - package: SwiftUIKit
     info:
       path: Sources/iOS/Info.plist
-  MLXChatApp-macOS:
-    type: application
-    platform: macOS
-    sources: [Sources/Shared, Sources/macOS, Sources/MLXChatApp]
-    settings:
-      GENERATE_INFOPLIST_FILE: YES
-      DEVELOPMENT_TEAM: M3W42R75UU
-      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-macOS
-    dependencies:
-      - package: MLXEngine
-  MLXChatApp-tvOS:
-    type: application
-    platform: tvOS
-    sources: [Sources/Shared, Sources/tvOS, Sources/MLXChatApp]
-    settings:
-      GENERATE_INFOPLIST_FILE: YES
-      DEVELOPMENT_TEAM: M3W42R75UU
-      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-tvOS
-    dependencies:
-      - package: MLXEngine
-  MLXChatApp-watchOS:
-    type: application
-    platform: watchOS
-    sources: [Sources/Shared, Sources/watchOS, Sources/MLXChatApp]
-    settings:
-      GENERATE_INFOPLIST_FILE: YES
-      DEVELOPMENT_TEAM: M3W42R75UU
-      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-watchOS
-    dependencies:
-      - package: MLXEngine
-  MLXChatApp-visionOS:
-    type: application
-    platform: visionOS
-    sources: [Sources/Shared, Sources/visionOS, Sources/MLXChatApp]
-    settings:
-      GENERATE_INFOPLIST_FILE: YES
-      DEVELOPMENT_TEAM: M3W42R75UU
-      PRODUCT_BUNDLE_IDENTIFIER: com.clevercoding.MLXChatApp-visionOS
-    dependencies:
-      - package: MLXEngine
   MLXEngineTests:
     type: bundle.unit-test
     platform: macOS

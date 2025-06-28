@@ -12,7 +12,7 @@ let package = Package(
         .package(url: "https://github.com/ml-explore/mlx-swift", from: "0.10.0"),
         .package(url: "https://github.com/ml-explore/mlx-swift-examples", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.3"),
-        .package(path: "SwiftUIKit")
+        .package(path: "../swift-uikit")
     ],
     targets: [
         .target(
@@ -23,7 +23,7 @@ let package = Package(
                 .product(name: "MLXLLM", package: "mlx-swift-examples"),
                 .product(name: "MLXLMCommon", package: "mlx-swift-examples"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "SwiftUIKit", package: "SwiftUIKit")
+                .product(name: "SwiftUIKit", package: "swift-uikit")
             ],
             path: "Sources/MLXEngine",
             exclude: ["macOS"],

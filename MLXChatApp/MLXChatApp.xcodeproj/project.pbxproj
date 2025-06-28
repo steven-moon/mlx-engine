@@ -8,131 +8,75 @@
 
 /* Begin PBXBuildFile section */
 		01228F65079733201D407DB0 /* HuggingFaceAPINetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2D60803B79B380D09106A7 /* HuggingFaceAPINetworkTests.swift */; };
-		07718F7812CE69C80BD57C18 /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778315ED9FD363F26962EBE3 /* ChatInputView.swift */; };
 		09DE1CC2D8C5E6F90360A217 /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03052EA84463518EF83F4874 /* MessageBubble.swift */; };
-		10B25B5146D1AC63CCA32706 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A254C41271A4BD89DC1D54 /* ChatView.swift */; };
-		17395321FB0B50B77C54AE64 /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03052EA84463518EF83F4874 /* MessageBubble.swift */; };
-		18EBACB1618C3F81C2472BD7 /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778315ED9FD363F26962EBE3 /* ChatInputView.swift */; };
 		1FF96750A40D916D6A648DC6 /* ModelSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B7920E54972593A26A7792 /* ModelSetupView.swift */; };
-		22D0235C5F4F1A673669C6AB /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628227A8CDF33573D5CC83D3 /* ChatViewModel.swift */; };
-		270156625160DE2CABBF4A2E /* ModelSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B7920E54972593A26A7792 /* ModelSetupView.swift */; };
-		2789F87345124D4813DE38F9 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C43B66A656BAEBBCB6088E /* AppState.swift */; };
-		27CF7B66A428A6EECA666376 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C868A3666D5CB27B1F9D2F90 /* ChatMessage.swift */; };
 		2963FDBA28BBFC10CACD0471 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A254C41271A4BD89DC1D54 /* ChatView.swift */; };
-		297AC474BD3DD1742FBCDE47 /* MLXChatAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BE2D4B0F4A7C0B1C6F2025 /* MLXChatAppApp.swift */; };
-		2DF3C4EB851397EEDA8B6E2C /* MLXEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 3310D87DE0F5E66C5DF51439 /* MLXEngine */; };
 		30249BD135DFCC2DC64CA9A9 /* ModelManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6033BFFC33930E51381535D /* ModelManagerTests.swift */; };
-		309C9AF850A046C3FDA1C4F9 /* ModelSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B7920E54972593A26A7792 /* ModelSetupView.swift */; };
-		3C96EC3FB699B49469E4FB74 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C43B66A656BAEBBCB6088E /* AppState.swift */; };
+		39322F0B097D3D95B94D462F /* HuggingFaceTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D945D1C027E0B71050C34A7E /* HuggingFaceTokenView.swift */; };
+		4146CEA31B6DA0483B98731E /* ModelCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBD59F36A75D87883E854DA2 /* ModelCardView.swift */; };
 		44ED7B0E73C5F2ED221DF7A9 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628227A8CDF33573D5CC83D3 /* ChatViewModel.swift */; };
-		4560AADC8C5816013A4FCCB3 /* MLXChatAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BE2D4B0F4A7C0B1C6F2025 /* MLXChatAppApp.swift */; };
-		45CE15548FFCA47780C8C9EC /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C43B66A656BAEBBCB6088E /* AppState.swift */; };
-		4639A7AEF784EBB6CF756AFF /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03052EA84463518EF83F4874 /* MessageBubble.swift */; };
 		465618ADA47505DF21749587 /* ModelRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C65D43FEF3AD5C27130418AF /* ModelRegistryTests.swift */; };
 		46E2943180E315149670FC1E /* ModelDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B6EEA60D8B82D1A3DCDD88 /* ModelDownloaderTests.swift */; };
-		4827F290CF48F53869A0AE0F /* ModelSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B7920E54972593A26A7792 /* ModelSetupView.swift */; };
-		4D94D47BE2814787C234F561 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D083F22DCBE794E22FF20E7 /* OnboardingView.swift */; };
-		58778AE8ED810AB438E13061 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C868A3666D5CB27B1F9D2F90 /* ChatMessage.swift */; };
 		5AAC4352860327CF42E16F02 /* MLXEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 555C7683EA182AB4384CFEF7 /* MLXEngine */; };
 		5D1458F312910A65D130929B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F9AAD8AD16750734F01936 /* ContentView.swift */; };
-		5DD8CD90B746DF3D37F0FCF2 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C43B66A656BAEBBCB6088E /* AppState.swift */; };
-		611D6D5B70E1EA6EA2CEFC26 /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03052EA84463518EF83F4874 /* MessageBubble.swift */; };
 		61A7BF4AAB28B97BD31157D1 /* MLXEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4381DBEF9CE2EDB5C8945A69 /* MLXEngineTests.swift */; };
-		61C3915B279C9C4AED1981F5 /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778315ED9FD363F26962EBE3 /* ChatInputView.swift */; };
-		62E2B299473CB8172FD24771 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D083F22DCBE794E22FF20E7 /* OnboardingView.swift */; };
-		6AA43BEEBC4662E3EE83911B /* MLXChatAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BE2D4B0F4A7C0B1C6F2025 /* MLXChatAppApp.swift */; };
-		6D809B4C46AA01689B20FE68 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F9AAD8AD16750734F01936 /* ContentView.swift */; };
 		6DEE1E32D6C6C2659A955064 /* SwiftUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = FF2F941C65D5C9D43695E2A1 /* SwiftUIKit */; };
 		70BF655EC81C48C7DFD7B882 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7C43B66A656BAEBBCB6088E /* AppState.swift */; };
-		81EDB161DAEA4BA7427B0DCE /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628227A8CDF33573D5CC83D3 /* ChatViewModel.swift */; };
-		84661E0CB34D52E1D23BDB57 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D083F22DCBE794E22FF20E7 /* OnboardingView.swift */; };
 		851FDB70FBCBDE3B63D034A9 /* ChatSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 830AFD9D5C9EED697C68D408 /* ChatSessionTests.swift */; };
 		8610C46AA879988B8AAFF649 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C868A3666D5CB27B1F9D2F90 /* ChatMessage.swift */; };
-		882FBC5A1A1D9380C2E3D35C /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C868A3666D5CB27B1F9D2F90 /* ChatMessage.swift */; };
-		8C138A9FFC9F52AF13632583 /* MLXEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 0BC8AED8B8BF9F04792CD3AB /* MLXEngine */; };
-		96A96E0AF055D556AAB0E95A /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628227A8CDF33573D5CC83D3 /* ChatViewModel.swift */; };
-		99C4FA9A469E5ED7C7125748 /* MLXEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 166D12F95E4F16DCEA9DDB3A /* MLXEngine */; };
 		9E4FBDDEF87C935E5CEF12D8 /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778315ED9FD363F26962EBE3 /* ChatInputView.swift */; };
-		A527100C9EF5D1D0B4A4A402 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D083F22DCBE794E22FF20E7 /* OnboardingView.swift */; };
-		A5EA0EF8EA8EE4BBE52E7686 /* MLXChatAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BE2D4B0F4A7C0B1C6F2025 /* MLXChatAppApp.swift */; };
-		AD11A3CB23797F75E141E634 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F9AAD8AD16750734F01936 /* ContentView.swift */; };
-		ADC05A94FE0DEAFF2C3ED36F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F9AAD8AD16750734F01936 /* ContentView.swift */; };
 		B5C058E02E49DCCDCA4CF964 /* RealWorldModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3810CE5942F9250F20A45EF2 /* RealWorldModelTests.swift */; };
-		B7B11DD77BB71966862785CD /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A254C41271A4BD89DC1D54 /* ChatView.swift */; };
 		BC4669A047F86B6B487514B8 /* MLXEngine in Frameworks */ = {isa = PBXBuildFile; productRef = A44D88238931D68F3E0A407A /* MLXEngine */; };
-		BD82B836C6DEBE1ED5235984 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C868A3666D5CB27B1F9D2F90 /* ChatMessage.swift */; };
-		C544A702424811815A129E0F /* ChatInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 778315ED9FD363F26962EBE3 /* ChatInputView.swift */; };
-		CBA82879E57A1E00C57F1932 /* MLXEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 8173791920276B42CF5B7EC6 /* MLXEngine */; };
-		CFBF62B49FB6510AE02D40B2 /* ModelSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B7920E54972593A26A7792 /* ModelSetupView.swift */; };
-		D1E13AD4B219C4354FE10879 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A254C41271A4BD89DC1D54 /* ChatView.swift */; };
 		D255A4744D03C45C9565113E /* ModelDiscoveryServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA74FDF112E30C60A5562338 /* ModelDiscoveryServiceTests.swift */; };
-		D6C2D24CD7698A054D09C677 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F9AAD8AD16750734F01936 /* ContentView.swift */; };
-		DF0C1113B1CCB2CFD2D7713D /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 628227A8CDF33573D5CC83D3 /* ChatViewModel.swift */; };
+		DDC27BC78CC4F181AC13B0AF /* ModelDiscoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D86F5772AAF826C9E212D6F /* ModelDiscoveryView.swift */; };
 		E27F35F59DDED19DB86ACC89 /* RealisticModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9221E7E0683B43716206662F /* RealisticModelTests.swift */; };
 		EDA29882590FFA30BB1EB395 /* MLXChatAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BE2D4B0F4A7C0B1C6F2025 /* MLXChatAppApp.swift */; };
-		F1404207ED082342E0FE9B7F /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A254C41271A4BD89DC1D54 /* ChatView.swift */; };
 		F2A9328295AC42FE72E078F5 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D083F22DCBE794E22FF20E7 /* OnboardingView.swift */; };
 		F42611972A6F23E0AA2B8B71 /* MLXIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBD7223D2B1B19254D1BE9 /* MLXIntegrationTests.swift */; };
-		FAB72F517BEE75B49F19EDB4 /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03052EA84463518EF83F4874 /* MessageBubble.swift */; };
+		FD0D1924DD2B58D8D2C0E46B /* ModelDiscoveryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10FA6B920DDF0E409951D136 /* ModelDiscoveryViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		03052EA84463518EF83F4874 /* MessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubble.swift; sourceTree = "<group>"; };
 		038BA0D1AE0B25B8CA6C36D9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		10FA6B920DDF0E409951D136 /* ModelDiscoveryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDiscoveryViewModel.swift; sourceTree = "<group>"; };
 		131C4E552D4B8069EE1D99E1 /* MLXChatApp-iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "MLXChatApp-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2489E4D10A7352AFF6E09B69 /* swift-uikit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "swift-uikit"; path = "../../swift-uikit"; sourceTree = SOURCE_ROOT; };
 		27B7920E54972593A26A7792 /* ModelSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelSetupView.swift; sourceTree = "<group>"; };
 		30BE2D4B0F4A7C0B1C6F2025 /* MLXChatAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXChatAppApp.swift; sourceTree = "<group>"; };
 		3810CE5942F9250F20A45EF2 /* RealWorldModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealWorldModelTests.swift; sourceTree = "<group>"; };
 		3DAA7E1E71873EDFEEECC02F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		423762537F595BD7167A4163 /* MLXChatApp-watchOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MLXChatApp-watchOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4381DBEF9CE2EDB5C8945A69 /* MLXEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXEngineTests.swift; sourceTree = "<group>"; };
 		4FDBD7223D2B1B19254D1BE9 /* MLXIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXIntegrationTests.swift; sourceTree = "<group>"; };
 		5D083F22DCBE794E22FF20E7 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		628227A8CDF33573D5CC83D3 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		6D86F5772AAF826C9E212D6F /* ModelDiscoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDiscoveryView.swift; sourceTree = "<group>"; };
 		778315ED9FD363F26962EBE3 /* ChatInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputView.swift; sourceTree = "<group>"; };
 		830AFD9D5C9EED697C68D408 /* ChatSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSessionTests.swift; sourceTree = "<group>"; };
 		9221E7E0683B43716206662F /* RealisticModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealisticModelTests.swift; sourceTree = "<group>"; };
 		A0F9AAD8AD16750734F01936 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AA74FDF112E30C60A5562338 /* ModelDiscoveryServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDiscoveryServiceTests.swift; sourceTree = "<group>"; };
-		B5F9F7F7C1D4408A7C5CACF2 /* MLXChatApp-visionOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "MLXChatApp-visionOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBD59F36A75D87883E854DA2 /* ModelCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelCardView.swift; sourceTree = "<group>"; };
 		C0A254C41271A4BD89DC1D54 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		C65D43FEF3AD5C27130418AF /* ModelRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelRegistryTests.swift; sourceTree = "<group>"; };
 		C7B6EEA60D8B82D1A3DCDD88 /* ModelDownloaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDownloaderTests.swift; sourceTree = "<group>"; };
 		C868A3666D5CB27B1F9D2F90 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		CB2D60803B79B380D09106A7 /* HuggingFaceAPINetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuggingFaceAPINetworkTests.swift; sourceTree = "<group>"; };
-		CEA7FE95AD508228B0C03895 /* MLXChatApp-tvOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "MLXChatApp-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D50DAF353EC29A23594D4801 /* .keep */ = {isa = PBXFileReference; path = .keep; sourceTree = "<group>"; };
 		D7AAB9882326E0E86CDFF259 /* mlx-engine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "mlx-engine"; path = ..; sourceTree = SOURCE_ROOT; };
+		D945D1C027E0B71050C34A7E /* HuggingFaceTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuggingFaceTokenView.swift; sourceTree = "<group>"; };
 		DCF9534E358626C70707DEA3 /* MLXEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLXEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EA730FD557AC9B602211240D /* SwiftUIKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SwiftUIKit; path = ../SwiftUIKit; sourceTree = SOURCE_ROOT; };
-		ED0F8A2EC67951F2A792615D /* MLXChatApp-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MLXChatApp-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6033BFFC33930E51381535D /* ModelManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelManagerTests.swift; sourceTree = "<group>"; };
 		F7C43B66A656BAEBBCB6088E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		6BD8DA48E2741D6CBF8637BB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2DF3C4EB851397EEDA8B6E2C /* MLXEngine in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B0A451F61018204B668879F2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				5AAC4352860327CF42E16F02 /* MLXEngine in Frameworks */,
 				6DEE1E32D6C6C2659A955064 /* SwiftUIKit in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B542E6B7F19C228848BB07A2 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8C138A9FFC9F52AF13632583 /* MLXEngine in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,25 +88,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D1897E9542DB54FA417AEAF2 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CBA82879E57A1E00C57F1932 /* MLXEngine in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D20D0ED1CB96E75F17C57C69 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				99C4FA9A469E5ED7C7125748 /* MLXEngine in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1E6129C188379CA6B7293629 /* ModelHub */ = {
+			isa = PBXGroup;
+			children = (
+				D945D1C027E0B71050C34A7E /* HuggingFaceTokenView.swift */,
+				BBD59F36A75D87883E854DA2 /* ModelCardView.swift */,
+				6D86F5772AAF826C9E212D6F /* ModelDiscoveryView.swift */,
+				10FA6B920DDF0E409951D136 /* ModelDiscoveryViewModel.swift */,
+			);
+			path = ModelHub;
+			sourceTree = "<group>";
+		};
 		2C48E76EF7FF89A5CCFB42A6 /* MLXEngineTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -200,29 +139,13 @@
 			path = Onboarding;
 			sourceTree = "<group>";
 		};
-		5BD5D70990DE62F5FFF166DC /* watchOS */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = watchOS;
-			path = Sources/watchOS;
-			sourceTree = "<group>";
-		};
 		6167C316C610A994BE6E0B14 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
 				D7AAB9882326E0E86CDFF259 /* mlx-engine */,
-				EA730FD557AC9B602211240D /* SwiftUIKit */,
+				2489E4D10A7352AFF6E09B69 /* swift-uikit */,
 			);
 			name = Packages;
-			sourceTree = "<group>";
-		};
-		6FE147F577BC4E71DA4D9145 /* tvOS */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = tvOS;
-			path = Sources/tvOS;
 			sourceTree = "<group>";
 		};
 		7044ACA172D146D9EDF63D53 /* Chat */ = {
@@ -258,34 +181,14 @@
 			path = Sources/Shared;
 			sourceTree = "<group>";
 		};
-		CBE7C85F349409C887661B4B /* macOS */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = macOS;
-			path = Sources/macOS;
-			sourceTree = "<group>";
-		};
-		D8576C7335291143A55E26F4 /* visionOS */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = visionOS;
-			path = Sources/visionOS;
-			sourceTree = "<group>";
-		};
 		E06EE17C12FC0117DAF273C5 = {
 			isa = PBXGroup;
 			children = (
 				31615AC866FE55B893E00591 /* iOS */,
-				CBE7C85F349409C887661B4B /* macOS */,
 				9F87DD50CFE85DB39B9F50C0 /* MLXChatApp */,
 				2C48E76EF7FF89A5CCFB42A6 /* MLXEngineTests */,
 				6167C316C610A994BE6E0B14 /* Packages */,
 				AADA88F42CFDE85B357A3D7A /* Shared */,
-				6FE147F577BC4E71DA4D9145 /* tvOS */,
-				D8576C7335291143A55E26F4 /* visionOS */,
-				5BD5D70990DE62F5FFF166DC /* watchOS */,
 				FE3F29469A6B336529347205 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -294,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				7044ACA172D146D9EDF63D53 /* Chat */,
+				1E6129C188379CA6B7293629 /* ModelHub */,
 				4980903589DCB36471EE2E36 /* Onboarding */,
 			);
 			path = Features;
@@ -303,10 +207,6 @@
 			isa = PBXGroup;
 			children = (
 				131C4E552D4B8069EE1D99E1 /* MLXChatApp-iOS.app */,
-				ED0F8A2EC67951F2A792615D /* MLXChatApp-macOS.app */,
-				CEA7FE95AD508228B0C03895 /* MLXChatApp-tvOS.app */,
-				B5F9F7F7C1D4408A7C5CACF2 /* MLXChatApp-visionOS.app */,
-				423762537F595BD7167A4163 /* MLXChatApp-watchOS.app */,
 				DCF9534E358626C70707DEA3 /* MLXEngineTests.xctest */,
 			);
 			name = Products;
@@ -315,44 +215,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		02E2D8BE353778221C22D1C5 /* MLXChatApp-tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BF77AB81DF0C9A56F9AD1148 /* Build configuration list for PBXNativeTarget "MLXChatApp-tvOS" */;
-			buildPhases = (
-				7B1F610EE8E45AE6121D5434 /* Sources */,
-				6BD8DA48E2741D6CBF8637BB /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "MLXChatApp-tvOS";
-			packageProductDependencies = (
-				3310D87DE0F5E66C5DF51439 /* MLXEngine */,
-			);
-			productName = "MLXChatApp-tvOS";
-			productReference = CEA7FE95AD508228B0C03895 /* MLXChatApp-tvOS.app */;
-			productType = "com.apple.product-type.application";
-		};
-		7869F52B5AC83392D50F7CDE /* MLXChatApp-macOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A6C6F2DFFC8F24D6BF35B774 /* Build configuration list for PBXNativeTarget "MLXChatApp-macOS" */;
-			buildPhases = (
-				A948E6E0BF7324316253EFCB /* Sources */,
-				D20D0ED1CB96E75F17C57C69 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "MLXChatApp-macOS";
-			packageProductDependencies = (
-				166D12F95E4F16DCEA9DDB3A /* MLXEngine */,
-			);
-			productName = "MLXChatApp-macOS";
-			productReference = ED0F8A2EC67951F2A792615D /* MLXChatApp-macOS.app */;
-			productType = "com.apple.product-type.application";
-		};
 		7EC2C2AE66F7EEACB5B8F945 /* MLXChatApp-iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F29504A6C205BF671ACDC26F /* Build configuration list for PBXNativeTarget "MLXChatApp-iOS" */;
@@ -371,25 +233,6 @@
 			);
 			productName = "MLXChatApp-iOS";
 			productReference = 131C4E552D4B8069EE1D99E1 /* MLXChatApp-iOS.app */;
-			productType = "com.apple.product-type.application";
-		};
-		A4CA474782738E6D0A1A4A66 /* MLXChatApp-watchOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AE2AA51EC87518DCAE004BC2 /* Build configuration list for PBXNativeTarget "MLXChatApp-watchOS" */;
-			buildPhases = (
-				73D0BD36CF3C6D98F1BF4ACA /* Sources */,
-				D1897E9542DB54FA417AEAF2 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "MLXChatApp-watchOS";
-			packageProductDependencies = (
-				8173791920276B42CF5B7EC6 /* MLXEngine */,
-			);
-			productName = "MLXChatApp-watchOS";
-			productReference = 423762537F595BD7167A4163 /* MLXChatApp-watchOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 		B24F86A9FA49EBD965F43F4B /* MLXEngineTests */ = {
@@ -411,25 +254,6 @@
 			productReference = DCF9534E358626C70707DEA3 /* MLXEngineTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		DAB004CA1E2B99050C9604EF /* MLXChatApp-visionOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 9C508E8EB8A916D58900A595 /* Build configuration list for PBXNativeTarget "MLXChatApp-visionOS" */;
-			buildPhases = (
-				3AA766FC24D4DEF5DA7C05A2 /* Sources */,
-				B542E6B7F19C228848BB07A2 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "MLXChatApp-visionOS";
-			packageProductDependencies = (
-				0BC8AED8B8BF9F04792CD3AB /* MLXEngine */,
-			);
-			productName = "MLXChatApp-visionOS";
-			productReference = B5F9F7F7C1D4408A7C5CACF2 /* MLXChatApp-visionOS.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -439,19 +263,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					02E2D8BE353778221C22D1C5 = {
-						DevelopmentTeam = M3W42R75UU;
-					};
-					7869F52B5AC83392D50F7CDE = {
-						DevelopmentTeam = M3W42R75UU;
-					};
 					7EC2C2AE66F7EEACB5B8F945 = {
-						DevelopmentTeam = M3W42R75UU;
-					};
-					A4CA474782738E6D0A1A4A66 = {
-						DevelopmentTeam = M3W42R75UU;
-					};
-					DAB004CA1E2B99050C9604EF = {
 						DevelopmentTeam = M3W42R75UU;
 					};
 				};
@@ -468,40 +280,19 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				3884A2C099EDF450BF144EBE /* XCLocalSwiftPackageReference "..//" */,
-				E2D83A8EE64E5A05037F49E9 /* XCLocalSwiftPackageReference "../SwiftUIKit" */,
+				6651228C246758B398EAEB30 /* XCLocalSwiftPackageReference "../../swift-uikit" */,
 			);
 			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				7EC2C2AE66F7EEACB5B8F945 /* MLXChatApp-iOS */,
-				7869F52B5AC83392D50F7CDE /* MLXChatApp-macOS */,
-				02E2D8BE353778221C22D1C5 /* MLXChatApp-tvOS */,
-				DAB004CA1E2B99050C9604EF /* MLXChatApp-visionOS */,
-				A4CA474782738E6D0A1A4A66 /* MLXChatApp-watchOS */,
 				B24F86A9FA49EBD965F43F4B /* MLXEngineTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3AA766FC24D4DEF5DA7C05A2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2789F87345124D4813DE38F9 /* AppState.swift in Sources */,
-				18EBACB1618C3F81C2472BD7 /* ChatInputView.swift in Sources */,
-				BD82B836C6DEBE1ED5235984 /* ChatMessage.swift in Sources */,
-				B7B11DD77BB71966862785CD /* ChatView.swift in Sources */,
-				DF0C1113B1CCB2CFD2D7713D /* ChatViewModel.swift in Sources */,
-				D6C2D24CD7698A054D09C677 /* ContentView.swift in Sources */,
-				297AC474BD3DD1742FBCDE47 /* MLXChatAppApp.swift in Sources */,
-				FAB72F517BEE75B49F19EDB4 /* MessageBubble.swift in Sources */,
-				309C9AF850A046C3FDA1C4F9 /* ModelSetupView.swift in Sources */,
-				4D94D47BE2814787C234F561 /* OnboardingView.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		45996BEFF610F843B8250E52 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -519,40 +310,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		73D0BD36CF3C6D98F1BF4ACA /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3C96EC3FB699B49469E4FB74 /* AppState.swift in Sources */,
-				07718F7812CE69C80BD57C18 /* ChatInputView.swift in Sources */,
-				882FBC5A1A1D9380C2E3D35C /* ChatMessage.swift in Sources */,
-				F1404207ED082342E0FE9B7F /* ChatView.swift in Sources */,
-				96A96E0AF055D556AAB0E95A /* ChatViewModel.swift in Sources */,
-				AD11A3CB23797F75E141E634 /* ContentView.swift in Sources */,
-				A5EA0EF8EA8EE4BBE52E7686 /* MLXChatAppApp.swift in Sources */,
-				611D6D5B70E1EA6EA2CEFC26 /* MessageBubble.swift in Sources */,
-				270156625160DE2CABBF4A2E /* ModelSetupView.swift in Sources */,
-				84661E0CB34D52E1D23BDB57 /* OnboardingView.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		7B1F610EE8E45AE6121D5434 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				45CE15548FFCA47780C8C9EC /* AppState.swift in Sources */,
-				C544A702424811815A129E0F /* ChatInputView.swift in Sources */,
-				27CF7B66A428A6EECA666376 /* ChatMessage.swift in Sources */,
-				D1E13AD4B219C4354FE10879 /* ChatView.swift in Sources */,
-				22D0235C5F4F1A673669C6AB /* ChatViewModel.swift in Sources */,
-				ADC05A94FE0DEAFF2C3ED36F /* ContentView.swift in Sources */,
-				6AA43BEEBC4662E3EE83911B /* MLXChatAppApp.swift in Sources */,
-				4639A7AEF784EBB6CF756AFF /* MessageBubble.swift in Sources */,
-				4827F290CF48F53869A0AE0F /* ModelSetupView.swift in Sources */,
-				62E2B299473CB8172FD24771 /* OnboardingView.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A5F9F467024E8CA06C0574C3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -563,79 +320,20 @@
 				2963FDBA28BBFC10CACD0471 /* ChatView.swift in Sources */,
 				44ED7B0E73C5F2ED221DF7A9 /* ChatViewModel.swift in Sources */,
 				5D1458F312910A65D130929B /* ContentView.swift in Sources */,
+				39322F0B097D3D95B94D462F /* HuggingFaceTokenView.swift in Sources */,
 				EDA29882590FFA30BB1EB395 /* MLXChatAppApp.swift in Sources */,
 				09DE1CC2D8C5E6F90360A217 /* MessageBubble.swift in Sources */,
+				4146CEA31B6DA0483B98731E /* ModelCardView.swift in Sources */,
+				DDC27BC78CC4F181AC13B0AF /* ModelDiscoveryView.swift in Sources */,
+				FD0D1924DD2B58D8D2C0E46B /* ModelDiscoveryViewModel.swift in Sources */,
 				1FF96750A40D916D6A648DC6 /* ModelSetupView.swift in Sources */,
 				F2A9328295AC42FE72E078F5 /* OnboardingView.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A948E6E0BF7324316253EFCB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				5DD8CD90B746DF3D37F0FCF2 /* AppState.swift in Sources */,
-				61C3915B279C9C4AED1981F5 /* ChatInputView.swift in Sources */,
-				58778AE8ED810AB438E13061 /* ChatMessage.swift in Sources */,
-				10B25B5146D1AC63CCA32706 /* ChatView.swift in Sources */,
-				81EDB161DAEA4BA7427B0DCE /* ChatViewModel.swift in Sources */,
-				6D809B4C46AA01689B20FE68 /* ContentView.swift in Sources */,
-				4560AADC8C5816013A4FCCB3 /* MLXChatAppApp.swift in Sources */,
-				17395321FB0B50B77C54AE64 /* MessageBubble.swift in Sources */,
-				CFBF62B49FB6510AE02D40B2 /* ModelSetupView.swift in Sources */,
-				A527100C9EF5D1D0B4A4A402 /* OnboardingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		3DC5480D91D5A32DC882C286 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = M3W42R75UU;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.clevercoding.MLXChatApp-macOS";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		5D402DE3DCA65041E397863E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				DEVELOPMENT_TEAM = M3W42R75UU;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.clevercoding.MLXChatApp-tvOS";
-				SDKROOT = appletvos;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		78EC723736B05C4DD39BABCB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = M3W42R75UU;
-				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.clevercoding.MLXChatApp-watchOS";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
-			};
-			name = Debug;
-		};
 		7B8378AE7F6778C0A28DEAD5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -731,19 +429,6 @@
 			};
 			name = Debug;
 		};
-		AD256EEF969FC8DC78362076 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = M3W42R75UU;
-				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.clevercoding.MLXChatApp-watchOS";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
-			};
-			name = Release;
-		};
 		C1F18FAA3970EE8EAADC8A3B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -777,71 +462,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests;
 				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		CD83536AC53074C234E58D78 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = M3W42R75UU;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.clevercoding.MLXChatApp-visionOS";
-				SDKROOT = xros;
-				TARGETED_DEVICE_FAMILY = 7;
-			};
-			name = Release;
-		};
-		D68B98B201CE38723C04D51B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = M3W42R75UU;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.clevercoding.MLXChatApp-macOS";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		EC14F176B3D540E444B5778A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				DEVELOPMENT_TEAM = M3W42R75UU;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.clevercoding.MLXChatApp-tvOS";
-				SDKROOT = appletvos;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Release;
-		};
-		F027736EA383F33D492A1140 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = M3W42R75UU;
-				GENERATE_INFOPLIST_FILE = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.clevercoding.MLXChatApp-visionOS";
-				SDKROOT = xros;
-				TARGETED_DEVICE_FAMILY = 7;
 			};
 			name = Debug;
 		};
@@ -923,42 +543,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9C508E8EB8A916D58900A595 /* Build configuration list for PBXNativeTarget "MLXChatApp-visionOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F027736EA383F33D492A1140 /* Debug */,
-				CD83536AC53074C234E58D78 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		A6C6F2DFFC8F24D6BF35B774 /* Build configuration list for PBXNativeTarget "MLXChatApp-macOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3DC5480D91D5A32DC882C286 /* Debug */,
-				D68B98B201CE38723C04D51B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		AE2AA51EC87518DCAE004BC2 /* Build configuration list for PBXNativeTarget "MLXChatApp-watchOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				78EC723736B05C4DD39BABCB /* Debug */,
-				AD256EEF969FC8DC78362076 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		BF77AB81DF0C9A56F9AD1148 /* Build configuration list for PBXNativeTarget "MLXChatApp-tvOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5D402DE3DCA65041E397863E /* Debug */,
-				EC14F176B3D540E444B5778A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
 		DEAF739C21476078B45966F0 /* Build configuration list for PBXNativeTarget "MLXEngineTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -984,30 +568,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "..//";
 		};
-		E2D83A8EE64E5A05037F49E9 /* XCLocalSwiftPackageReference "../SwiftUIKit" */ = {
+		6651228C246758B398EAEB30 /* XCLocalSwiftPackageReference "../../swift-uikit" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../SwiftUIKit;
+			relativePath = "../../swift-uikit";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0BC8AED8B8BF9F04792CD3AB /* MLXEngine */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MLXEngine;
-		};
-		166D12F95E4F16DCEA9DDB3A /* MLXEngine */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MLXEngine;
-		};
-		3310D87DE0F5E66C5DF51439 /* MLXEngine */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MLXEngine;
-		};
 		555C7683EA182AB4384CFEF7 /* MLXEngine */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MLXEngine;
-		};
-		8173791920276B42CF5B7EC6 /* MLXEngine */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MLXEngine;
 		};

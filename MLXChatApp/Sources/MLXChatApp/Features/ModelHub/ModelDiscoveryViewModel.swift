@@ -13,7 +13,7 @@ class ModelDiscoveryViewModel: ObservableObject {
     @Published var hasValidToken = false
     
     private let huggingFaceAPI = HuggingFaceAPI.shared
-    private let modelManager = ModelManager.shared
+    private let modelManager = ModelDiscoveryManager.shared
     private var currentPage = 0
     private let pageSize = 20
     private var currentSearchQuery = ""
@@ -91,7 +91,7 @@ class ModelDiscoveryViewModel: ObservableObject {
             let config = model.toModelConfiguration()
             let modelURL = try await modelManager.downloadModel(config) { progress in
                 Task { @MainActor in
-                    downloadProgress[model.id] = progress
+                    self.downloadProgress[model.id] = progress
                 }
             }
             
@@ -149,8 +149,8 @@ class ModelDiscoveryViewModel: ObservableObject {
 }
 
 /// Model Manager for handling model downloads
-class ModelManager: ObservableObject {
-    static let shared = ModelManager()
+class ModelDiscoveryManager: ObservableObject {
+    static let shared = ModelDiscoveryManager()
     private let downloader = OptimizedDownloader()
     
     private init() {}
