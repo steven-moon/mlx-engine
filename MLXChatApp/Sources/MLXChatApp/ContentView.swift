@@ -5,64 +5,84 @@ struct ContentView: View {
     @State private var selectedTab = 0
     @AppStorage("selectedStyleKind") private var selectedStyleKindRaw: String = UIAIStyleKind.minimal.rawValue
     @AppStorage("selectedColorScheme") private var selectedColorSchemeRaw: String = UIAIColorScheme.light.rawValue
+    @AppStorage("showOnboarding") private var showOnboarding: Bool = true
+    @State private var showOnboardingSheet: Bool = false
     
     private var currentStyle: any UIAIStyle {
         UIAIStyleRegistry.style(for: UIAIStyleKind(rawValue: selectedStyleKindRaw) ?? .minimal, colorScheme: UIAIColorScheme(rawValue: selectedColorSchemeRaw) ?? .light)
     }
     
     var body: some View {
-        #if os(iOS)
-        TabView(selection: $selectedTab) {
-            ChatView()
-                .tabItem {
-                    Image(systemName: "message")
-                    Text("Chat")
+        ZStack {
+            if showOnboarding {
+                OnboardingView {
+                    showOnboarding = false
                 }
-                .tag(0)
-            
-            ModelDiscoveryView()
-                .tabItem {
-                    Image(systemName: "square.and.arrow.down")
-                    Text("Models")
-                }
-                .tag(1)
-            
-            SettingsView(
-                selectedStyleKindRaw: $selectedStyleKindRaw,
-                selectedColorSchemeRaw: $selectedColorSchemeRaw
-            )
-                .tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
-                }
-                .tag(2)
-        }
-        .uiaiStyle(currentStyle)
-        #else
-        NavigationSplitView {
-            List(selection: $selectedTab) {
-                Label("Chat", systemImage: "message").tag(0)
-                Label("Models", systemImage: "square.and.arrow.down").tag(1)
-                Label("Settings", systemImage: "gear").tag(2)
-            }
-            .listStyle(.sidebar)
-        } detail: {
-            switch selectedTab {
-            case 0:
+            } else {
+            #if os(iOS)
+            TabView(selection: $selectedTab) {
                 ChatView()
-            case 1:
+                    .tabItem {
+                        Image(systemName: "message")
+                        Text("Chat")
+                    }
+                    .tag(0)
+                
                 ModelDiscoveryView()
-            case 2:
+                    .tabItem {
+                        Image(systemName: "square.and.arrow.down")
+                        Text("Models")
+                    }
+                    .tag(1)
+                
                 SettingsView(
                     selectedStyleKindRaw: $selectedStyleKindRaw,
-                    selectedColorSchemeRaw: $selectedColorSchemeRaw
+                    selectedColorSchemeRaw: $selectedColorSchemeRaw,
+                    showOnboarding: $showOnboarding,
+                    showOnboardingSheet: $showOnboardingSheet
                 )
-            default:
-                ChatView()
+                    .tabItem {
+                        Image(systemName: "gear")
+                        Text("Settings")
+                    }
+                    .tag(2)
+            }
+            .uiaiStyle(currentStyle)
+            #else
+            NavigationSplitView {
+                List(selection: $selectedTab) {
+                    Label("Chat", systemImage: "message").tag(0)
+                    Label("Models", systemImage: "square.and.arrow.down").tag(1)
+                    Label("Settings", systemImage: "gear").tag(2)
+                }
+                .listStyle(.sidebar)
+            
+                switch selectedTab {
+                case 0:
+                    ChatView()
+                case 1:
+                    ModelDiscoveryView()
+                case 2:
+                    SettingsView(
+                        selectedStyleKindRaw: $selectedStyleKindRaw,
+                        selectedColorSchemeRaw: $selectedColorSchemeRaw,
+                        showOnboarding: $showOnboarding,
+                        showOnboardingSheet: $showOnboardingSheet
+                    )
+                default:
+                    ChatView()
+                }
+            }
+            .uiaiStyle(currentStyle)
+            #endif
             }
         }
-        .uiaiStyle(currentStyle)
-        #endif
+        .sheet(isPresented: $showOnboardingSheet) {
+            OnboardingView {
+                showOnboarding = false
+                showOnboardingSheet = false
+            }
+        }
     }
 }
 
@@ -70,6 +90,8 @@ struct ContentView: View {
 struct SettingsView: View {
     @Binding var selectedStyleKindRaw: String
     @Binding var selectedColorSchemeRaw: String
+    @Binding var showOnboarding: Bool
+    @Binding var showOnboardingSheet: Bool
     @State private var showingAppearanceSheet = false
     
     var body: some View {
@@ -82,6 +104,16 @@ struct SettingsView: View {
                             Text("Change Theme & Style")
                         }
                     }
+                }
+                Section(header: Text("Development")) {
+                    Toggle(isOn: $showOnboarding) {
+                        Text("Show onboarding on next launch")
+                    }
+                    .accessibilityIdentifier("showOnboardingToggle")
+                    Button(action: { showOnboardingSheet = true }) {
+                        Label("Show onboarding now", systemImage: "rectangle.stack.person.crop")
+                    }
+                    .accessibilityIdentifier("showOnboardingNowButton")
                 }
                 // Add other settings here
             }

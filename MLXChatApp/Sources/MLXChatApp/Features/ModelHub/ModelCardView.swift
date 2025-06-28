@@ -9,6 +9,7 @@ struct ModelCardView: View {
     let onDownload: () -> Void
     
     @State private var showingDetails = false
+    @Environment(\.uiaiStyle) private var style
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -25,7 +26,7 @@ struct ModelCardView: View {
                     // MLX indicator
                     if model.hasMLXFiles() {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.green)
+                            .foregroundColor(style.successColor)
                             .font(.caption)
                     }
                 }
@@ -33,7 +34,7 @@ struct ModelCardView: View {
                 if let author = model.author {
                     Text("by \(author)")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(style.secondaryForegroundColor)
                 }
             }
             
@@ -44,7 +45,7 @@ struct ModelCardView: View {
                     ModelMetadataItem(
                         icon: "cpu",
                         text: parameters,
-                        color: .blue
+                        color: style.accentColor
                     )
                 }
                 
@@ -53,7 +54,7 @@ struct ModelCardView: View {
                     ModelMetadataItem(
                         icon: "memorychip",
                         text: quantization,
-                        color: .purple
+                        color: style.infoColor ?? .purple
                     )
                 }
                 
@@ -62,7 +63,7 @@ struct ModelCardView: View {
                     ModelMetadataItem(
                         icon: "arrow.down.circle",
                         text: formatDownloads(downloads),
-                        color: .green
+                        color: style.successColor
                     )
                 }
                 
@@ -78,8 +79,8 @@ struct ModelCardView: View {
                                 .font(.caption2)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Color.accentColor.opacity(0.1))
-                                .foregroundColor(.accentColor)
+                                .background(style.accentColor.opacity(0.1))
+                                .foregroundColor(style.accentColor)
                                 .clipShape(Capsule())
                         }
                     }
@@ -102,7 +103,7 @@ struct ModelCardView: View {
                             .frame(width: 100)
                         Text("\(Int(downloadProgress * 100))%")
                             .font(.caption2)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(style.secondaryForegroundColor)
                     }
                 } else {
                     Button("Download") {
@@ -114,8 +115,8 @@ struct ModelCardView: View {
             }
         }
         .padding()
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(12)
+        .background(style.backgroundColor)
+        .cornerRadius(style.cornerRadius)
         .sheet(isPresented: $showingDetails) {
             ModelDetailView(model: model)
         }
@@ -137,6 +138,7 @@ struct ModelMetadataItem: View {
     let icon: String
     let text: String
     let color: Color
+    @Environment(\.uiaiStyle) private var style
     
     var body: some View {
         HStack(spacing: 4) {
@@ -145,7 +147,7 @@ struct ModelMetadataItem: View {
                 .foregroundColor(color)
             Text(text)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(style.secondaryForegroundColor)
         }
     }
 }
@@ -154,6 +156,7 @@ struct ModelMetadataItem: View {
 struct ModelDetailView: View {
     let model: HuggingFaceModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.uiaiStyle) private var style
     
     var body: some View {
         NavigationView {
@@ -168,16 +171,16 @@ struct ModelDetailView: View {
                         if let author = model.author {
                             Text("Author: \(author)")
                                 .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(style.secondaryForegroundColor)
                         }
                         
                         if model.hasMLXFiles() {
                             HStack {
                                 Image(systemName: "checkmark.seal.fill")
-                                    .foregroundColor(.green)
+                                    .foregroundColor(style.successColor)
                                 Text("MLX Compatible")
                                     .font(.caption)
-                                    .foregroundColor(.green)
+                                    .foregroundColor(style.successColor)
                             }
                         }
                     }
@@ -214,8 +217,8 @@ struct ModelDetailView: View {
                                         .font(.caption)
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
-                                        .background(Color.accentColor.opacity(0.1))
-                                        .foregroundColor(.accentColor)
+                                        .background(style.accentColor.opacity(0.1))
+                                        .foregroundColor(style.accentColor)
                                         .clipShape(Capsule())
                                 }
                             }
