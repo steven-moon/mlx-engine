@@ -1,0 +1,23 @@
+# .cursor-project.yml
+mode: project
+agent:
+  autoRun: true
+  autoPush: false
+  autoCommit: false
+  autoFormat: true
+  autoLint: true
+  promptOnDestructive: true
+  force: false
+  logLevel: debug
+  logFile: /tmp/cursor-agent-mlxengine.log
+  notificationLevel: errors
+  environment:
+    MLXENGINE_SCHEME: "MLXChatApp-iOS"
+    MLXENGINE_WORKSPACE: "mlx-engine/MLXChatApp/MLXChatApp.xcodeproj/project.xcworkspace"
+workflows:
+  build: _scripts/agent_dev_workflow.sh build-ios
+  test: _scripts/agent_dev_workflow.sh test
+  clean: _scripts/agent_dev_workflow.sh clean
+  monitor: _scripts/agent_dev_workflow.sh monitor
+  fullCycle: _scripts/agent_dev_workflow.sh full-cycle
+  status: _scripts/agent_dev_workflow.sh status 
