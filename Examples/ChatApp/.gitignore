@@ -1,0 +1,50 @@
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+Package.resolved
+
+# Xcode
+xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserdatad/
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.pbxuser
+*.xccheckout
+*.xcscmblueprint
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift
+*.swiftdoc
+*.swiftmodule
+*.swiftsourceinfo
+*.swiftinterface
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Build artifacts
+build/
+DerivedData/
+
+# Local development
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Documentation build
+docs/
+
+default.metallib 
