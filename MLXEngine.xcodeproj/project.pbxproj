@@ -20,11 +20,9 @@
 		0F8083DBDA7BA2835B945144 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 71CF0B81147B2A79A6AB30D4 /* MLX */; };
 		1048B5290925A9CF8D715615 /* MetalLibraryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BD577B8F28283B580FD6B0 /* MetalLibraryBuilder.swift */; };
 		11C5FA01BC02DD03C234E66C /* MLXEngine_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E517F637270869146105427C /* MLXEngine_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1554D24FE1DB85F011CB6BB8 /* default.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 13E0E0CD7993FE7ABD1A7A52 /* default.metallib */; };
 		156B9DA0D255514A66FD902F /* RealWorldModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3501D306A4A58AA2FB463911 /* RealWorldModelTests.swift */; };
 		172138CF26A9C72D227CC277 /* SwiftUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = EB9E9AA01B7C8ECD9CA16FA7 /* SwiftUIKit */; };
 		19BC91492DF0A083E9946878 /* MetalLibraryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BD577B8F28283B580FD6B0 /* MetalLibraryBuilder.swift */; };
-		19BF3B3BA3C693B491CA9E4E /* default.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 13E0E0CD7993FE7ABD1A7A52 /* default.metallib */; };
 		1E4B9B0A90A3CEBEC5667D37 /* MLXEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F902DDDDE72A4247F1354B7C /* MLXEngineTests.swift */; };
 		1FA83DAFC3D1254B77AC5953 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = F3000B468992501FD76BCA3A /* MLXLMCommon */; };
 		2009293850B48FCBEB6E8D0A /* RealWorldModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3501D306A4A58AA2FB463911 /* RealWorldModelTests.swift */; };
@@ -45,7 +43,6 @@
 		2FE492B31C2E2B2662B67DAA /* MLXEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7430BB22E84A73210D0A4DD2 /* MLXEngine.swift */; };
 		319A0BBF57C53BF21D26DE1E /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = CB52EE74CD94498E8C718D70 /* MLX */; };
 		3317D6BACFB3D922BE043F4E /* RealisticModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97758E6209D70F1314B34AE /* RealisticModelTests.swift */; };
-		3328A9028EA8ABD6E98CF9FB /* default.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 13E0E0CD7993FE7ABD1A7A52 /* default.metallib */; };
 		34866DA101FA75614A80CE76 /* InferenceEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCFC82C669B9192ED2B78AB4 /* InferenceEngine.swift */; };
 		34EE3E1A217A5FD399B0D098 /* MLXModelSearchUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF0F3B66687218B835D351 /* MLXModelSearchUtility.swift */; };
 		361F107B861740218BF64E46 /* MLXEngine_iOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E517F637270869146105427C /* MLXEngine_iOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -85,7 +82,6 @@
 		609F96AD7508DB37F138F44E /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 56650743B1BEE88A37D6C80C /* MLXLLM */; };
 		60E5160A957B4D4822BF9133 /* MLXEngine_visionOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C986BB2CEE1360E8C6AC377 /* MLXEngine_visionOS.framework */; };
 		611F4AD87EC6E2E01AEE419A /* OptimizedDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51F60A57FC0DB5CF439E133 /* OptimizedDownloader.swift */; };
-		61769F0A1B59D7383C1B4A29 /* default.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 13E0E0CD7993FE7ABD1A7A52 /* default.metallib */; };
 		61AB24C183D51C892B7D8470 /* MetalLibraryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BD577B8F28283B580FD6B0 /* MetalLibraryBuilder.swift */; };
 		63C30D032CD82E0AE850A89C /* RealisticModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97758E6209D70F1314B34AE /* RealisticModelTests.swift */; };
 		64508A20BB5A90E725F65E18 /* MetalLibraryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BD577B8F28283B580FD6B0 /* MetalLibraryBuilder.swift */; };
@@ -162,7 +158,6 @@
 		E0D97CCAC4198159D14338AB /* ModelTrainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0769ADEB603B7F7DCF0E3F /* ModelTrainer.swift */; };
 		E0EA0B9DE5F3E6D8CD41959E /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 18900E74E4A7D3330DB57B0F /* MLXLLM */; };
 		E17C0582EFEA359F92AC4561 /* MetalLibraryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BD577B8F28283B580FD6B0 /* MetalLibraryBuilder.swift */; };
-		E1B61990BEEE0ADCC0C0B48E /* default.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 13E0E0CD7993FE7ABD1A7A52 /* default.metallib */; };
 		E277A4306D7289184064F1AB /* ModelDiscoveryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D548BA1F754C8C995E9A7FA0 /* ModelDiscoveryService.swift */; };
 		E6CFE1DF266AB5FD6F4C206E /* FileManagerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15519A84FA6F47173231C3E8 /* FileManagerService.swift */; };
 		E71BDA350B38F84D74B9AF6A /* ModelManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59C16BC181C301FA6B87A20 /* ModelManagerTests.swift */; };
@@ -321,7 +316,6 @@
 
 /* Begin PBXFileReference section */
 		112C6D67DD856CA6BCAB0FE7 /* MLXEngine_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MLXEngine_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		13E0E0CD7993FE7ABD1A7A52 /* default.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; path = default.metallib; sourceTree = "<group>"; };
 		15519A84FA6F47173231C3E8 /* FileManagerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerService.swift; sourceTree = "<group>"; };
 		207F0C36AB3914ED6AF5A793 /* MLXIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXIntegrationTests.swift; sourceTree = "<group>"; };
 		2BAF0F3B66687218B835D351 /* MLXModelSearchUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXModelSearchUtility.swift; sourceTree = "<group>"; };
@@ -331,6 +325,7 @@
 		337612B481FCEEC772DE9FEC /* ModelRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelRegistry.swift; sourceTree = "<group>"; };
 		3501D306A4A58AA2FB463911 /* RealWorldModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealWorldModelTests.swift; sourceTree = "<group>"; };
 		3D5FAF2ACEBE46F165E86DE8 /* HuggingFaceAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuggingFaceAPI.swift; sourceTree = "<group>"; };
+		3ECF20156551D9D4FFCFB9F3 /* swift-uikit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "swift-uikit"; path = "../swift-uikit"; sourceTree = SOURCE_ROOT; };
 		3F87F43BD0F6F327DBBAD6C7 /* MLXEngineTests_macOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLXEngineTests_macOS.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		410293B1233018514C241B36 /* MLXEngine_watchOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MLXEngine_watchOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		426EE16C5B650E4F2959535A /* MLXEngineTests_visionOS.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MLXEngineTests_visionOS.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -359,7 +354,6 @@
 		E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugUtility.swift; sourceTree = "<group>"; };
 		E517F637270869146105427C /* MLXEngine_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MLXEngine_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAC10B06EBB70A782C3B0B66 /* MLXEngineTests_tvOS.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MLXEngineTests_tvOS.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F1B5F6C1EA461B023E9B4D1D /* SwiftUIKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SwiftUIKit; path = SwiftUIKit; sourceTree = SOURCE_ROOT; };
 		F902DDDDE72A4247F1354B7C /* MLXEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXEngineTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -560,7 +554,7 @@
 		E784BA874AFCB1FD9C19EF28 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				F1B5F6C1EA461B023E9B4D1D /* SwiftUIKit */,
+				3ECF20156551D9D4FFCFB9F3 /* swift-uikit */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -568,7 +562,6 @@
 		ED83D3348E821C09528B2797 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				13E0E0CD7993FE7ABD1A7A52 /* default.metallib */,
 				B46A8F9902D71685116A2076 /* Info.plist */,
 			);
 			path = Resources;
@@ -655,7 +648,6 @@
 			buildConfigurationList = 39D16EC01CB2CB536E528493 /* Build configuration list for PBXNativeTarget "MLXEngine_watchOS" */;
 			buildPhases = (
 				E73FAB2A31AD55E43524A747 /* Sources */,
-				A0E81BA748B1811238A00A78 /* Resources */,
 				CF808D49F8D0F23CBABE89A1 /* Frameworks */,
 			);
 			buildRules = (
@@ -724,7 +716,6 @@
 			buildConfigurationList = A69672267CCC7390BA8F81CB /* Build configuration list for PBXNativeTarget "MLXEngine_tvOS" */;
 			buildPhases = (
 				F3D95C9F82F770EB48101618 /* Sources */,
-				9FFD74D674D832C88B4E3AAF /* Resources */,
 				432E6827CB8743C56E930D3D /* Frameworks */,
 			);
 			buildRules = (
@@ -747,7 +738,6 @@
 			buildConfigurationList = 39EE37E603160165CA9E58FC /* Build configuration list for PBXNativeTarget "MLXEngine_iOS" */;
 			buildPhases = (
 				9A075C5B88D634987C22EF8D /* Sources */,
-				A59823972FBAC345143F4298 /* Resources */,
 				5D0F9CF6816F20D51BEF306C /* Frameworks */,
 			);
 			buildRules = (
@@ -814,7 +804,6 @@
 			buildConfigurationList = 7875583463377F1E5B9B5EC2 /* Build configuration list for PBXNativeTarget "MLXEngine_macOS" */;
 			buildPhases = (
 				DC47800380D8084CD957E177 /* Sources */,
-				70B89CF7B198D018F9C4A2D8 /* Resources */,
 				82BB2CAB15DBFB98EFB51FA0 /* Frameworks */,
 			);
 			buildRules = (
@@ -858,7 +847,6 @@
 			buildConfigurationList = FFE10B1B64AF1209C6D55C9E /* Build configuration list for PBXNativeTarget "MLXEngine_visionOS" */;
 			buildPhases = (
 				B519349F0F672FE8831B2119 /* Sources */,
-				BDAEA5CE455415B4CA9BB17C /* Resources */,
 				96AFA3C4A473A06DE52D4CA9 /* Frameworks */,
 			);
 			buildRules = (
@@ -900,7 +888,7 @@
 			packageReferences = (
 				7156CDA2DF007614E4F10607 /* XCRemoteSwiftPackageReference "mlx-swift" */,
 				A3CA775A967B4FB9B5749D67 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
-				25E5969F75E74765AF350DC5 /* XCLocalSwiftPackageReference "SwiftUIKit" */,
+				E221CE24B9A7755325546122 /* XCLocalSwiftPackageReference "../swift-uikit" */,
 			);
 			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
@@ -921,49 +909,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		70B89CF7B198D018F9C4A2D8 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				61769F0A1B59D7383C1B4A29 /* default.metallib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9FFD74D674D832C88B4E3AAF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				19BF3B3BA3C693B491CA9E4E /* default.metallib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A0E81BA748B1811238A00A78 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E1B61990BEEE0ADCC0C0B48E /* default.metallib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A59823972FBAC345143F4298 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1554D24FE1DB85F011CB6BB8 /* default.metallib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BDAEA5CE455415B4CA9BB17C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3328A9028EA8ABD6E98CF9FB /* default.metallib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0B3397F17A564FF3963ED8AE /* Sources */ = {
@@ -1234,7 +1179,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_iOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.iOS;
 				SDKROOT = iphoneos;
@@ -1262,7 +1207,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_tvOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.tvOS;
 				SDKROOT = appletvos;
@@ -1329,7 +1274,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_macOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.macOS;
 				SDKROOT = macosx;
@@ -1406,7 +1351,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_visionOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.visionOS;
 				SDKROOT = xros;
@@ -1494,7 +1439,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_tvOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.tvOS;
 				SDKROOT = appletvos;
@@ -1575,7 +1520,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_watchOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.watchOS;
 				SDKROOT = watchos;
@@ -1605,7 +1550,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_watchOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.watchOS;
 				SDKROOT = watchos;
@@ -1765,7 +1710,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_macOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.macOS;
 				SDKROOT = macosx;
@@ -1793,7 +1738,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_iOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.iOS;
 				SDKROOT = iphoneos;
@@ -1875,7 +1820,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine,
+					MLXEngine_visionOS,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.visionOS;
 				SDKROOT = xros;
@@ -2091,9 +2036,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		25E5969F75E74765AF350DC5 /* XCLocalSwiftPackageReference "SwiftUIKit" */ = {
+		E221CE24B9A7755325546122 /* XCLocalSwiftPackageReference "../swift-uikit" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = SwiftUIKit;
+			relativePath = "../swift-uikit";
 		};
 /* End XCLocalSwiftPackageReference section */
 
