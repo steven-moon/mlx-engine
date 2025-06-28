@@ -228,6 +228,10 @@ function install_and_launch_app() {
     # Verify app is running
     if xcrun simctl get_app_container booted "$BUNDLE_ID" > /dev/null 2>&1; then
         log_success "App is running in simulator."
+        # Extract executable name from Info.plist
+        APP_EXECUTABLE=$(plutil -extract CFBundleExecutable raw "$APP_PATH/Info.plist")
+        log_info "Tailing logs for simulator process: $APP_EXECUTABLE"
+        xcrun simctl spawn booted log stream --predicate "process == \"$APP_EXECUTABLE\"" --style compact
         return 0
     else
         log_warning "App may not be running. Checking logs..."
@@ -252,13 +256,15 @@ function launch_simulator() {
 
 function monitor_logs() {
     log_info "Monitoring simulator logs..."
-    log_info "Press Ctrl+C to stop monitoring"
-    log_info "Monitoring process: $PROCESS_NAME"
-    
-    # Monitor app logs with correct process name
-    xcrun simctl spawn booted log stream \
-        --predicate "process == \"$PROCESS_NAME\"" \
-        --style compact
+    # Find the built app
+    APP_PATH=$(find "$DERIVED_DATA_PATH" -name "*.app" -path "*/Debug-iphonesimulator/*" | head -1)
+    if [ -z "$APP_PATH" ]; then
+        log_error "Could not find built .app bundle in $DERIVED_DATA_PATH"
+        return 1
+    fi
+    APP_EXECUTABLE=$(plutil -extract CFBundleExecutable raw "$APP_PATH/Info.plist")
+    log_info "Tailing logs for simulator process: $APP_EXECUTABLE"
+    xcrun simctl spawn booted log stream --predicate "process == \"$APP_EXECUTABLE\"" --style compact
 }
 
 function reset_simulator() {

@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftUIKit
+import MLXEngine
 
 struct OnboardingView: View {
     let onComplete: () -> Void
@@ -32,8 +33,11 @@ struct OnboardingView: View {
                             Spacer()
                         }
                         .uiaiStyle(UIAIStyleRegistry.style(for: tempStyleKind, colorScheme: tempColorScheme))
-                        .background(UIAIStyleRegistry.style(for: tempStyleKind, colorScheme: tempColorScheme).backgroundColor.ignoresSafeArea())
+                        .background(Color.black.ignoresSafeArea())
                         .tag(idx)
+                        .onAppear {
+                            AppLogger.shared.info("Onboarding", "Personalize step appeared (index: \(idx))")
+                        }
                     } else {
                         OnboardingStepView(
                             step: steps[idx],
@@ -54,17 +58,25 @@ struct OnboardingView: View {
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .ignoresSafeArea(edges: .top)
+            .frame(maxHeight: .infinity)
+            .onChange(of: currentStep) { newStep in
+                let stepName = steps[newStep].title
+                AppLogger.shared.info("Onboarding", "Navigated to step \(newStep): \(stepName)")
+            }
             Spacer(minLength: 0)
             // Pager dots only, no blue bar
-            HStack(spacing: 8) {
-                ForEach(0..<steps.count, id: \ .self) { idx in
-                    Circle()
-                        .fill(idx == currentStep ? Color.white : Color.gray.opacity(0.4))
-                        .frame(width: 10, height: 10)
-                        .shadow(radius: idx == currentStep ? 2 : 0)
+            VStack(spacing: 0) {
+                Spacer(minLength: 16) // Add extra space above dots
+                HStack(spacing: 8) {
+                    ForEach(0..<steps.count, id: \ .self) { idx in
+                        Circle()
+                            .fill(idx == currentStep ? Color.white : Color.gray.opacity(0.4))
+                            .frame(width: 10, height: 10)
+                            .shadow(radius: idx == currentStep ? 2 : 0)
+                    }
                 }
+                .padding(.bottom, 32) // More space before button
             }
-            .padding(.bottom, 32) // More space before button
         }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 0) {
@@ -174,28 +186,40 @@ struct OnboardingStepView: View {
 
     var body: some View {
         VStack(spacing: 40) {
-            Spacer(minLength: 0)
             Image(systemName: step.systemImage)
                 .font(.system(size: 80))
                 .foregroundStyle(style.accentColor.gradient)
+                .padding(.top, 60)
+                .padding(.bottom, 8)
             VStack(spacing: 16) {
                 Text(step.title)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 24)
                 Text(step.subtitle)
                     .font(.title3)
                     .foregroundColor(style.secondaryForegroundColor)
                     .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 24)
                 Text(step.description)
                     .font(.body)
                     .foregroundColor(style.secondaryForegroundColor)
                     .multilineTextAlignment(.center)
+                    .lineLimit(4)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 24)
             }
-            Spacer(minLength: 0)
+            .frame(maxWidth: 500)
+            Spacer(minLength: 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .onAppear {
+            AppLogger.shared.info("Onboarding", "Step appeared: \(step.title)")
         }
     }
 } 
