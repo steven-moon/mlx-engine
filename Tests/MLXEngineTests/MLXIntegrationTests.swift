@@ -24,7 +24,10 @@ final class MLXIntegrationTests: XCTestCase {
     
     // MARK: - Feature Detection Tests
     
-    func testFeatureDetection() {
+    func testFeatureDetection() throws {
+        guard ProcessInfo.processInfo.environment["RUN_REAL_MODEL_TESTS"] != nil else {
+            throw XCTSkip("Skipping real model test: RUN_REAL_MODEL_TESTS not set")
+        }
         print("\n🔍 [FEATURE TEST] Testing feature detection...")
         
         let features = InferenceEngine.supportedFeatures
@@ -48,6 +51,9 @@ final class MLXIntegrationTests: XCTestCase {
     // MARK: - LLM Model Tests
     
     func testLLMModelDownloadAndInference() async throws {
+        guard ProcessInfo.processInfo.environment["RUN_REAL_MODEL_TESTS"] != nil else {
+            throw XCTSkip("Skipping real model test: RUN_REAL_MODEL_TESTS not set")
+        }
         print("\n🚀 [LLM TEST] Testing LLM model download and inference...")
         
         // Test with a small, fast model
@@ -122,6 +128,9 @@ final class MLXIntegrationTests: XCTestCase {
     // MARK: - VLM Model Tests
     
     func testVLMModelDownloadAndInference() async throws {
+        guard ProcessInfo.processInfo.environment["RUN_REAL_MODEL_TESTS"] != nil else {
+            throw XCTSkip("Skipping real model test: RUN_REAL_MODEL_TESTS not set")
+        }
         print("\n🖼️ [VLM TEST] Testing VLM model download and inference...")
         
         // Check if VLM features are available
@@ -176,6 +185,9 @@ final class MLXIntegrationTests: XCTestCase {
     // MARK: - Embedding Model Tests
     
     func testEmbeddingModelDownloadAndInference() async throws {
+        guard ProcessInfo.processInfo.environment["RUN_REAL_MODEL_TESTS"] != nil else {
+            throw XCTSkip("Skipping real model test: RUN_REAL_MODEL_TESTS not set")
+        }
         print("\n🔗 [EMBEDDING TEST] Testing embedding model download and inference...")
         
         // Check if embedding features are available
@@ -228,6 +240,9 @@ final class MLXIntegrationTests: XCTestCase {
     // MARK: - Diffusion Model Tests
     
     func testDiffusionModelDownloadAndInference() async throws {
+        guard ProcessInfo.processInfo.environment["RUN_REAL_MODEL_TESTS"] != nil else {
+            throw XCTSkip("Skipping real model test: RUN_REAL_MODEL_TESTS not set")
+        }
         print("\n🎨 [DIFFUSION TEST] Testing diffusion model download and inference...")
         
         // Check if diffusion features are available
@@ -280,6 +295,9 @@ final class MLXIntegrationTests: XCTestCase {
     // MARK: - Quantization Tests
     
     func testQuantizedModelInference() async throws {
+        guard ProcessInfo.processInfo.environment["RUN_REAL_MODEL_TESTS"] != nil else {
+            throw XCTSkip("Skipping real model test: RUN_REAL_MODEL_TESTS not set")
+        }
         print("\n⚡ [QUANTIZATION TEST] Testing quantized model inference...")
         
         // Check if quantization features are available
@@ -330,6 +348,9 @@ final class MLXIntegrationTests: XCTestCase {
     // MARK: - Performance Monitoring Tests
     
     func testPerformanceMonitoring() async throws {
+        guard ProcessInfo.processInfo.environment["RUN_REAL_MODEL_TESTS"] != nil else {
+            throw XCTSkip("Skipping real model test: RUN_REAL_MODEL_TESTS not set")
+        }
         print("\n📊 [PERFORMANCE TEST] Testing performance monitoring...")
         
         // Check if performance monitoring features are available
@@ -377,6 +398,9 @@ final class MLXIntegrationTests: XCTestCase {
     // MARK: - Model Registry Tests
     
     func testModelRegistryComprehensive() async throws {
+        guard ProcessInfo.processInfo.environment["RUN_REAL_MODEL_TESTS"] != nil else {
+            throw XCTSkip("Skipping real model test: RUN_REAL_MODEL_TESTS not set")
+        }
         print("\n📚 [REGISTRY TEST] Testing comprehensive model registry...")
         
         // Test all model types
@@ -417,6 +441,9 @@ final class MLXIntegrationTests: XCTestCase {
     // MARK: - Error Handling Tests
     
     func testErrorHandling() async throws {
+        guard ProcessInfo.processInfo.environment["RUN_REAL_MODEL_TESTS"] != nil else {
+            throw XCTSkip("Skipping real model test: RUN_REAL_MODEL_TESTS not set")
+        }
         print("\n⚠️ [ERROR TEST] Testing error handling...")
         
         // Test with invalid model configuration

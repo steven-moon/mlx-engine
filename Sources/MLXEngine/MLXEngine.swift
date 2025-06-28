@@ -152,11 +152,31 @@ public struct ModelConfiguration: Codable, Sendable {
     // Add more helpers as needed
 
     public func withExtractedMetadata() -> ModelConfiguration {
-        // Stub: return self for now
-        return self
+        var newConfig = self
+        newConfig.extractMetadataFromId()
+        return newConfig
     }
+
     public mutating func extractMetadataFromId() {
-        // Stub: do nothing for now
+        let id = hubId.lowercased()
+
+        // Extract architecture (e.g., Llama, Qwen, Mistral)
+        if let match = id.range(of: "(llama|qwen|mistral|gemma|phi)", options: .regularExpression) {
+            architecture = String(id[match]).capitalized
+        }
+
+        // Extract parameters (e.g., 0.5B, 7B, 8x7B)
+        if let match = id.range(of: "([0-9.]+(b|m))", options: .regularExpression) {
+            parameters = String(id[match]).replacingOccurrences(of: "b", with: "B").replacingOccurrences(of: "m", with: "M")
+        } else if let match = id.range(of: "([0-9]+x[0-9]+(b|m))", options: .regularExpression) {
+            parameters = String(id[match]).replacingOccurrences(of: "b", with: "B").replacingOccurrences(of: "m", with: "M")
+        }
+
+
+        // Extract quantization (e.g., 4bit, 8bit, fp16)
+        if let match = id.range(of: "(4bit|8bit|fp16|q4_k_m|q4_0|q8_0)", options: .regularExpression) {
+            quantization = String(id[match])
+        }
     }
 }
 

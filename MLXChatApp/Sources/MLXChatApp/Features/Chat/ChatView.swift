@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftUIKit
 
 struct ChatView: View {
     @StateObject private var viewModel = ChatViewModel()
+    @Environment(\.uiaiStyle) private var style
     
     var body: some View {
         VStack(spacing: 0) {
@@ -22,6 +24,7 @@ struct ChatView: View {
                 }
             )
         }
+        .background(style.backgroundColor.ignoresSafeArea())
         .navigationTitle("Chat")
         .navigationBarTitleDisplayMode(.inline)
         .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
@@ -43,15 +46,16 @@ struct ChatView: View {
             VStack(alignment: .leading) {
                 Text("MLX Chat")
                     .font(.headline)
+                    .foregroundColor(style.foregroundColor)
                 
                 if let model = viewModel.selectedModel {
                     Text(model.name)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(style.secondaryForegroundColor)
                 } else {
                     Text("No model selected")
                         .font(.caption)
-                        .foregroundStyle(.red)
+                        .foregroundColor(style.warningColor ?? .red)
                 }
             }
             
@@ -83,10 +87,11 @@ struct ChatView: View {
             } label: {
                 Image(systemName: "ellipsis.circle")
                     .font(.title2)
+                    .foregroundColor(style.accentColor)
             }
         }
         .padding()
-        .background(.thinMaterial)
+        .background(style.backgroundColor)
     }
     
     private var messagesView: some View {

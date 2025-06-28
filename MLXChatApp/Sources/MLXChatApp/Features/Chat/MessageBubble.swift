@@ -1,8 +1,10 @@
 import SwiftUI
+import SwiftUIKit
 
 struct MessageBubble: View {
     let message: ChatMessage
     let isStreaming: Bool
+    @Environment(\.uiaiStyle) private var style
     
     init(message: ChatMessage, isStreaming: Bool = false) {
         self.message = message
@@ -28,17 +30,17 @@ struct MessageBubble: View {
             HStack {
                 if !message.isUser {
                     Image(systemName: "cpu")
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(style.secondaryForegroundColor)
                         .font(.caption)
                 }
                 
                 Text(message.isUser ? "You" : (message.modelName ?? "Assistant"))
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(style.secondaryForegroundColor)
                 
                 if message.isUser {
                     Image(systemName: "person.circle.fill")
-                        .foregroundStyle(.blue)
+                        .foregroundColor(style.accentColor)
                         .font(.caption)
                 }
             }
@@ -49,9 +51,9 @@ struct MessageBubble: View {
                     .padding(12)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(message.isUser ? Color.blue : Color(.secondarySystemBackground))
+                            .fill(message.isUser ? style.accentColor : style.backgroundColor)
                     )
-                    .foregroundStyle(message.isUser ? .white : .primary)
+                    .foregroundColor(message.isUser ? style.backgroundColor : style.foregroundColor)
                 
                 if isStreaming {
                     ProgressView()
@@ -62,7 +64,7 @@ struct MessageBubble: View {
             HStack {
                 Text(message.timestamp.formatted(date: .omitted, time: .shortened))
                     .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .foregroundColor(style.secondaryForegroundColor)
                 
                 if !message.isUser && !isStreaming {
                     Button {
@@ -77,7 +79,7 @@ struct MessageBubble: View {
                             .font(.caption2)
                     }
                     .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(style.secondaryForegroundColor)
                 }
             }
         }

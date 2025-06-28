@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftUIKit
 
 struct ChatInputView: View {
     @Binding var text: String
@@ -7,6 +8,7 @@ struct ChatInputView: View {
     let onStop: () -> Void
     
     @FocusState private var isTextFieldFocused: Bool
+    @Environment(\.uiaiStyle) private var style
     
     var body: some View {
         VStack(spacing: 12) {
@@ -18,14 +20,15 @@ struct ChatInputView: View {
                     .padding(12)
                     .background(
                         RoundedRectangle(cornerRadius: 20)
-                            .fill(Color(.secondarySystemBackground))
+                            .fill(style.backgroundColor)
                     )
+                    .foregroundColor(style.foregroundColor)
                 
                 if isGenerating {
                     Button(action: onStop) {
                         Image(systemName: "stop.circle.fill")
                             .font(.title2)
-                            .foregroundStyle(.red)
+                            .foregroundColor(style.warningColor ?? .red)
                     }
                     .buttonStyle(.plain)
                 } else {
@@ -34,7 +37,7 @@ struct ChatInputView: View {
                     } label: {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.title2)
-                            .foregroundStyle(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .gray : .blue)
+                            .foregroundColor(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? style.secondaryForegroundColor : style.accentColor)
                     }
                     .buttonStyle(.plain)
                     .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -42,7 +45,7 @@ struct ChatInputView: View {
             }
         }
         .padding()
-        .background(.thinMaterial)
+        .background(style.backgroundColor)
         .onSubmit {
             if !isGenerating && !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Task { await onSend() }

@@ -8,17 +8,7 @@ import MLX
 import MLXNN
 #endif
 
-#if os(macOS)
 @testable import MLXEngine
-#elseif os(iOS)
-@testable import MLXEngine_iOS
-#elseif os(tvOS)
-@testable import MLXEngine_tvOS
-#elseif os(watchOS)
-@testable import MLXEngine_watchOS
-#elseif os(visionOS)
-@testable import MLXEngine_visionOS
-#endif
 
 @MainActor
 final class MLXEngineTests: XCTestCase {

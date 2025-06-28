@@ -3,6 +3,12 @@ import SwiftUIKit
 
 struct ContentView: View {
     @State private var selectedTab = 0
+    @AppStorage("selectedStyleKind") private var selectedStyleKindRaw: String = UIAIStyleKind.minimal.rawValue
+    @AppStorage("selectedColorScheme") private var selectedColorSchemeRaw: String = UIAIColorScheme.light.rawValue
+    
+    private var currentStyle: any UIAIStyle {
+        UIAIStyleRegistry.style(for: UIAIStyleKind(rawValue: selectedStyleKindRaw) ?? .minimal, colorScheme: UIAIColorScheme(rawValue: selectedColorSchemeRaw) ?? .light)
+    }
     
     var body: some View {
         #if os(iOS)
@@ -21,13 +27,17 @@ struct ContentView: View {
                 }
                 .tag(1)
             
-            SettingsView()
+            SettingsView(
+                selectedStyleKindRaw: $selectedStyleKindRaw,
+                selectedColorSchemeRaw: $selectedColorSchemeRaw
+            )
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")
                 }
                 .tag(2)
         }
+        .uiaiStyle(currentStyle)
         #else
         NavigationSplitView {
             List(selection: $selectedTab) {
@@ -43,18 +53,45 @@ struct ContentView: View {
             case 1:
                 ModelDiscoveryView()
             case 2:
-                SettingsView()
+                SettingsView(
+                    selectedStyleKindRaw: $selectedStyleKindRaw,
+                    selectedColorSchemeRaw: $selectedColorSchemeRaw
+                )
             default:
                 ChatView()
             }
         }
+        .uiaiStyle(currentStyle)
         #endif
     }
 }
 
 // Placeholder for SettingsView
 struct SettingsView: View {
+    @Binding var selectedStyleKindRaw: String
+    @Binding var selectedColorSchemeRaw: String
+    @State private var showingAppearanceSheet = false
+    
     var body: some View {
-        Text("Settings View")
+        NavigationView {
+            List {
+                Section(header: Text("Appearance")) {
+                    Button(action: { showingAppearanceSheet = true }) {
+                        HStack {
+                            Image(systemName: "paintpalette")
+                            Text("Change Theme & Style")
+                        }
+                    }
+                }
+                // Add other settings here
+            }
+            .navigationTitle("Settings")
+            .sheet(isPresented: $showingAppearanceSheet) {
+                AppearanceSettingsView(
+                    selectedStyleKindRaw: $selectedStyleKindRaw,
+                    selectedColorSchemeRaw: $selectedColorSchemeRaw
+                )
+            }
+        }
     }
 } 

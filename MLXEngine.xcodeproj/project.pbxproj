@@ -1234,7 +1234,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_iOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.iOS;
 				SDKROOT = iphoneos;
@@ -1262,7 +1262,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_tvOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.tvOS;
 				SDKROOT = appletvos;
@@ -1329,7 +1329,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_macOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.macOS;
 				SDKROOT = macosx;
@@ -1406,7 +1406,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_visionOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.visionOS;
 				SDKROOT = xros;
@@ -1494,7 +1494,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_tvOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.tvOS;
 				SDKROOT = appletvos;
@@ -1575,7 +1575,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_watchOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.watchOS;
 				SDKROOT = watchos;
@@ -1605,7 +1605,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_watchOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.watchOS;
 				SDKROOT = watchos;
@@ -1765,7 +1765,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_macOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.macOS;
 				SDKROOT = macosx;
@@ -1793,7 +1793,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_iOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.iOS;
 				SDKROOT = iphoneos;
@@ -1875,7 +1875,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"-framework",
-					MLXEngine_visionOS,
+					MLXEngine,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevercoding.MLXEngineTests.visionOS;
 				SDKROOT = xros;

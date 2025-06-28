@@ -367,6 +367,55 @@ The workflow references these documents:
 
 ---
 
+## Ensuring Swift Package Changes Are Propagated
+
+When using a modular Swift Package (like SwiftUIKit) and a consuming app (like MLXChatApp), Xcode and SwiftPM can aggressively cache builds and package artifacts. This can cause changes in the library to not appear in the app, even after a clean build. To ensure your changes are always reflected:
+
+### **Best Practices**
+- Always clean DerivedData and build artifacts for both the app and the library.
+- Run `swift package clean` in both the SwiftUIKit and MLXChatApp directories.
+- Uninstall the app from the simulator before reinstalling.
+- Regenerate the Xcode project if using xcodegen.
+- Use a monorepo workspace and reference SwiftUIKit as a local package.
+- Always display a build hash or timestamp in the UI and logs for verification.
+
+### **Recommended Full Clean/Build/Install Script**
+```bash
+# Clean all derived data and build artifacts
+rm -rf ~/Library/Developer/Xcode/DerivedData/*
+cd SwiftUIKit && swift package clean && cd ..
+cd MLXChatApp && swift package clean && cd ..
+
+# Regenerate Xcode projects if using xcodegen
+xcodegen generate
+
+# Uninstall the app from the simulator
+xcrun simctl uninstall booted com.clevercoding.MLXChatApp-iOS || true
+
+# Reset the simulator (optional, for stubborn cache issues)
+xcrun simctl shutdown "iPhone 16" 2>/dev/null || true
+xcrun simctl erase "iPhone 16"
+
+# Build and install the app
+xcodebuild -scheme MLXChatApp-iOS -workspace MLXChatApp/MLXChatApp.xcodeproj/project.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 16' clean build
+xcrun simctl install booted ~/Library/Developer/Xcode/DerivedData/MLXChatApp-*/Build/Products/Debug-iphonesimulator/MLXChatApp-iOS.app
+xcrun simctl launch booted com.clevercoding.MLXChatApp-iOS
+```
+
+### **Debug Panel and Build Hash Verification**
+- Use the built-in Debug Panel in SwiftUIKit to view the current build hash, build date, and other debug info.
+- Always check the build hash in the UI to confirm you are running the latest build.
+- If the hash does not change after a code update, repeat the full clean/build/install script above.
+
+### **Troubleshooting**
+- If changes to SwiftUIKit do not appear in the app:
+  - Ensure you are editing the correct local package and not a cached or remote version.
+  - Run the full clean/build/install script.
+  - Check the build hash in the UI and logs.
+  - If issues persist, try resetting the simulator and regenerating the Xcode project.
+
+---
+
 ## Conclusion
 
 The **agent-driven development workflow** transforms Cursor into a truly autonomous development assistant. By automatically handling build, test, and simulator tasks, it allows you to focus entirely on writing code while maintaining confidence that your changes are working correctly.
