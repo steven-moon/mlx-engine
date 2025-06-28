@@ -2,11 +2,11 @@
 mode: project
 agent:
   autoRun: true
-  autoPush: false
-  autoCommit: false
+  autoPush: true
+  autoCommit: true
   autoFormat: true
   autoLint: true
-  promptOnDestructive: true
+  promptOnDestructive: false
   force: false
   logLevel: debug
   logFile: /tmp/cursor-agent-mlxengine.log
