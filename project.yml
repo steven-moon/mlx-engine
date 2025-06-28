@@ -16,7 +16,7 @@ packages:
     url: https://github.com/ml-explore/mlx-swift-examples
     branch: main
   SwiftUIKit:
-    path: SwiftUIKit
+    path: ../swift-uikit
 
 # Main XcodeGen targets
 

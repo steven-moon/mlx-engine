@@ -14,7 +14,6 @@
 		075D4BBF40DEF3F94F8F4738 /* ChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4604797971018BE86527A9AD /* ChatSession.swift */; };
 		09DA8CD1B9990CA4A84A0474 /* ChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4604797971018BE86527A9AD /* ChatSession.swift */; };
 		0B1A394F0774F36D14102143 /* ChatSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DC66E6BF8AD582DADA052B /* ChatSessionTests.swift */; };
-		0D92E9F40AD6FCABA5C8B510 /* DebugUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */; };
 		0E19684C5F9A2738EC62FE9C /* SwiftUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 120E76CBC75178C3F5ACEC54 /* SwiftUIKit */; };
 		0E776501B555B9B0EAF8A368 /* ModelDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8152086575478D68B0A7FB0B /* ModelDownloaderTests.swift */; };
 		0F8083DBDA7BA2835B945144 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 71CF0B81147B2A79A6AB30D4 /* MLX */; };
@@ -26,7 +25,6 @@
 		1E4B9B0A90A3CEBEC5667D37 /* MLXEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F902DDDDE72A4247F1354B7C /* MLXEngineTests.swift */; };
 		1FA83DAFC3D1254B77AC5953 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = F3000B468992501FD76BCA3A /* MLXLMCommon */; };
 		2009293850B48FCBEB6E8D0A /* RealWorldModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3501D306A4A58AA2FB463911 /* RealWorldModelTests.swift */; };
-		217A2D00CEC1B1DEEA54BCB8 /* DebugUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */; };
 		248801D5D09B48DFEA1F40BC /* SwiftUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = 09EBDAEC17AFC609644087A3 /* SwiftUIKit */; };
 		248926641720F51523883A91 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 08C69C93C222345144A36DA8 /* MLXLLM */; };
 		256B328161C4ADDEB99D3ACE /* MLXIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207F0C36AB3914ED6AF5A793 /* MLXIntegrationTests.swift */; };
@@ -68,7 +66,6 @@
 		49721DEC5CE3BC49E35D8A88 /* HuggingFaceAPINetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710C1A047DA98D5AA746A827 /* HuggingFaceAPINetworkTests.swift */; };
 		4A117C3C20E4AB39BE82B296 /* MLXEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7430BB22E84A73210D0A4DD2 /* MLXEngine.swift */; };
 		4B0060915B35D42D1B47566F /* ChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4604797971018BE86527A9AD /* ChatSession.swift */; };
-		4D75988CAC83E8E946E82C1D /* DebugUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */; };
 		4D79468E0382EC71FE2F0280 /* ModelDiscoveryServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF4519AEBC2F38740162DA /* ModelDiscoveryServiceTests.swift */; };
 		520FA744C34F9604D085DD83 /* RealisticModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97758E6209D70F1314B34AE /* RealisticModelTests.swift */; };
 		52E1734950B60F7CF3D5E989 /* ChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DF6A31AB93C071311A4271 /* ChatApp.swift */; };
@@ -95,7 +92,6 @@
 		70C3DD918C0DF1512B91F72A /* ModelRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337612B481FCEEC772DE9FEC /* ModelRegistry.swift */; };
 		745E043EBE84B6615244C1B2 /* SwiftUIKit in Frameworks */ = {isa = PBXBuildFile; productRef = F0536F9E5799F4DAFCFE8A71 /* SwiftUIKit */; };
 		7545713B0A2AF0F40A2C4160 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 30FDF122703C696B29170B61 /* MLX */; };
-		782DA250668EA190725CB60A /* DebugUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */; };
 		78E03F198B405AB2CD528BE4 /* MLXEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7430BB22E84A73210D0A4DD2 /* MLXEngine.swift */; };
 		78EDF6E4B679E12AA9ACA2E9 /* ModelDiscoveryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D548BA1F754C8C995E9A7FA0 /* ModelDiscoveryService.swift */; };
 		79369843B73856297D746A9A /* ModelRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337612B481FCEEC772DE9FEC /* ModelRegistry.swift */; };
@@ -174,7 +170,6 @@
 		F68EEE23EBDD7BFC0D5CE018 /* ModelTrainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0769ADEB603B7F7DCF0E3F /* ModelTrainer.swift */; };
 		F7CCB9D325850D13BA0878CC /* ChatSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DC66E6BF8AD582DADA052B /* ChatSessionTests.swift */; };
 		F7D85471FC136C5A964DC045 /* ModelTrainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0769ADEB603B7F7DCF0E3F /* ModelTrainer.swift */; };
-		F8CC4367C6F671070D89C09B /* DebugUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */; };
 		F9626EC9601F76453BDD02A6 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 8F7DEAAF4CD91E141A6974A2 /* MLXLMCommon */; };
 		FBD296C4C8E78E2D6A52CFF7 /* FileManagerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15519A84FA6F47173231C3E8 /* FileManagerService.swift */; };
 		FBD473A3DF2834720177A0A8 /* ChatSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4604797971018BE86527A9AD /* ChatSession.swift */; };
@@ -351,7 +346,6 @@
 		D6C62594017E540EE94C568A /* ModelRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelRegistryTests.swift; sourceTree = "<group>"; };
 		D97758E6209D70F1314B34AE /* RealisticModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealisticModelTests.swift; sourceTree = "<group>"; };
 		DCFC82C669B9192ED2B78AB4 /* InferenceEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InferenceEngine.swift; sourceTree = "<group>"; };
-		E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugUtility.swift; sourceTree = "<group>"; };
 		E517F637270869146105427C /* MLXEngine_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MLXEngine_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAC10B06EBB70A782C3B0B66 /* MLXEngineTests_tvOS.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MLXEngineTests_tvOS.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F902DDDDE72A4247F1354B7C /* MLXEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLXEngineTests.swift; sourceTree = "<group>"; };
@@ -502,7 +496,6 @@
 			isa = PBXGroup;
 			children = (
 				4604797971018BE86527A9AD /* ChatSession.swift */,
-				E0676D1C9D2A0A5A0774EB9B /* DebugUtility.swift */,
 				15519A84FA6F47173231C3E8 /* FileManagerService.swift */,
 				3D5FAF2ACEBE46F165E86DE8 /* HuggingFaceAPI.swift */,
 				DCFC82C669B9192ED2B78AB4 /* InferenceEngine.swift */,
@@ -992,7 +985,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				09DA8CD1B9990CA4A84A0474 /* ChatSession.swift in Sources */,
-				4D75988CAC83E8E946E82C1D /* DebugUtility.swift in Sources */,
 				8A0C1B543243CA3227580C61 /* FileManagerService.swift in Sources */,
 				82CC9BBBB12147BDBFB0F053 /* HuggingFaceAPI+macOS.swift in Sources */,
 				FBE35BBDF202764BB9D57543 /* HuggingFaceAPI.swift in Sources */,
@@ -1030,7 +1022,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FBD473A3DF2834720177A0A8 /* ChatSession.swift in Sources */,
-				782DA250668EA190725CB60A /* DebugUtility.swift in Sources */,
 				D40099C1DB3B65F544791096 /* FileManagerService.swift in Sources */,
 				8780FF5F799533A0093F9A8F /* HuggingFaceAPI+macOS.swift in Sources */,
 				A8D964C4EFDEEDCE1DFCE152 /* HuggingFaceAPI.swift in Sources */,
@@ -1059,7 +1050,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				075D4BBF40DEF3F94F8F4738 /* ChatSession.swift in Sources */,
-				0D92E9F40AD6FCABA5C8B510 /* DebugUtility.swift in Sources */,
 				E765E7F73C3845915B9B40DC /* FileManagerService.swift in Sources */,
 				F43D17F03C85BF6E322C6B0C /* HuggingFaceAPI+macOS.swift in Sources */,
 				D43B78D3E31B57EC2D33CEC6 /* HuggingFaceAPI.swift in Sources */,
@@ -1080,7 +1070,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B0060915B35D42D1B47566F /* ChatSession.swift in Sources */,
-				F8CC4367C6F671070D89C09B /* DebugUtility.swift in Sources */,
 				FBD296C4C8E78E2D6A52CFF7 /* FileManagerService.swift in Sources */,
 				7E417AB39BF15263F99C3A2F /* HuggingFaceAPI+macOS.swift in Sources */,
 				79C6B9D26014CF44D374DBAD /* HuggingFaceAPI.swift in Sources */,
@@ -1101,7 +1090,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				694BF7E72A04EC2FAACC866A /* ChatSession.swift in Sources */,
-				217A2D00CEC1B1DEEA54BCB8 /* DebugUtility.swift in Sources */,
 				E6CFE1DF266AB5FD6F4C206E /* FileManagerService.swift in Sources */,
 				2AA1A7A35EF9A9871C0D1D77 /* HuggingFaceAPI+macOS.swift in Sources */,
 				BE70B0B7A13735326D8966FB /* HuggingFaceAPI.swift in Sources */,

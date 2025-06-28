@@ -36,4 +36,9 @@ targets:
     settings:
       ENABLE_TEST_DISCOVERY: YES
       GENERATE_INFOPLIST_FILE: YES
-      INFOPLIST_FILE: ../Tests/MLXEngineTests/Info.plist 
+      INFOPLIST_FILE: ../Tests/MLXEngineTests/Info.plist
+
+workspace:
+  name: MLXChatApp
+  projects:
+    - MLXChatApp.xcodeproj 
