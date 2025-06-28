@@ -23,14 +23,17 @@ struct OnboardingView: View {
             TabView(selection: $currentStep) {
                 ForEach(0..<steps.count, id: \ .self) { idx in
                     if steps[idx] == .personalize {
-                        VStack(spacing: 32) {
+                        VStack(spacing: 40) {
                             Text("Personalize Your Experience")
                                 .font(.title2.bold())
                                 .multilineTextAlignment(.center)
-                                .padding(.top, 32)
+                                .padding(.top, 40)
                             AppearanceOnboardingPicker(tempStyleKind: $tempStyleKind, tempColorScheme: $tempColorScheme)
                                 .frame(maxWidth: 400)
-                            Spacer()
+                                .padding(.horizontal, 16)
+                                .background(RoundedRectangle(cornerRadius: 16).fill(Color(.secondarySystemBackground).opacity(0.2)))
+                                .padding(.bottom, 16)
+                            Spacer(minLength: 32)
                         }
                         .uiaiStyle(UIAIStyleRegistry.style(for: tempStyleKind, colorScheme: tempColorScheme))
                         .background(Color.black.ignoresSafeArea())
@@ -48,8 +51,11 @@ struct OnboardingView: View {
                                     selectedColorSchemeRaw = tempColorScheme.rawValue
                                     onComplete()
                                 } else {
-                                    withAnimation { currentStep += 1 }
+                                    withAnimation(.easeInOut) { currentStep += 1 }
                                 }
+                            },
+                            onSkip: {
+                                withAnimation(.easeInOut) { currentStep = steps.count - 1 }
                             }
                         )
                         .tag(idx)
@@ -64,62 +70,75 @@ struct OnboardingView: View {
                 AppLogger.shared.info("Onboarding", "Navigated to step \(newStep): \(stepName)")
             }
             Spacer(minLength: 0)
-            // Pager dots only, no blue bar
             VStack(spacing: 0) {
-                Spacer(minLength: 16) // Add extra space above dots
-                HStack(spacing: 8) {
+                Spacer(minLength: 24)
+                HStack(spacing: 10) {
                     ForEach(0..<steps.count, id: \ .self) { idx in
                         Circle()
                             .fill(idx == currentStep ? Color.white : Color.gray.opacity(0.4))
-                            .frame(width: 10, height: 10)
-                            .shadow(radius: idx == currentStep ? 2 : 0)
+                            .frame(width: 12, height: 12)
+                            .shadow(radius: idx == currentStep ? 3 : 0)
                     }
                 }
-                .padding(.bottom, 32) // More space before button
+                .padding(.bottom, 40)
             }
         }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: 0) {
-                if currentStep == 3 { // Model selection step (now index 3)
+                if currentStep == 3 {
                     HStack {
-                        Button(action: { withAnimation { currentStep += 1 } }) {
+                        Button(action: { withAnimation(.easeInOut) { currentStep += 1 } }) {
                             Text("Skip for now")
                                 .foregroundColor(.gray)
                                 .underline()
                         }
                         Spacer()
                         Button("Continue") {
-                            withAnimation { currentStep += 1 }
+                            withAnimation(.easeInOut) { currentStep += 1 }
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.blue)
+                        .frame(height: 56)
+                        .cornerRadius(14)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 32)
-                } else if currentStep == 2 { // Personalize step
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 40)
+                } else if currentStep == 2 {
                     Button("Continue") {
-                        withAnimation { currentStep += 1 }
+                        withAnimation(.easeInOut) { currentStep += 1 }
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.blue)
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 32)
+                    .frame(maxWidth: .infinity, minHeight: 56)
+                    .cornerRadius(14)
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 40)
                 } else {
-                    Button(currentStep == steps.count - 1 ? "Get Started" : "Continue") {
-                        if currentStep == steps.count - 1 {
-                            selectedStyleKindRaw = tempStyleKind.rawValue
-                            selectedColorSchemeRaw = tempColorScheme.rawValue
-                            onComplete()
-                        } else {
-                            withAnimation { currentStep += 1 }
+                    HStack {
+                        if currentStep < steps.count - 1 {
+                            Button(action: { withAnimation(.easeInOut) { currentStep = steps.count - 1 } }) {
+                                Text("Skip")
+                                    .foregroundColor(.gray)
+                                    .underline()
+                            }
                         }
+                        Spacer()
+                        Button(currentStep == steps.count - 1 ? "Get Started" : "Continue") {
+                            if currentStep == steps.count - 1 {
+                                selectedStyleKindRaw = tempStyleKind.rawValue
+                                selectedColorSchemeRaw = tempColorScheme.rawValue
+                                onComplete()
+                            } else {
+                                withAnimation(.easeInOut) { currentStep += 1 }
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.blue)
+                        .frame(height: 56)
+                        .cornerRadius(14)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.blue)
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 32)
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 40)
                 }
             }
             .background(Color.clear)
@@ -181,41 +200,42 @@ struct OnboardingStepView: View {
     let step: OnboardingStep
     let isLast: Bool
     let onNext: () -> Void
+    var onSkip: (() -> Void)? = nil
     @State private var animateButton = false
     @Environment(\.uiaiStyle) private var style
 
     var body: some View {
-        VStack(spacing: 40) {
+        VStack(spacing: 48) {
             Image(systemName: step.systemImage)
-                .font(.system(size: 80))
+                .font(.system(size: 90))
                 .foregroundStyle(style.accentColor.gradient)
-                .padding(.top, 60)
-                .padding(.bottom, 8)
-            VStack(spacing: 16) {
+                .padding(.top, 80)
+                .padding(.bottom, 16)
+            VStack(spacing: 20) {
                 Text(step.title)
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .multilineTextAlignment(.center)
-                    .lineLimit(3)
+                    .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 32)
                 Text(step.subtitle)
                     .font(.title3)
                     .foregroundColor(style.secondaryForegroundColor)
                     .multilineTextAlignment(.center)
-                    .lineLimit(2)
+                    .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 32)
                 Text(step.description)
                     .font(.body)
                     .foregroundColor(style.secondaryForegroundColor)
                     .multilineTextAlignment(.center)
-                    .lineLimit(4)
+                    .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 32)
             }
             .frame(maxWidth: 500)
-            Spacer(minLength: 24)
+            Spacer(minLength: 32)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .onAppear {
