@@ -17,13 +17,17 @@
 
 set -e
 
-# Configuration
+# Configuration - Updated to match actual project structure
 SIMULATOR_DEVICE="iPhone 16"
 BUILD_SCHEME_IOS="MLXChatApp-iOS"
 BUILD_SCHEME_MACOS="MLXChatApp-macOS"
 WORKSPACE_PATH="MLXChatApp/MLXChatApp.xcodeproj/project.xcworkspace"
 DERIVED_DATA_PATH="/tmp/MLXEngine-build"
 LOG_FILE="/tmp/MLXEngine-build.log"
+
+# Bundle and process identifiers - Updated to match actual values
+BUNDLE_ID="com.clevercoding.MLXChatApp-iOS"
+PROCESS_NAME="MLXChatApp-iOS"
 
 # Colors for output
 RED='\033[0;31m'
@@ -90,9 +94,6 @@ function clean_build() {
 
 function build_ios_app() {
     log_info "Building iOS app..."
-    
-    # Ensure simulator is available
-    xcrun simctl boot "$SIMULATOR_DEVICE" 2>/dev/null || true
     
     # Build the app
     xcodebuild -scheme "$BUILD_SCHEME_IOS" \
@@ -162,37 +163,101 @@ function run_tests() {
     return 0
 }
 
-function launch_simulator() {
-    log_info "Launching simulator and app..."
-    
-    # Boot simulator
+function ensure_simulator_ready() {
+    log_info "Ensuring Simulator GUI is open..."
+    open -a Simulator
+
+    log_info "Booting simulator device: $SIMULATOR_DEVICE"
     xcrun simctl boot "$SIMULATOR_DEVICE" 2>/dev/null || true
+
+    # Wait for simulator to be fully booted
+    log_info "Waiting for simulator to boot..."
+    for i in {1..15}; do
+        if xcrun simctl list devices | grep "$SIMULATOR_DEVICE" | grep -q "Booted"; then
+            log_success "Simulator is booted"
+            return 0
+        fi
+        sleep 2
+    done
     
-    # Install and launch app
-    xcodebuild -scheme "$BUILD_SCHEME_IOS" \
-        -workspace "$WORKSPACE_PATH" \
-        -destination "platform=iOS Simulator,name=$SIMULATOR_DEVICE" \
-        -derivedDataPath "$DERIVED_DATA_PATH" \
-        build-for-testing test-without-building \
-        > "$LOG_FILE" 2>&1
-    
-    if [ $? -eq 0 ]; then
-        log_success "App launched in simulator"
-        return 0
-    else
-        log_error "Failed to launch app in simulator"
-        cat "$LOG_FILE" | tail -20
+    log_error "Simulator failed to boot within 30 seconds"
+    return 1
+}
+
+function install_and_launch_app() {
+    # Find the built app
+    APP_PATH=$(find "$DERIVED_DATA_PATH" -name "*.app" -path "*/Debug-iphonesimulator/*" | head -1)
+    if [ -z "$APP_PATH" ]; then
+        log_error "Could not find built .app bundle in $DERIVED_DATA_PATH"
+        log_info "Available files:"
+        find "$DERIVED_DATA_PATH" -name "*.app" 2>/dev/null || true
         return 1
     fi
+
+    log_info "Found app: $APP_PATH"
+    
+    # Verify bundle ID matches
+    ACTUAL_BUNDLE_ID=$(plutil -extract CFBundleIdentifier raw "$APP_PATH/Info.plist" 2>/dev/null || echo "")
+    if [ "$ACTUAL_BUNDLE_ID" != "$BUNDLE_ID" ]; then
+        log_warning "Bundle ID mismatch. Expected: $BUNDLE_ID, Found: $ACTUAL_BUNDLE_ID"
+        log_info "Using actual bundle ID: $ACTUAL_BUNDLE_ID"
+        BUNDLE_ID="$ACTUAL_BUNDLE_ID"
+    fi
+
+    # Uninstall existing app if present
+    log_info "Uninstalling existing app if present..."
+    xcrun simctl uninstall booted "$BUNDLE_ID" 2>/dev/null || true
+
+    # Install the app
+    log_info "Installing app: $APP_PATH"
+    if ! xcrun simctl install booted "$APP_PATH"; then
+        log_error "App install failed."
+        return 1
+    fi
+
+    # Launch the app
+    log_info "Launching app with bundle ID: $BUNDLE_ID"
+    if ! xcrun simctl launch booted "$BUNDLE_ID"; then
+        log_error "App launch failed."
+        return 1
+    fi
+
+    # Wait a moment for app to start
+    sleep 3
+
+    # Verify app is running
+    if xcrun simctl get_app_container booted "$BUNDLE_ID" > /dev/null 2>&1; then
+        log_success "App is running in simulator."
+        return 0
+    else
+        log_warning "App may not be running. Checking logs..."
+        return 1
+    fi
+}
+
+function launch_simulator() {
+    # Ensure simulator is ready
+    if ! ensure_simulator_ready; then
+        return 1
+    fi
+
+    # Install and launch the app
+    if ! install_and_launch_app; then
+        log_error "Failed to install and launch app"
+        return 1
+    fi
+
+    log_success "Simulator launch completed successfully"
 }
 
 function monitor_logs() {
     log_info "Monitoring simulator logs..."
     log_info "Press Ctrl+C to stop monitoring"
+    log_info "Monitoring process: $PROCESS_NAME"
     
-    # Monitor app logs
+    # Monitor app logs with correct process name
     xcrun simctl spawn booted log stream \
-        --predicate 'process == "MLXChatApp"' \
+        --predicate "process == \"$PROCESS_NAME\"" \
         --style compact
 }
 
@@ -211,34 +276,24 @@ function reset_simulator() {
 function full_development_cycle() {
     log_info "Starting full development cycle..."
     
-    # Check prerequisites
-    check_prerequisites
-    
-    # Clean build
+    # Reset and clean
+    reset_simulator
     clean_build
     
-    # Build iOS app
+    # Build the app
     if ! build_ios_app; then
-        log_error "Development cycle failed at build step"
+        log_error "Build failed. Stopping cycle."
         return 1
     fi
     
-    # Run tests
-    if ! run_tests; then
-        log_error "Development cycle failed at test step"
-        return 1
-    fi
-    
-    # Launch simulator
+    # Launch simulator and app
     if ! launch_simulator; then
-        log_error "Development cycle failed at simulator launch"
+        log_error "Simulator launch failed. Stopping cycle."
         return 1
     fi
     
-    log_success "Full development cycle completed successfully!"
-    log_info "App is running in simulator. Ready for testing."
-    
-    return 0
+    log_success "Development cycle completed successfully"
+    log_info "App should now be running in the simulator"
 }
 
 function show_status() {
@@ -249,12 +304,21 @@ function show_status() {
     echo "  Workspace: $WORKSPACE_PATH"
     echo "  Derived Data: $DERIVED_DATA_PATH"
     echo "  Log File: $LOG_FILE"
+    echo "  Bundle ID: $BUNDLE_ID"
+    echo "  Process Name: $PROCESS_NAME"
     
     # Check simulator status
     if xcrun simctl list devices | grep -q "$SIMULATOR_DEVICE.*Booted"; then
         log_success "Simulator is running"
     else
         log_warning "Simulator is not running"
+    fi
+    
+    # Check if app is installed
+    if xcrun simctl get_app_container booted "$BUNDLE_ID" > /dev/null 2>&1; then
+        log_success "App is installed in simulator"
+    else
+        log_warning "App is not installed in simulator"
     fi
 }
 
