@@ -118,7 +118,7 @@ struct ModelDiscoveryView: View {
             ProgressView()
                 .scaleEffect(1.2)
             Text("Searching for models...")
-                .foregroundColor(.secondary)
+                .foregroundColor(style.secondaryForegroundColor)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -127,12 +127,12 @@ struct ModelDiscoveryView: View {
         VStack(spacing: 16) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 48))
-                .foregroundColor(.secondary)
+                .foregroundColor(style.secondaryForegroundColor)
             Text("No models found")
                 .font(.title2)
                 .fontWeight(.medium)
             Text("Try adjusting your search terms or filters")
-                .foregroundColor(.secondary)
+                .foregroundColor(style.secondaryForegroundColor)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -143,12 +143,12 @@ struct ModelDiscoveryView: View {
         VStack(spacing: 16) {
             Image(systemName: "brain.head.profile")
                 .font(.system(size: 48))
-                .foregroundColor(.secondary)
+                .foregroundColor(style.secondaryForegroundColor)
             Text("Discover AI Models")
                 .font(.title2)
                 .fontWeight(.medium)
             Text("Search for MLX-compatible models from HuggingFace Hub")
-                .foregroundColor(.secondary)
+                .foregroundColor(style.secondaryForegroundColor)
                 .multilineTextAlignment(.center)
             Button("Search for models") {
                 searchText = "mlx"

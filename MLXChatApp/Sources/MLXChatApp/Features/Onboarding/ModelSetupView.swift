@@ -60,6 +60,7 @@ struct ModelSetupView: View {
     @State private var downloadProgress: Double = 0
     @State private var isDownloading = false
     @State private var downloadCompleted = false
+    @Environment(\.uiaiStyle) private var style
     
     let onContinue: () -> Void
     
@@ -100,6 +101,7 @@ struct ModelSetupView: View {
                             isSelected: selectedModel?.hubId == model.hubId,
                             onSelect: { selectedModel = Model(from: model) }
                         )
+                        .uiaiStyle(style)
                     }
                 }
                 .padding(.horizontal)
@@ -116,6 +118,7 @@ struct ModelSetupView: View {
                     onDownload: { downloadModel(model) },
                     onContinue: onContinue
                 )
+                .uiaiStyle(style)
             }
         }
         .padding()
@@ -166,21 +169,22 @@ struct ModelSelectionCard: View {
     let model: RecommendedModel
     let isSelected: Bool
     let onSelect: () -> Void
+    @Environment(\.uiaiStyle) private var style
     
     var body: some View {
         Button(action: onSelect) {
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(model.name).font(.headline)
-                    Text(model.description).font(.subheadline).foregroundColor(.secondary)
+                    Text(model.description).font(.subheadline).foregroundColor(style.secondaryForegroundColor)
                     HStack {
                         ForEach(model.tags, id: \.self) { tag in
                             Text(tag)
                                 .font(.caption2)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(model.category.color.opacity(0.2))
-                                .foregroundColor(model.category.color)
+                                .background(style.accentColor.opacity(0.15))
+                                .foregroundColor(style.accentColor)
                                 .clipShape(Capsule())
                         }
                     }
@@ -188,16 +192,16 @@ struct ModelSelectionCard: View {
                 Spacer()
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.blue)
+                        .foregroundColor(style.accentColor)
                         .font(.title)
                 }
             }
             .padding()
-            .background(Color(.secondarySystemBackground))
-            .cornerRadius(12)
+            .background(style.backgroundColor)
+            .cornerRadius(style.cornerRadius)
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+                RoundedRectangle(cornerRadius: style.cornerRadius)
+                    .stroke(isSelected ? style.accentColor : Color.clear, lineWidth: 2)
             )
         }
         .buttonStyle(.plain)
@@ -211,21 +215,23 @@ struct DownloadSection: View {
     let downloadCompleted: Bool
     let onDownload: () -> Void
     let onContinue: () -> Void
+    @Environment(\.uiaiStyle) private var style
     
     var body: some View {
         VStack {
             if isDownloading {
                 ProgressView(value: downloadProgress) {
                     Text("Downloading \(model.name)... \(Int(downloadProgress * 100))%")
+                        .foregroundColor(style.foregroundColor)
                 }
             } else if downloadCompleted {
                 HStack {
-                    Image(systemName: "checkmark.circle.fill").foregroundColor(.green)
+                    Image(systemName: "checkmark.circle.fill").foregroundColor(style.successColor)
                     Text("\(model.name) Downloaded")
+                        .foregroundColor(style.successColor)
                 }
                 Button("Continue", action: onContinue)
                     .buttonStyle(.borderedProminent)
-
             } else {
                 Button("Download \(model.name) (\(model.size))", action: onDownload)
                     .buttonStyle(.borderedProminent)
