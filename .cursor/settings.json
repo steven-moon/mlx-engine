@@ -145,5 +145,7 @@
     "errorDetails": true,
     "successConfirmations": true,
     "userNotifications": true
-  }
+  },
+  
+  "cursor.agent.logDirectory": "/tmp"
 } 

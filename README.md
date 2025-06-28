@@ -195,7 +195,9 @@ let modelURL = try await downloader.downloadModel(config) { progress in
 - [Build Status](_docs/build_status_summary.md) - Current project status
 - [Integration Guides](_docs/integration_guides/) - Sample app integration guides
 
-## 🛠️ **Development**
+## ��️ **Development**
+
+> **Note:** Do not generate log files in the project root. Use `/tmp` or a `logs/` directory for all build/test logs to keep the workspace clean.
 
 ### Requirements
 - **Xcode**: Latest Xcode with Swift 5.9+

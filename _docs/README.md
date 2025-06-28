@@ -154,6 +154,10 @@ MLXEngine uses comprehensive error types for robust error handling:
 
 All errors conform to `LocalizedError` and provide user-friendly descriptions. See the [API Reference](api_reference.md#error-types) for details.
 
+## Project Rules
+
+- All logs must be written to `/tmp` or a `logs/` directory, not the project root.
+
 ---
 
 *Last updated: June 27, 2025* 
