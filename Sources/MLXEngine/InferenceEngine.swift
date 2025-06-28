@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 
 #if canImport(MLX) && canImport(MLXLLM) && canImport(MLXLMCommon)
 import MLX

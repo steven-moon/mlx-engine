@@ -12,7 +12,8 @@ let package = Package(
         .package(url: "https://github.com/ml-explore/mlx-swift", from: "0.10.0"),
         .package(url: "https://github.com/ml-explore/mlx-swift-examples", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.3"),
-        .package(path: "../swift-uikit")
+        .package(path: "../swift-uikit"),
+        .package(path: "../summa-core-swift-package")
     ],
     targets: [
         .target(
@@ -23,7 +24,8 @@ let package = Package(
                 .product(name: "MLXLLM", package: "mlx-swift-examples"),
                 .product(name: "MLXLMCommon", package: "mlx-swift-examples"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "SwiftUIKit", package: "swift-uikit")
+                .product(name: "SwiftUIKit", package: "swift-uikit"),
+                .product(name: "SummaCoreSwiftPackage", package: "summa-core-swift-package")
             ],
             path: "Sources/MLXEngine",
             exclude: ["macOS"],

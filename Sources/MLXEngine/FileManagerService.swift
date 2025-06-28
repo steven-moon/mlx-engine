@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 
 /// Cross-platform file management service for MLXEngine
 public class FileManagerService: @unchecked Sendable {

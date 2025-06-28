@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 // import Hub  // Removed: No such module available in SPM or MLX
 
 /// Optimized model downloader using URLSession for reliable downloads. Previously used the Hub library, now replaced with URLSession-based implementation.

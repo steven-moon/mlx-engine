@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 
 /// Hugging Face Hub API client for searching and downloading models
 public actor HuggingFaceAPI {

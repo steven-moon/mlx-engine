@@ -30,6 +30,7 @@ import MLX
 import MLXLLM
 import MLXLMCommon
 import Metal
+import Logging
 
 // MARK: - Core Types
 
