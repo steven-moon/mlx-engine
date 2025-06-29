@@ -274,4 +274,12 @@ fi
 
 echo ""
 print_status "🎉 Metal library build completed successfully!"
-print_info "The library is ready for use with MLXEngine" 
+print_info "The library is ready for use with MLXEngine"
+
+# After creating minimal library, check for file and log result
+if [[ -f "$OUTPUT_DIR/$METALLIB_NAME" ]]; then
+    print_status "Verified: $OUTPUT_DIR/$METALLIB_NAME created."
+else
+    print_error "Failed: $OUTPUT_DIR/$METALLIB_NAME was not created."
+    exit 1
+fi 
