@@ -12,62 +12,70 @@ import XCTest
 
 @MainActor
 final class MLXEngineTests: XCTestCase {
-    // Shared engine for basic tests to avoid repetitive loading
-    private var sharedEngine: InferenceEngine!
-    
-    override func setUp() async throws {
-        // Copy metallib to current working directory for MLX C++ backend
-        let fm = FileManager.default
-        let testBundle = Bundle(for: type(of: self))
-        var metallibCopied = false
-        if let metallibURL = testBundle.url(forResource: "default", withExtension: "metallib") {
-            let cwd = URL(fileURLWithPath: fm.currentDirectoryPath).appendingPathComponent("default.metallib")
-            do {
-                if fm.fileExists(atPath: cwd.path) {
-                    try fm.removeItem(at: cwd)
-                }
-                try fm.copyItem(at: metallibURL, to: cwd)
-                print("[TEST SETUP] Copied default.metallib from bundle resources to current working directory: \(cwd.path)")
-                metallibCopied = true
-            } catch {
-                print("[TEST SETUP] Failed to copy metallib from resources: \(error)")
-            }
+  // Shared engine for basic tests to avoid repetitive loading
+  private var sharedEngine: InferenceEngine!
+
+  override func setUp() async throws {
+    // Copy metallib to current working directory for MLX C++ backend
+    let fm = FileManager.default
+    let testBundle = Bundle(for: type(of: self))
+    var metallibCopied = false
+    if let metallibURL = testBundle.url(forResource: "default", withExtension: "metallib") {
+      let cwd = URL(fileURLWithPath: fm.currentDirectoryPath).appendingPathComponent(
+        "default.metallib")
+      do {
+        if fm.fileExists(atPath: cwd.path) {
+          try fm.removeItem(at: cwd)
         }
-        if !metallibCopied {
-            // Try Contents directory (manual copy)
-            let bundlePath = testBundle.bundlePath
-            let contentsPath = URL(fileURLWithPath: bundlePath).appendingPathComponent("default.metallib")
-            if fm.fileExists(atPath: contentsPath.path) {
-                let cwd = URL(fileURLWithPath: fm.currentDirectoryPath).appendingPathComponent("default.metallib")
-                do {
-                    if fm.fileExists(atPath: cwd.path) {
-                        try fm.removeItem(at: cwd)
-                    }
-                    try fm.copyItem(at: contentsPath, to: cwd)
-                    print("[TEST SETUP] Copied default.metallib from Contents to current working directory: \(cwd.path)")
-                    metallibCopied = true
-                } catch {
-                    print("[TEST SETUP] Failed to copy metallib from Contents: \(error)")
-                }
-            }
-        }
-        if !metallibCopied {
-            print("[TEST SETUP] Could not find default.metallib in test bundle resources or Contents directory")
-        }
-        
-        // Create a simple test configuration for basic tests
-        let config = ModelConfiguration(
-            name: "Test Model",
-            hubId: "test/model",
-            description: "Test model for unit testing",
-            modelType: .llm,
-            gpuCacheLimit: 512 * 1024 * 1024,
-            features: []
+        try fm.copyItem(at: metallibURL, to: cwd)
+        print(
+          "[TEST SETUP] Copied default.metallib from bundle resources to current working directory: \(cwd.path)"
         )
-        
-        // Load engine once for basic tests
-        sharedEngine = try await InferenceEngine.loadModel(config) { progress in }
+        metallibCopied = true
+      } catch {
+        print("[TEST SETUP] Failed to copy metallib from resources: \(error)")
+      }
     }
+    if !metallibCopied {
+      // Try Contents directory (manual copy)
+      let bundlePath = testBundle.bundlePath
+      let contentsPath = URL(fileURLWithPath: bundlePath).appendingPathComponent("default.metallib")
+      if fm.fileExists(atPath: contentsPath.path) {
+        let cwd = URL(fileURLWithPath: fm.currentDirectoryPath).appendingPathComponent(
+          "default.metallib")
+        do {
+          if fm.fileExists(atPath: cwd.path) {
+            try fm.removeItem(at: cwd)
+          }
+          try fm.copyItem(at: contentsPath, to: cwd)
+          print(
+            "[TEST SETUP] Copied default.metallib from Contents to current working directory: \(cwd.path)"
+          )
+          metallibCopied = true
+        } catch {
+          print("[TEST SETUP] Failed to copy metallib from Contents: \(error)")
+        }
+      }
+    }
+    if !metallibCopied {
+      print(
+        "[TEST SETUP] Could not find default.metallib in test bundle resources or Contents directory"
+      )
+    }
+
+    // Create a simple test configuration for basic tests
+    let config = ModelConfiguration(
+      name: "Test Model",
+      hubId: "test/model",
+      description: "Test model for unit testing",
+      modelType: .llm,
+      gpuCacheLimit: 512 * 1024 * 1024,
+      features: []
+    )
+
+    // Load engine once for basic tests
+    sharedEngine = try await InferenceEngine.loadModel(config) { progress in }
+  }
 
   override func tearDown() async throws {
     sharedEngine?.unload()
