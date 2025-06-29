@@ -14,10 +14,11 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-MLX_PATH=".build/checkouts/mlx-swift"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+MLX_PATH="$SCRIPT_DIR/.build/checkouts/mlx-swift"
 METAL_SOURCE_DIR="$MLX_PATH/Source/Cmlx/mlx-generated/metal"
 EXAMPLES_SOURCE_DIR="$MLX_PATH/Source/Cmlx/mlx/examples/extensions"
-OUTPUT_DIR="Sources/MLXEngine/Resources"
+OUTPUT_DIR="$SCRIPT_DIR/Sources/MLXEngine/Resources"
 METALLIB_NAME="default.metallib"
 
 echo -e "${BLUE}🔧 MLXEngine Metal Library Builder${NC}"
@@ -103,7 +104,6 @@ compile_metal_file() {
 # Function to create a minimal Metal library
 create_minimal_library() {
     print_info "Creating minimal Metal library..."
-    
     local minimal_metal="$OUTPUT_DIR/minimal.metal"
     cat > "$minimal_metal" << 'EOF'
 #include <metal_stdlib>
@@ -159,14 +159,20 @@ kernel void reduce_sum(device const float* input,
 }
 EOF
 
-    # Compile minimal library
-    if xcrun metal -c "$minimal_metal" -o "$OUTPUT_DIR/minimal.air" && \
-       xcrun metallib "$OUTPUT_DIR/minimal.air" -o "$OUTPUT_DIR/$METALLIB_NAME"; then
-        print_status "Created minimal Metal library"
+    # Compile minimal library with verbose output
+    print_info "Compiling minimal.metal to minimal.air..."
+    xcrun metal -c "$minimal_metal" -o "$OUTPUT_DIR/minimal.air" 2>&1 | tee "$OUTPUT_DIR/minimal_metal.log"
+    print_info "Compiling minimal.air to default.metallib..."
+    xcrun metallib "$OUTPUT_DIR/minimal.air" -o "$OUTPUT_DIR/$METALLIB_NAME" 2>&1 | tee -a "$OUTPUT_DIR/minimal_metal.log"
+
+    if [ -f "$OUTPUT_DIR/$METALLIB_NAME" ]; then
+        print_status "Created minimal Metal library at $OUTPUT_DIR/$METALLIB_NAME"
         rm -f "$minimal_metal" "$OUTPUT_DIR/minimal.air"
         return 0
     else
-        print_error "Failed to create minimal Metal library"
+        print_error "Failed to create minimal Metal library at $OUTPUT_DIR/$METALLIB_NAME"
+        ls -l "$OUTPUT_DIR"
+        cat "$OUTPUT_DIR/minimal_metal.log"
         return 1
     fi
 }
@@ -181,11 +187,16 @@ if [[ ${#metal_files[@]} -eq 0 ]]; then
     print_warning "No .metal files found, creating minimal library"
     if create_minimal_library; then
         print_status "Metal library build completed successfully"
-        exit 0
     else
         print_error "Failed to create minimal Metal library"
         exit 1
     fi
+fi
+
+# If the output file is still missing, fail loudly
+if [ ! -f "$OUTPUT_DIR/$METALLIB_NAME" ]; then
+    print_error "default.metallib was not created in $OUTPUT_DIR. Build failed."
+    exit 1
 fi
 
 print_info "Found ${#metal_files[@]} .metal files"

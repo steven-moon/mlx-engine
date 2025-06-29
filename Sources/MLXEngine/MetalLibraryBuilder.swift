@@ -64,18 +64,35 @@ public struct MetalLibraryBuilder {
 
   /// Finds precompiled Metal library in the bundle
   private static func findPrecompiledLibrary(device: MTLDevice) -> MTLLibrary? {
-    // Look for precompiled library in bundle
+    // Look for precompiled library in SwiftPM module bundle (robust for app and test targets)
+    #if SWIFT_PACKAGE
+    let bundle = Bundle.module
+    #else
     let bundle = Bundle(for: BundleFinder.self)
+    #endif
+    let candidatePaths: [String] = [
+      bundle.url(forResource: "default", withExtension: "metallib")?.path ?? "(nil)",
+      Bundle.main.url(forResource: "default", withExtension: "metallib")?.path ?? "(nil)",
+      "./default.metallib",
+      "../Resources/default.metallib",
+      "/tmp/default.metallib",
+      "/Users/stevenmoon/GitRepo/summa-coding-macos-companion-cursor-workspace/mlx-engine/Sources/MLXEngine/Resources/default.metallib"
+    ]
+    print("🔍 [MetalLibraryBuilder] Checking candidate paths for default.metallib:")
+    for path in candidatePaths {
+      let exists = FileManager.default.fileExists(atPath: path)
+      print("  - \(path): \(exists ? "FOUND" : "missing")")
+    }
     guard let libraryURL = bundle.url(forResource: "default", withExtension: "metallib") else {
+      print("⚠️ Could not find default.metallib in bundle: \(bundle.bundlePath)")
       return nil
     }
-
     do {
       let library = try device.makeLibrary(URL: libraryURL)
-      print("✅ Found precompiled Metal library")
+      print("✅ Found precompiled Metal library at \(libraryURL.path)")
       return library
     } catch {
-      print("⚠️ Failed to load precompiled library: \(error)")
+      print("❌ Failed to load Metal library at \(libraryURL.path): \(error)")
       return nil
     }
   }

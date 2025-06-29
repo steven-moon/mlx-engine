@@ -28,7 +28,7 @@ let package = Package(
                 .product(name: "SummaCoreSwiftPackage", package: "summa-core-swift-package")
             ],
             path: "Sources/MLXEngine",
-            exclude: ["macOS"],
+            exclude: ["macOS", "Resources/Info.plist"],
             resources: [
                 .process("Resources/default.metallib")
             ]
@@ -48,8 +48,10 @@ let package = Package(
                 .product(name: "SummaCoreSwiftPackage", package: "summa-core-swift-package")
             ],
             path: "Tests/MLXEngineTests",
+            exclude: ["Resources/Info.plist", "Info.plist", "Resources/default.metallib"],
+            // Flatten resource path for bulletproof bundling
             resources: [
-                .process("Resources/default.metallib")
+                .copy("default.metallib")
             ]
         )
     ]

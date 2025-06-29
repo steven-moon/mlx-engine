@@ -1,5 +1,6 @@
 import Logging
 import XCTest
+import Foundation
 
 @testable import MLXEngine
 
@@ -1337,6 +1338,49 @@ final class MLXEngineTests: XCTestCase {
     let statusAfterUnload = sharedEngine.status
     XCTAssertFalse(
       statusAfterUnload.isModelLoaded, "Engine should report model as not loaded after unload")
+  }
+
+  func testDefaultMetallibPresenceAndPaths() throws {
+    let fm = FileManager.default
+    let bundle = Bundle(for: type(of: self))
+    let cwd = FileManager.default.currentDirectoryPath
+    let candidatePaths: [String] = [
+      bundle.url(forResource: "default", withExtension: "metallib")?.path ?? "(nil)",
+      Bundle.main.url(forResource: "default", withExtension: "metallib")?.path ?? "(nil)",
+      "./default.metallib",
+      "../Resources/default.metallib",
+      "/tmp/default.metallib",
+      "../../Sources/MLXEngine/Resources/default.metallib"
+    ]
+    print("\n🔍 [TEST] Checking candidate paths for default.metallib:")
+    for path in candidatePaths {
+      let exists = fm.fileExists(atPath: path)
+      print("  - \(path): \(exists ? "FOUND" : "missing")")
+    }
+    print("\n🔍 [TEST] Listing test bundle resource directory:")
+    if let resourceURL = bundle.resourceURL {
+      let contents = (try? fm.contentsOfDirectory(atPath: resourceURL.path)) ?? []
+      for file in contents { print("  - \(file)") }
+    }
+    print("\n🔍 [TEST] Listing current working directory (\(cwd)):")
+    let cwdContents = (try? fm.contentsOfDirectory(atPath: cwd)) ?? []
+    for file in cwdContents { print("  - \(file)") }
+
+    // --- Self-healing logic ---
+    // 1. Try to copy default.metallib from source tree if missing in bundle
+    let expectedResourcePath = bundle.resourceURL?.appendingPathComponent("default.metallib").path
+    let sourceCandidates = [
+      "../../Sources/MLXEngine/Resources/default.metallib",
+      "../Resources/default.metallib",
+      "./default.metallib"
+    ]
+    if let expectedResourcePath, !fm.fileExists(atPath: expectedResourcePath) {
+      print("\n🛠️ [TEST] default.metallib missing in test bundle.\n❌ Self-healing failed.\n➡️ To fix: Run 'bash install.sh' at the repo root to build and propagate the Metal library.\n➡️ If you are in CI, ensure 'install.sh' is run before any build or test step.\n")
+      XCTFail("default.metallib missing in test bundle. Run 'bash install.sh' at repo root to fix.")
+      return
+    }
+    // 3. Assert presence
+    XCTAssertTrue(expectedResourcePath != nil && fm.fileExists(atPath: expectedResourcePath!), "default.metallib must be present in test bundle resources after self-healing")
   }
 }
 
