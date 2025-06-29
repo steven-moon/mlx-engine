@@ -260,7 +260,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 See [Action Plan Summary](_docs/Action_Plan_Summary.md) for the current roadmap and next steps.
 
+## Installation & Setup
+
+Before building or testing MLXEngine (or any project that depends on it), you must ensure all required Metal resources are present. This is handled by the `install.sh` script in this directory.
+
+**To run the install script:**
+
+```bash
+bash install.sh
+```
+
+This script will:
+- Check for Xcode command line tools and the Metal compiler
+- Ensure all required Metal resources (e.g., `default.metallib`) are present
+- Prepare the package for building and testing
+
+If you see errors about missing Metal resources, re-run `bash install.sh` and check for errors.
+
 ---
+*Last updated: 2025-07-01*
 
 **Built with ❤️ for the Apple ecosystem**
 
