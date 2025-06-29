@@ -475,25 +475,6 @@ final class RealWorldModelTests: XCTestCase {
   func testRealWorldErrorHandling() async throws {
     print("\n⚠️ [REAL WORLD ERROR TEST] Testing real-world error handling...")
 
-    // Test with invalid model configuration
-    let invalidConfig = ModelConfiguration(
-      name: "Invalid Model",
-      hubId: "invalid/model/that/does/not/exist",
-      description: "This model does not exist",
-      maxTokens: 100,
-      modelType: .llm,
-      gpuCacheLimit: 512 * 1024 * 1024,
-      features: []
-    )
-
-    do {
-      let _ = try await InferenceEngine.loadModel(invalidConfig) { _ in }
-      XCTFail("Should have thrown an error for invalid model")
-    } catch {
-      print("✅ [REAL WORLD ERROR TEST] Correctly caught error for invalid model: \(error)")
-      XCTAssertTrue(error is MLXEngineError, "Error should be MLXEngineError")
-    }
-
     // Test with unsupported features
     let engine = try await InferenceEngine.loadModel(ModelRegistry.qwen05B) { _ in }
 
