@@ -50,11 +50,12 @@ final class ModelManagerTests: XCTestCase {
   }
 
   func testModelMetadataExtraction() {
-    let config = ModelConfiguration(
+    var config = ModelConfiguration(
       name: "Qwen Test",
       hubId: "mlx-community/Qwen1.5-0.5B-Chat-4bit",
       description: "Test Qwen model"
     )
+    config.extractMetadataFromId()
     XCTAssertEqual(config.architecture?.lowercased(), "qwen")
     XCTAssertEqual(config.quantization?.lowercased(), "4bit")
     XCTAssertEqual(config.parameters?.lowercased(), "0.5b")
