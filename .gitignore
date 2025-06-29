@@ -51,4 +51,4 @@ sample-code/
 docs/
 
 # Metal library
-default.metallib 
+# default.metallib (REMOVED: allow metallib to be tracked and present) 

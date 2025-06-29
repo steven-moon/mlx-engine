@@ -47,7 +47,10 @@ let package = Package(
                 "MLXEngine",
                 .product(name: "SummaCoreSwiftPackage", package: "summa-core-swift-package")
             ],
-            path: "Tests/MLXEngineTests"
+            path: "Tests/MLXEngineTests",
+            resources: [
+                .process("Resources/default.metallib")
+            ]
         )
     ]
 )
